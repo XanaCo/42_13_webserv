@@ -1,5 +1,5 @@
 
-#include "request.hpp"
+#include "../inc/webserv.hpp"
 
 int	findMethod(std::string str)
 {

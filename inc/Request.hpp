@@ -4,6 +4,8 @@
 #ifndef REQUEST_HPP
 # define REQUEST_HPP
 
+# define REQUEST "\033[1;37mRequest\033[0m"
+
 enum methodes
 {
     GET,

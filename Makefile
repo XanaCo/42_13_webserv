@@ -2,50 +2,49 @@
 NAME = webserv
 
 # Compiler
-CPP			= c++
-CPPFLAGS	= -Wall -Werror -Wextra -std=c++98
+CPP		= c++
+FLAGS	= -Wall -Werror -Wextra -std=c++98
 
 # Paths
 SRC_PATH	= ./src/
 BIN_PATH	= ./bin/
 
 # Includes
-INCLUDES	= inc/
+INCLUDES	= inc/*.hpp
 
 # Clean
 RM	= rm -rf
 
 # Files
-SRC	=	main.cpp \
-		request.cpp \
-		parsing_request.cpp \
+SRC	= main.cpp \
 
-OBJ	= $(addprefix $(BIN_PATH), $(SRC:.cpp=.o))
+OBJ	= ${addprefix ${BIN_PATH}, ${SRC:.cpp=.o}}
 
-DEPS		= $(OBJ:.o=.d)
+DEPS		= ${OBJ:.o=.d}
 
+.c.o :	
+		${CPP} ${FLAGS} -I ${INCLUDES} -c $< -o ${<:.cpp=.o}
 
-.cpp.o :	
-		${CPP} ${CPPFLAGS} -c++ $< -o ${<:.cpp=.o}
+${BIN_PATH}%.o: ${SRC_PATH}%.cpp
+		mkdir -p ${dir $@}
+		@ ${CPP} ${FLAGS} -c $< -o $@
 
-$(BIN_PATH)%.o: $(SRC_PATH)%.c
-		mkdir -p $(dir $@)
-		@ $(CPP) $(CPPFLAGS) -c $< -o $@
-		
 ${NAME} :	${OBJ}
-		${CPP} -o ${NAME} -g ${CPPFLAGS} ${OBJ}
+		${CPP} -o ${NAME} -g ${FLAGS} ${OBJ} 
 		clear
-	              
+	        @toilet -f pagga.tlf --gay "Enjoy ${NAME} !"
+	
 all :		${NAME}
 
 clean :
-		${RM} ${BIN_PATH}
+		${RM} ${OBJ}
 
 fclean :	clean
+		${RM} ${BIN_PATH}
 		${RM} ${NAME}
 
 re :		fclean all
 
 .PHONY :	all clean fclean re
 
--include $(DEPS)
+-include ${DEPS}

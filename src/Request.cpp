@@ -31,7 +31,7 @@ Request	&Request::operator=(Request const &obj)
 
 std::ostream	&operator<<(std::ostream &os, Request &obj)
 {
-    os << obj._method << std::endl;
+    os << REQUEST << " method:" <<obj._method << std::endl;
     return (os);
 }
 
