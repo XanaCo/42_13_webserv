@@ -17,6 +17,8 @@ RM	= rm -rf
 
 # Files
 SRC	=	main.cpp \
+		request.cpp \
+		parsing_request.cpp \
 
 OBJ	= $(addprefix $(BIN_PATH), $(SRC:.cpp=.o))
 
