@@ -10,6 +10,8 @@
 - [ Medium Guide ](https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa)
 - [ Authorised Functions ](https://free-mimosa-2dd.notion.site/Fonctions-autorisees-41b6c35f8c854d75992ee6bc7edf3001?pvs=4)
 - [ Maxence's Webserv ](https://github.com/mbocquel/42_cursus/tree/main/52_webserv)
+- [ Webserv Guide ](https://github.com/Kaydooo/Webserv_42)
+- [ Webserv Ressources ](https://github.com/cclaude42/webserv)
 
 ## GIT 
 
