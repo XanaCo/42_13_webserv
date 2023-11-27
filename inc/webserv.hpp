@@ -8,7 +8,50 @@
 #ifndef WEBSERV_HPP
 # define WEBSERV_HPP
 
+# include <iostream>
+# include <fstream>
+# include <sstream>
+# include <list>
+# include <map>
+# include <string>
+# include <vector>
+# include <cstdlib>
+# include <csignal>
+# include <ctime>
+# include <exception>
+# include <cmath>
+# include <cerrno>
+# include <cctype>
+# include <algorithm>
+# include <limits>
+# include <mutex>
+# include <utility>
+
+// # include <sys/socket.h>
+// # include <dirent.h>
+// # include <sys/select.h>
+// # include <poll.h>
+// # include <sys/epoll.h>
+// # include <sys/wait.h>
+// # include <sys/stat.h>
+// # include <signal.h>
+
 # include "Request.hpp"
+
+
+// ************************************************************************** //
+//  COLORS & PRINT VARIABLE
+// ************************************************************************** //
+
+# define WHITE "\033[97;1m"
+# define YELLOW "\033[33;1m"
+# define BLUE "\033[34;1m"
+# define MAGENTA "\033[95;1m"
+# define RED "\033[31;1m"
+# define GREEN "\033[32;1m"
+# define END_COLOR "\033[0m"
+
+# define PRINT 1
 
 // ************************************************************************** //
 //  RETURN STATUS

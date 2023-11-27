@@ -8,7 +8,7 @@
 - [ DataTracker ](https://datatracker.ietf.org/doc/html/rfc2616)
 - [ Bej's Guide to Network Programming ](https://beej.us/guide/bgnet/html/split/)
 - [ Medium Guide ](https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa)
-- [ Authorised Functions ](https://www.notion.so/Fonctions-autorisees-41b6c35f8c854d75992ee6bc7edf3001?pvs=4)
+- [ Authorised Functions ](https://free-mimosa-2dd.notion.site/Fonctions-autorisees-41b6c35f8c854d75992ee6bc7edf3001?pvs=4)
 - [ Maxence's Webserv ](https://github.com/mbocquel/42_cursus/tree/main/52_webserv)
 
 ## GIT 
