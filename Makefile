@@ -3,7 +3,7 @@ NAME = webserv
 
 # Compiler
 CPP		= c++
-FLAGS	= -Wall -Werror -Wextra -std=c++98
+FLAGS	= -Wall -Werror -Wextra# -std=c++98
 
 # Paths
 SRC_PATH	= ./src/
@@ -32,8 +32,8 @@ ${BIN_PATH}%.o: ${SRC_PATH}%.cpp
 ${NAME} :	${OBJ}
 		${CPP} -o ${NAME} -g ${FLAGS} ${OBJ} 
 		clear
-	        @toilet -f pagga.tlf --gay "Enjoy ${NAME} !"
-	
+			@toilet -f pagga.tlf --gay "Enjoy ${NAME} !"
+
 all :		${NAME}
 
 clean :

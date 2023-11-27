@@ -15,7 +15,5 @@ ARGUMENTS
 Configuration file
 */
 
-int	main()
-{
-	return (0);
-}
+#include "../inc/webserv.hpp"
+
