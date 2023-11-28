@@ -10,7 +10,7 @@ SRC_PATH	= ./src/
 BIN_PATH	= ./bin/
 
 # Includes
-INCLUDES	= inc/*.hpp
+INCLUDES	= inc/*.hpp # ATTENTION AUX WILDCARDS! INTERDIT!
 
 # Clean
 RM	= rm -rf
