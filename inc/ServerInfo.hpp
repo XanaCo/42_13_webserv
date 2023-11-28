@@ -7,6 +7,8 @@
 # include "webserv.hpp"
 # include "Location.hpp"
 
+class Location;
+
 class ServerInfo {
 
 public:
@@ -30,7 +32,7 @@ public:
 		public:
 			// ServerInfoError();
 			// virtual ~ServerInfoError();
-			const char *what(std::string msg) const throw();
+			const char *what() const throw();
 	};
 
 private:

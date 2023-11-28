@@ -23,7 +23,7 @@ public:
 		public:
 			// LocationError();
 			// virtual ~LocationError();
-			const char *what(std::string msg) const throw();
+			const char *what() const throw();
 	};
 
 private:

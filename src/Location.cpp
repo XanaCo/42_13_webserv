@@ -6,7 +6,7 @@
 Location::Location(std::string const &block) {
 
 	/// set params 
-
+	(void)block;
 	if (PRINT)
 		std::cout << GREEN << "Constructor: Location created " << END_COLOR << std::endl;
 
@@ -26,7 +26,8 @@ Location::~Location() {
 /*::: Operator Overloading ::: */
 
 std::ostream &operator<<(std::ostream &out, Location const &other) {
-		
+	
+	(void)other;
 	out << "all LocationInfos here to debug";
 
 	return out;
@@ -42,9 +43,7 @@ std::ostream &operator<<(std::ostream &out, Location const &other) {
 
 /*::: EXCEPTIONS :::*/
 
-const char *Location::LocationError::what(std::string msg) const throw() {
+const char *Location::LocationError::what() const throw() {
 
-	std::string error = "Webserv Error : " + msg;
-
-	return error.c_str();
+	return YELLOW "Webserv Error : Location" END_COLOR;
 }

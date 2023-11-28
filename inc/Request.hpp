@@ -6,24 +6,7 @@
 
 # define REQUEST "\033[1;37mRequest\033[0m"
 
-# include <iostream>
-# include <fstream>
-# include <sstream>
-# include <list>
-# include <map>
-# include <string>
-# include <vector>
-# include <cstdlib>
-# include <csignal>
-# include <ctime>
-# include <exception>
-# include <cmath>
-# include <cerrno>
-# include <cctype>
-# include <algorithm>
-# include <limits>
-# include <mutex>
-# include <utility>
+# include "webserv.hpp"
 
 enum methodes
 {

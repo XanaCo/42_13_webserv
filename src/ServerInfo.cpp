@@ -75,9 +75,7 @@ bool ServerInfo::getIsAlive() const {
 
 /*::: EXCEPTIONS :::*/
 
-const char *ServerInfo::ServerInfoError::what(std::string msg) const throw() {
+const char *ServerInfo::ServerInfoError::what() const throw() {
 
-	std::string error = "Webserv Error : " + msg;
-
-	return error.c_str();
+	return YELLOW "Webserv Error : ServerInfo" END_COLOR;
 }

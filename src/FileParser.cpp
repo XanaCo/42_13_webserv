@@ -26,7 +26,8 @@ FileParser::~FileParser() {
 /*::: Operator Overloading ::: */
 
 std::ostream &operator<<(std::ostream &out, FileParser const &other) {
-		
+	
+	(void)other;
 	out << "all FileParserInfos here to debug";
 
 	return out;
@@ -42,9 +43,7 @@ std::ostream &operator<<(std::ostream &out, FileParser const &other) {
 
 /*::: EXCEPTIONS :::*/
 
-const char *FileParser::FileParserError::what(std::string msg) const throw() {
+const char *FileParser::FileParserError::what() const throw() {
 
-	std::string error = "Webserv Error : " + msg;
-
-	return error.c_str();
+	return YELLOW "Webserv Error : FileParser" END_COLOR;
 }

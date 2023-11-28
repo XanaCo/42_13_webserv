@@ -17,8 +17,26 @@ Configuration file
 
 #include "../inc/webserv.hpp"
 
-int	main(void)
+int	main(int argc, char **argv)
 {
-	multiplexer();
-	return (0);
+	if (argc > 2)
+	{
+		std::cerr << "Webserv Error : Too many arguments" << std::endl;
+		return (EXIT_FAILURE); 
+	}
+	try 
+	{
+		// signals first thing
+		// (argc == 1 valid)
+		// check argv[1] here (if it does not exist create it?)
+		FileParser config(argv[1]); // parsing check here, number of servers set
+		//launch SERVER(FileParser.getServers()) // -> multiplexer()?
+	}
+	catch (std::exception &e)
+	{
+		std::cerr << e.what() << std::endl;
+		return (EXIT_FAILURE);
+	}
+
+	return (EXIT_SUCCESS);
 }

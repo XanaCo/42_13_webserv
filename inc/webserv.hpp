@@ -24,7 +24,6 @@
 # include <cctype>
 # include <algorithm>
 # include <limits>
-# include <mutex>
 # include <utility>
 
 # include <unistd.h>
@@ -46,6 +45,13 @@
 // # include <signal.h>
 
 
+// ************************************************************************** //
+//  CLASSES
+// ************************************************************************** //
+
+# include "FileParser.hpp"
+# include "ServerInfo.hpp"
+# include "Location.hpp"
 # include "Request.hpp"
 
 

@@ -24,7 +24,7 @@ public:
 		public:
 			// FileParserError();
 			// virtual ~FileParserError();
-			const char *what(std::string msg) const throw();
+			const char *what() const throw();
 	};
 
 private:
