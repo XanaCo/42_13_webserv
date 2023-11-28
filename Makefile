@@ -16,7 +16,8 @@ INCLUDES	= inc/*.hpp
 RM	= rm -rf
 
 # Files
-SRC	= main.cpp \
+SRC	=	main.cpp \
+		multiplexer.cpp \
 
 OBJ	= ${addprefix ${BIN_PATH}, ${SRC:.cpp=.o}}
 

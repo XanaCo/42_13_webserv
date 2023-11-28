@@ -17,3 +17,8 @@ Configuration file
 
 #include "../inc/webserv.hpp"
 
+int	main(void)
+{
+	multiplexer();
+	return (0);
+}

@@ -27,14 +27,24 @@
 # include <mutex>
 # include <utility>
 
-// # include <sys/socket.h>
-// # include <dirent.h>
-// # include <sys/select.h>
-// # include <poll.h>
-// # include <sys/epoll.h>
-// # include <sys/wait.h>
-// # include <sys/stat.h>
+# include <unistd.h>
+# include <fcntl.h>
+# include <string.h>
+# include <errno.h>
+# include <netdb.h>
+# include <arpa/inet.h>
+# include <sys/select.h>
+# include <sys/types.h>
+# include <dirent.h>
+# include <poll.h>
+# include <sys/socket.h>
+# include <sys/epoll.h>
+// # include <sys/event.h>
+# include <sys/wait.h>
+# include <sys/stat.h>
+# include <sys/signal.h>
 // # include <signal.h>
+
 
 # include "Request.hpp"
 
@@ -94,6 +104,6 @@
 //  PROTOTYPES
 // ************************************************************************** //
 
-
+void	multiplexer(void);
 
 #endif
