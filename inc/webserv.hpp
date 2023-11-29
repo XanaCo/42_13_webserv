@@ -91,6 +91,7 @@
 # define E_METHOD_NOT_ALLOWED	405 // la methode de requete n'est pas autorisee pour la ressource demandee
 # define E_CONFLICT				409 // il y a un conflit d'etat entre la requete du client et l'etat actuel de la ressource
 # define E_GONE					410 // la ressource demandee etait presente autrefois mais n'existe plus
+# define E_BODY_SIZE			413 // la taille du body de la requete depasse la taille maximale acceptee
 # define E_TOO_MANY_REQUESTS	429 // le client a envoye trop de requetes dans un court lapse de temps
 
 // Server errors

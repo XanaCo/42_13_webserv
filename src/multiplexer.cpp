@@ -6,7 +6,7 @@
 /*   By: pcheron <pcheron@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 10:45:33 by pcheron           #+#    #+#             */
-/*   Updated: 2023/11/28 12:31:06 by pcheron          ###   ########.fr       */
+/*   Updated: 2023/11/28 12:38:22 by pcheron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,26 +38,6 @@ void *get_in_addr(struct sockaddr *sa)
     return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
-// 						-nouvelles structures-
-//
-//	addrinfo : stocke les informations sur une/des adresse(s) reseau
-//	elle est utilise dans le cadre de la resolution d'adresses reseau
-//	-> (la resolution d'adresse reseau est le processus qui transforme 
-//		un nom d'hote ("www.example.com") en adresse(s) IP.)
-//	->	struct addrinfo {
-//		     int ai_flags;           // Indicateurs pour le traitement additionnel des options
-//		     int ai_family;          // Famille d'adresses (AF_INET, AF_INET6, etc.)
-//		     int ai_socktype;        // Type de socket (SOCK_STREAM, SOCK_DGRAM, etc.)
-//		     int ai_protocol;        // Protocole associé à l'adresse
-//		     size_t ai_addrlen;      // Taille de l'adresse en octets
-//		     struct sockaddr *ai_addr; // Pointeur vers une structure sockaddr contenant l'adresse
-//		     char *ai_canonname;     // Nom canonique du nœud
-//		     struct addrinfo *ai_next; // Pointeur vers l'élément suivant dans la liste
-//		 };
-//
-//	sockaddr_storage : stocke n'importe quel type d'adresse reseau
-//	
-//
 
 // boucle principale pour accepter des connexions
 void	getConnexionLoop(int listen_socket)
@@ -79,7 +59,7 @@ void	getConnexionLoop(int listen_socket)
 			continue;
 		}
 
-		// convertit l'adresse IP du client en format texte
+		// convertit l'adresse IP du client en format texte / fonction pas autorise a voir pour la changer
 		inet_ntop(client_addr.ss_family, get_in_addr((struct sockaddr *)&client_addr), s, sizeof s);
 		std::cout << "server: got connection from " << s << std::endl;
 
@@ -95,6 +75,27 @@ void	getConnexionLoop(int listen_socket)
 		close(new_connexion_socket);
 	}
 }
+
+// 						-nouvelles structures-
+//
+//	addrinfo : stocke les informations sur une/des adresse(s) reseau
+//	elle est utilise dans le cadre de la resolution d'adresses reseau
+//	-> (la resolution d'adresse reseau est le processus qui transforme 
+//		un nom d'hote ("www.example.com") en adresse(s) IP.)
+//	->	struct addrinfo
+//		{
+//		     int ai_flags;           // Indicateurs pour le traitement additionnel des options
+//		     int ai_family;          // Famille d'adresses (AF_INET, AF_INET6, etc.)
+//		     int ai_socktype;        // Type de socket (SOCK_STREAM, SOCK_DGRAM, etc.)
+//		     int ai_protocol;        // Protocole associé à l'adresse
+//		     size_t ai_addrlen;      // Taille de l'adresse en octets
+//		     struct sockaddr *ai_addr; // Pointeur vers une structure sockaddr contenant l'adresse
+//		     char *ai_canonname;     // Nom canonique du nœud
+//		     struct addrinfo *ai_next; // Pointeur vers l'élément suivant dans la liste
+//		 };
+//
+//	sockaddr_storage : stocke n'importe quel type d'adresse reseau
+//	
 
 void	multiplexer(void)
 {
