@@ -1,51 +1,76 @@
+
+#######	VARIABLES #######
+
 # Project
-NAME = webserv
+NAME		= webserv
 
 # Compiler
-CPP		= c++
-FLAGS	= -Wall -Werror -Wextra# -std=c++98
+CPP			= c++
+FLAGS		= -Wall -Wextra -Werror -MMD -MP -std=c++98
+EXTRAF		= -Wshadow #-Wno-shadow
 
 # Paths
 SRC_PATH	= ./src/
 BIN_PATH	= ./bin/
 
 # Includes
-INCLUDES	= inc/*.hpp
+INCLUDES	= inc/
 
 # Clean
-RM	= rm -rf
+RM			= rm -rf
 
 # Files
-SRC	=	main.cpp \
-		multiplexer.cpp \
+SRC			= main.cpp \
+			FileParser.cpp \
+			ServerInfo.cpp \
+			Location.cpp \
+			#multiplexer.cpp \
 
-OBJ	= ${addprefix ${BIN_PATH}, ${SRC:.cpp=.o}}
+OBJ			= ${addprefix ${BIN_PATH}, ${SRC:.cpp=.o}}
 
 DEPS		= ${OBJ:.o=.d}
 
-.c.o :	
-		${CPP} ${FLAGS} -I ${INCLUDES} -c $< -o ${<:.cpp=.o}
+LEAKS		= valgrind
+
+LF			= --leak-check=full \
+        	--show-leak-kinds=all \
+    		--track-origins=yes \
+			--track-fds=yes \
+
+#######	RULES #######
+
+all : ${NAME}
+
+.c.o :
+	@ ${CPP} ${FLAGS} ${EXTRAF} -I ${INCLUDES} -c $< -o ${<:.cpp=.o}
 
 ${BIN_PATH}%.o: ${SRC_PATH}%.cpp
-		mkdir -p ${dir $@}
-		@ ${CPP} ${FLAGS} -c $< -o $@
+	@ mkdir -p ${dir $@}
+	@ echo "\n\033[97;4m🚧 compiling $@ files 🚧\033[0m\n"
+	@ ${CPP} ${FLAGS} ${EXTRAF} -c $< -o $@
+	@ echo "\033[32;1m★ bin OK ★\033[0m\n"
 
-${NAME} :	${OBJ}
-		${CPP} -o ${NAME} -g ${FLAGS} ${OBJ} 
-		clear
-			@toilet -f pagga.tlf --gay "Enjoy ${NAME} !"
+${NAME} : ${OBJ}
+	@ ${CPP} -o ${NAME} -g ${FLAGS} ${EXTRAF} ${OBJ}
+	@ clear
+	@ toilet -f pagga.tlf --gay "Enjoy ${NAME} !"
 
-all :		${NAME}
+run: all
+	./${NAME} "add config default file here"
+
+bonus : all
 
 clean :
-		${RM} ${OBJ}
+	@ echo "\n\033[97;4m🚧 cleaning object files 🚧\033[0m\n"
+	@ ${RM} ${OBJ}
+	@ ${RM} ${BIN_PATH}
+	@ echo "\033[32;1m★ objects cleaned ★\033[0m\n"
 
-fclean :	clean
-		${RM} ${BIN_PATH}
-		${RM} ${NAME}
+fclean : clean
+	@ ${RM} ${NAME}
 
-re :		fclean all
+re : fclean all
 
-.PHONY :	all clean fclean re
+.PHONY : all clean fclean re
 
 -include ${DEPS}
