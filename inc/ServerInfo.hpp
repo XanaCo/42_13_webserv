@@ -41,19 +41,16 @@ private:
 
 	bool						_alive; // needed?
 	std::string					_serverName; // par default: "ServerXX" (XX nb serveurs?)
-	//sockaddr_in
+	struct sockaddr_in			_sockAddress;
 	in_port_t					_Port; // uint_16
 	in_addr_t					_Host; // uint_32
-	std::string					_root; // root path
+	std::string					_Root; // root path
 	std::string					_index; // path to index.html
 	int							_maxClientBody; // revoir type
-
-	std::map<std::string, Location *>	_location; // revoir type
-	std::vector<std::string>	_allowedMethods; // revoir type
-	// definir redirection HTTP ??
-	// bool listing ??
-	// error pages??
-
+	std::vector<Location *>		_location; // class location
+	std::map<int, std::string>	_errorPages; // 500 - "code erreur"
+	int							_listen;
+	char						_allowedMethods;
 
 };
 
