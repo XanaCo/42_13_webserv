@@ -19,6 +19,7 @@ Configuration file
 
 int	main(int argc, char **argv)
 {
+	(void)argv;
 	if (argc > 2)
 	{
 		std::cerr << "Webserv Error : Too many arguments" << std::endl;
@@ -29,7 +30,8 @@ int	main(int argc, char **argv)
 		// signals first thing
 		// (argc == 1 valid)
 		// check argv[1] here (if it does not exist create it?)
-		FileParser config(argv[1]); // parsing check here, number of servers set
+		//FileParser config(argv[1]); // parsing check here, number of servers set
+		TesterInfo config; // <- Test a toutes les infos par default!
 		//launch SERVER(FileParser.getServers()) // -> multiplexer()?
 	}
 	catch (std::exception &e)

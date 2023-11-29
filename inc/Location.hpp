@@ -17,7 +17,7 @@ public:
 	//setters
 
 	//others
-	
+
 	class LocationError : public std::exception {
 	
 		public:

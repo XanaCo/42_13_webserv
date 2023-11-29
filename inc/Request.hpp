@@ -8,12 +8,12 @@
 
 # include "webserv.hpp"
 
-enum methodes
-{
-    GET,
-    POST,
-    DELETE,
-};
+// enum methodes
+// {
+//     GET,
+//     POST,
+//     DELETE,
+// };
 
 class Request
 {

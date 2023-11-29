@@ -8,7 +8,7 @@ ServerInfo::ServerInfo() : _serverName("Default") {
 	this->_alive = true;
 	this->_Port = 0;
 	this->_Host = 0;
-	this->_root = "www";
+	this->_Root = "www";
 	/// set other params default
 
 	if (PRINT)
