@@ -15,16 +15,27 @@ public:
 	FileParser(std::string const &filePath);
 	~FileParser();
 
-	// getFilePath
-	// getNServers
-	// getServerMap
+	std::string const &getFilePath() const;
+	std::vector<std::string> getRawFile() const;
+	std::vector<std::string> getRawServer() const;
+	std::vector<ServerInfo *> getAllServers() const;
+	int getNServers() const;
+
+	void cleanFile(std::string const &path);
+	std::string checkFileValid(std::string const &path);
+	void splitServers(std::vector<std::string> &rawServer);
 
 	class FileParserError : public std::exception {
 	
 		public:
-			// FileParserError();
-			// virtual ~FileParserError();
-			const char *what() const throw();
+			FileParserError(std::string errorMsg) throw();
+			~FileParserError() throw();
+
+			virtual const char *what() const throw();
+		
+		private:
+			std::string _errorMsg;
+
 	};
 
 private:
@@ -33,9 +44,10 @@ private:
 	FileParser	&operator=(FileParser const &other);
 
 	std::string const			_filePath;
-	int 						_nServers; // counts each time we launch
-	std::map<int, ServerInfo *>	_Server;
-
+	std::vector<std::string>	_rawFile;
+	std::vector<std::string>	_rawServer;
+	std::vector<ServerInfo *>	_allServers; // classified info
+	int 						_nServers; // counts each time we stock serverline
 
 };
 

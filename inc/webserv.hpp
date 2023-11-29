@@ -121,4 +121,7 @@
 
 void	multiplexer(void);
 
+void eraseComments(std::string &content);
+std::vector<std::string> cSplitLine(std::string line, char const *charset);
+
 #endif
