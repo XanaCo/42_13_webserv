@@ -1,0 +1,8 @@
+POST /api/users HTTP/1.1
+Host: api.example.com
+Content-Type: application/json
+
+{
+	"username": "john_doe",
+	"email": "john.doe@example.com"
+}
