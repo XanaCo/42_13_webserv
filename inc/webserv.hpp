@@ -132,7 +132,7 @@ typedef enum e_content {
 	COOKIES,
 	CONNECTION,
 	CACHECONTROL,
-	BODY_START
+	BODY_START,
 	OTHER_CONTENT
 }	t_content;
 
