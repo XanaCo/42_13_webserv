@@ -39,7 +39,8 @@ private:
 	ServerInfo(ServerInfo const &copy);
 	ServerInfo	&operator=(ServerInfo const &other);
 
-	bool						_alive; // needed?
+	bool						_alive;
+	std::string					_rawInfo;
 	std::string					_serverName; // par default: "ServerXX" (XX nb serveurs?)
 	struct sockaddr_in			_sockAddress;
 	in_port_t					_Port; // uint_16

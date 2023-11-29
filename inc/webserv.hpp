@@ -143,6 +143,9 @@ typedef enum e_content {
 // main program
 void	multiplexer(void);
 
+void eraseComments(std::string &content);
+std::vector<std::string> cSplitLine(std::string line, char const *charset);
+
 // parsing utils
 std::vector<std::string> splitString(const std::string& input, char delimiter);
 
