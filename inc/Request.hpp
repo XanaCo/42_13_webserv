@@ -8,12 +8,53 @@
 
 # include "webserv.hpp"
 
-enum methodes
+
+
+int findContent(std::string line)
 {
-    GET,
-    POST,
-    DELETE,
-};
+    int size 
+    if (line.substr(0, 5) == "Host:")
+        return (HOST);
+    if (line.substr(0, 11) == "User-Agent:")
+        return (USER_AGENT);
+    if (line.substr(0, 7) == "Accept:")
+        return (ACCEPT);
+    if (line.substr(0, 17) == "Accept-Language:")
+        return (ACCEPT_LANGUAGE);
+    if (line.substr(0, 16) == "Accept-Encoding:")
+        return (ACCEPT_ENCODING);
+    if (line.substr(0, 14) == "Autorization:")
+        return (AUTOR);
+    if (line.substr(0, 13) == "Content-Type:")
+        return (CONTENT_TYPE);
+    if (line.substr(0, 15) == "Content-Lenght:")
+        return (CONTENT_LENGHT);
+    if (line.substr(0, 8) == "Referer:")
+        return (REFERER);
+    if (line.substr(0, 6) == "Cookie:")
+        return (COOKIES);
+    if (line.substr(0, 11) == "Connection:")
+        return (CONNECTION);
+    if (line.substr(0, 14) == "Cache-Control:")
+        return (CACHECONTROL);
+    if (line.substr(0, 1) == "{")
+        return (BODY_START);
+    return ();
+}
+
+{
+    std::string request;
+
+    std::vector<std::string> lines = splitString(request, '\n');
+
+    int nb_lines = lines.size();
+    for (int i = 0; i < size; i++)
+    {
+        // checker quel est le mot clef
+        findContent(lines[i]);
+        // fill la bonne variable
+    }
+}
 
 class Request
 {
@@ -24,23 +65,30 @@ class Request
     private:
         Request();
 
-        std::string             _path; // URI
-        int                     _method;
+        int                     _method;    // ok
+        std::string             _host;      // www.example.com
         
-        std::string             _host;
-        std::string             _userAgent;
+        std::string             _userAgent; // Mozilla/5.0 (...)...
 
+        // indique ce que le client peut traiter;
         std::vector<std::string>    _accept;
         std::vector<std::string>    _acceptLanguage;
         std::vector<std::string>    _acceptEncoding;
-        // autorisation
+    
+        // autorisations
+        std::string                 _autor;
+
         std::string                 _contentType;
-        int                         _contentLenght;
+        int                         _contentLenght; // taille du body
+
         std::string                 _referer;
+
         std::vector<std::string>    _cookies;
 
         std::string                 _connection;
         std::string                 _cacheControl;
+
+        std::string                 _body;
 
 
 };

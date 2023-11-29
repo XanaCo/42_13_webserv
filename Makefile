@@ -24,6 +24,7 @@ SRC			= main.cpp \
 			FileParser.cpp \
 			ServerInfo.cpp \
 			Location.cpp \
+			parsingUtils.cpp \
 			#multiplexer.cpp \
 
 OBJ			= ${addprefix ${BIN_PATH}, ${SRC:.cpp=.o}}

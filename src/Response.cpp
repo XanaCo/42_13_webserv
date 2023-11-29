@@ -1,4 +1,4 @@
-#include "Response.hpp"
+#include "../inc/Response.hpp"
 
 // ************************************************************************** //
 //	CONSTRUCTOR / DESTRUCTOR
@@ -8,10 +8,16 @@ const std::string host = "en.wikipedia.org";
 const std::string path = "/wiki/Main_Page";
 
 Response::Response(uint16_t port): _port(port), _content("")
-{}
+{
+    if (PRINT)
+        std::cout << GREEN << "Response constructor called" << END_COLOR << std::endl;
+}
 
 Response::~Response()
-{}
+{
+    if (PRINT)
+        std::cout << RED << "Response destructor called" << END_COLOR << std::endl;
+}
 
 // ************************************************************************** //
 //  OPERATORS

@@ -53,7 +53,7 @@
 # include "ServerInfo.hpp"
 # include "Location.hpp"
 # include "Request.hpp"
-
+# include "Response.hpp"
 
 // ************************************************************************** //
 //  COLORS & PRINT VARIABLE
@@ -107,10 +107,34 @@
 # define E_SERVICE_UNAVAILABLE	503 // le server n'est pas en mesure de traiter la demande du client pour le moment
 # define E_GATEWAY_TIMEOUT		504 // renvoye par un serveur proxi pour indiquer qu'il n'a pas recu de reponde de la part d'un serveur en amont
 
+
+typedef enum e_content {
+	METHOD,
+	HOST,
+	METHOD,
+	USER_AGENT,
+	ACCEPT,
+	ACCEPT_LANGUAGE,
+	ACCEPT_ENCODING,
+	AUTOR,
+	CONTENT_TYPE,
+	CONTENT_LENGHT,
+	REFERER,
+	COOKIES,
+	CONNECTION,
+	CACHECONTROL,
+	BODY_START
+	OTHER_CONTENT
+}	t_content;
+
 // ************************************************************************** //
 //  PROTOTYPES
 // ************************************************************************** //
 
+// main program
 void	multiplexer(void);
+
+// parsing utils
+std::vector<std::string> splitString(const std::string& input, char delimiter);
 
 #endif

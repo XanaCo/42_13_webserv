@@ -11,13 +11,6 @@
 # define BODY_SIZE_LIMIT 40960
 # define BUFFER_SIZE 4096
 
-enum methodes
-{
-    GET,
-    POST,
-    DELETE,
-};
-
 class Response
 {
     public:
