@@ -14,6 +14,7 @@
 class Response
 {
     public:
+
         Response(uint16_t port);
         ~Response();
 
@@ -26,6 +27,7 @@ class Response
         std::string    getContent(void) const;
 
     private:
+
         Response();
 
         uint16_t    _port;

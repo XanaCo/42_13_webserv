@@ -7,7 +7,7 @@
 const std::string host = "en.wikipedia.org";
 const std::string path = "/wiki/Main_Page";
 
-Response::Response(uint16_t port): _port(port), _content("")
+Response::Response(uint16_t port): _port(port)
 {
     if (PRINT)
         std::cout << GREEN << "Response constructor called" << END_COLOR << std::endl;
@@ -94,10 +94,10 @@ void    Response::recieve()
 // verifier le path est autorise dans le fichier de configuration
 // puis recuperer le contenu du fichier a l'aide de cette fonction :
 
-bool readRessource(const char* path, std::stringstream& content)
+bool Ressource::readRessource(const char* path, std::stringstream& content)
 {
 	struct stat sb;
-    Response    response;
+    // Response    response;
 
 	if (stat(path, &sb) != 0)
     {
@@ -118,11 +118,11 @@ bool readRessource(const char* path, std::stringstream& content)
         // std::cerr << path << " : cant be opened" << std::endl;
 		return (false);
     }
-	content << ifs.rdbuf();
+	this->setContent(ifs.rdbuf());
 	ifs.close();
-	if (!content.tellp())
+	if (!(this->getContent().tellp()))
     {
-        response.setReturnStatus(S_NO_CONTENT); // pas sur de return false;
+        response.setReturnStatus(S_NO_CONTENT); // pas certain du return false;
         // std::cerr << path << " : is empty" << std::endl;
         return (false);
     }
