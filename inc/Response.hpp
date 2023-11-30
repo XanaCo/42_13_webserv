@@ -4,7 +4,7 @@
 #ifndef RESPONSE_HPP
 # define RESPONSE_HPP
 
-# include "Webserv.hpp"
+# include "webserv.hpp"
 
 # define RESPONSE "\033[1;37mResponse\033[0m"
 
@@ -14,7 +14,7 @@
 class Response
 {
     public:
-        Response(uint16_t port) _port(port);
+        Response(uint16_t port);
         ~Response();
 
         void        recieve();
@@ -23,7 +23,7 @@ class Response
         Response();
 
         uint16_t    _port;
-        std::string _content;        
+        std::string _content;
 
 };
 std::ostream& operator<<(std::ostream& os, Response const& obj);

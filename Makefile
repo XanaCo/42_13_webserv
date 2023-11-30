@@ -23,6 +23,7 @@ RM			= rm -rf
 SRC			= main.cpp \
 			FileParser.cpp \
 			ServerInfo.cpp \
+			ServerUtils.cpp \
 			Location.cpp \
 			parsingUtils.cpp \
 			TesterInfo.cpp \

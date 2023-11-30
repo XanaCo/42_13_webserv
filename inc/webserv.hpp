@@ -134,14 +134,15 @@ typedef enum e_content {
 # define E_SERVICE_UNAVAILABLE	503 // le server n'est pas en mesure de traiter la demande du client pour le moment
 # define E_GATEWAY_TIMEOUT		504 // renvoye par un serveur proxi pour indiquer qu'il n'a pas recu de reponde de la part d'un serveur en amont
 
-
-
 // ************************************************************************** //
 //  PROTOTYPES
 // ************************************************************************** //
 
 // main program
 void	multiplexer(void);
+
+void eraseComments(std::string &content);
+std::vector<std::string> cSplitLine(std::string line, char const *charset);
 
 // parsing utils
 std::vector<std::string> splitString(const std::string& input, char delimiter);

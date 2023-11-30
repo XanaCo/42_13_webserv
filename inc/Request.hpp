@@ -12,7 +12,7 @@
 
 int findContent(std::string line)
 {
-    int size 
+    int size;
     if (line.substr(0, 5) == "Host:")
         return (HOST);
     if (line.substr(0, 11) == "User-Agent:")
