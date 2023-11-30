@@ -15,7 +15,6 @@ public:
 	ServerInfo();
 	~ServerInfo();
 
-	bool getIsAlive() const;
 	std::string getServerName() const;
 	in_port_t getPort() const;
 	in_addr_t getHost() const;
@@ -39,17 +38,15 @@ private:
 	ServerInfo(ServerInfo const &copy);
 	ServerInfo	&operator=(ServerInfo const &other);
 
-	bool						_alive;
-	std::string					_rawInfo;
-	std::string					_serverName; // par default: "ServerXX" (XX nb serveurs?)
+	std::string					_serverName;
 	struct sockaddr_in			_sockAddress;
 	in_port_t					_Port; // uint_16
 	in_addr_t					_Host; // uint_32
 	std::string					_Root; // root path
 	std::string					_index; // path to index.html
-	int							_maxClientBody; // revoir type
+	unsigned int				_maxClientBody;
 	std::vector<Location *>		_location; // class location
-	std::map<int, std::string>	_errorPages; // 500 - "code erreur"
+	std::map<int, std::string>	_errorPages; // 500 - path to error
 	int							_listen;
 	char						_allowedMethods;
 
