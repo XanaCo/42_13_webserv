@@ -52,24 +52,6 @@
 # define POST		2
 # define DELETE		4
 
-typedef enum e_content {
-	METHOD,
-	HOST,
-	USER_AGENT,
-	// ACCEPT,
-	// ACCEPT_LANGUAGE,
-	// ACCEPT_ENCODING,
-	// AUTOR,
-	CONTENT_TYPE,
-	CONTENT_LENGHT,
-	// REFERER,
-	COOKIES,
-	CONNECTION,
-	// CACHECONTROL,
-	BODY_START,
-	OTHER_CONTENT
-}	t_content;
-
 // ************************************************************************** //
 //  CLASSES
 // ************************************************************************** //
