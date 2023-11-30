@@ -34,3 +34,17 @@ std::vector<std::string> cSplitLine(std::string line, char const *charset) {
 	return res;
 }
 
+void	signalHandler(int signal) {
+	
+	if (signal == SIGPIPE)
+		return;
+	else
+		throw FileParser::SignalExit();
+}
+
+void	printStringVector(std::vector<std::string> stringVector) {
+
+	for (size_t i = 0; i < stringVector.size(); i++)
+		std::cout << stringVector[i] << std::endl;
+
+}

@@ -59,7 +59,7 @@
 # include "FileParser.hpp"
 # include "ServerInfo.hpp"
 # include "Location.hpp"
-# include "Request.hpp"
+// # include "Request.hpp"
 # include "Response.hpp"
 
 # include "TesterInfo.hpp" //  a effacer
@@ -120,7 +120,6 @@
 typedef enum e_content {
 	METHOD,
 	HOST,
-	METHOD,
 	USER_AGENT,
 	ACCEPT,
 	ACCEPT_LANGUAGE,
@@ -142,6 +141,9 @@ typedef enum e_content {
 
 // main program
 void	multiplexer(void);
+
+void	signalHandler(int signal);
+void	printStringVector(std::vector<std::string> stringVector);
 
 void eraseComments(std::string &content);
 std::vector<std::string> cSplitLine(std::string line, char const *charset);
