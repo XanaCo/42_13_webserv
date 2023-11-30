@@ -54,6 +54,7 @@ bool    Server::set_listen_socket(std::string l_port){
         listener = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
         if (listener < 0)
             continue;
+        fcntl(listener, F_SETFL, O_NONBLOCK);
         setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &test, sizeof(int));
         if (bind(listener, p->ai_addr, p->ai_addrlen) < 0)
         {

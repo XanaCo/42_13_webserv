@@ -22,6 +22,8 @@
 #include <cstdio>
 #include <vector>
 
+# define BUFFER_SIZE 1024
+
 class   Client{
 
     public :
@@ -30,6 +32,14 @@ class   Client{
 
         struct  sockaddr_in address;
         std::string received;
+        char    buffer[BUFFER_SIZE];
+
+        Client(void);
+        Client(int socket, struct sockaddr_in *r_address);
+        Client(const Client & rhs);
+        ~Client(void);
+        Client &   operator=(const Client & rhs);
+
 
     private :
 };
