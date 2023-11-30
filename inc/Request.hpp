@@ -70,23 +70,23 @@ class Request
         
         std::string             _userAgent; // Mozilla/5.0 (...)...
 
-        // indique ce que le client peut traiter;
-        std::vector<std::string>    _accept;
-        std::vector<std::string>    _acceptLanguage;
-        std::vector<std::string>    _acceptEncoding;
+        // indique ce que le client peut traiter :
+        // std::vector<std::string>    _accept;
+        // std::vector<std::string>    _acceptLanguage;
+        // std::vector<std::string>    _acceptEncoding;
     
         // autorisations
-        std::string                 _autor;
+        // std::string                 _autor;
 
         std::string                 _contentType;
         int                         _contentLenght; // taille du body
 
-        std::string                 _referer;
+        // std::string                 _referer;
 
         std::vector<std::string>    _cookies;
 
         std::string                 _connection;
-        std::string                 _cacheControl;
+        // std::string                 _cacheControl;
 
         std::string                 _body;
 

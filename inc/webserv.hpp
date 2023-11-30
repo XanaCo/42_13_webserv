@@ -52,6 +52,24 @@
 # define POST		2
 # define DELETE		4
 
+typedef enum e_content {
+	METHOD,
+	HOST,
+	USER_AGENT,
+	// ACCEPT,
+	// ACCEPT_LANGUAGE,
+	// ACCEPT_ENCODING,
+	// AUTOR,
+	CONTENT_TYPE,
+	CONTENT_LENGHT,
+	// REFERER,
+	COOKIES,
+	CONNECTION,
+	// CACHECONTROL,
+	BODY_START,
+	OTHER_CONTENT
+}	t_content;
+
 // ************************************************************************** //
 //  CLASSES
 // ************************************************************************** //
@@ -117,24 +135,6 @@
 # define E_GATEWAY_TIMEOUT		504 // renvoye par un serveur proxi pour indiquer qu'il n'a pas recu de reponde de la part d'un serveur en amont
 
 
-typedef enum e_content {
-	METHOD,
-	HOST,
-	METHOD,
-	USER_AGENT,
-	ACCEPT,
-	ACCEPT_LANGUAGE,
-	ACCEPT_ENCODING,
-	AUTOR,
-	CONTENT_TYPE,
-	CONTENT_LENGHT,
-	REFERER,
-	COOKIES,
-	CONNECTION,
-	CACHECONTROL,
-	BODY_START
-	OTHER_CONTENT
-}	t_content;
 
 // ************************************************************************** //
 //  PROTOTYPES
