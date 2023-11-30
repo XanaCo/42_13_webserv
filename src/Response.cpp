@@ -11,6 +11,8 @@ Response::Response(uint16_t port): _port(port), _content("")
 {
     if (PRINT)
         std::cout << GREEN << "Response constructor called" << END_COLOR << std::endl;
+    this->setReturnStatus(200);
+    this->setContent("");
 }
 
 Response::~Response()
@@ -88,7 +90,65 @@ void    Response::recieve()
     }
 }
 
+// dans le cas de GET,
+// verifier le path est autorise dans le fichier de configuration
+// puis recuperer le contenu du fichier a l'aide de cette fonction :
+
+bool readRessource(const char* path, std::stringstream& content)
+{
+	struct stat sb;
+    Response    response;
+
+	if (stat(path, &sb) != 0)
+    {
+        response.setReturnStatus(E_NOT_FOUND);
+        // std::cerr << path << " : does not exist" << std::endl;
+        return (false);
+    }
+	if (!S_ISREG(sb.st_mode))
+    {
+        response.setReturnStatus(E_CONFLICT); // je suis pas certain pour ce code d'erreur
+        // std::cerr << path << " : is not a regular file" << std::endl;
+        return (false);
+    }
+	std::ifstream ifs(path);
+	if (!ifs.is_open())
+    {
+        response.setReturnStatus(E_FORBIDDEN); // je suis pas certain pour ce code d'erreur
+        // std::cerr << path << " : cant be opened" << std::endl;
+		return (false);
+    }
+	content << ifs.rdbuf();
+	ifs.close();
+	if (!content.tellp())
+    {
+        response.setReturnStatus(S_NO_CONTENT); // pas sur de return false;
+        // std::cerr << path << " : is empty" << std::endl;
+        return (false);
+    }
+	return (true);
+}
+
 // ************************************************************************** //
 //	LA GET-SET
 // ************************************************************************** //
 
+void    Response::setReturnStatus(int returnStatus)
+{
+    _returnStatus = returnStatus;
+}
+
+void    Response::setContent(int content)
+{
+    _content = content;
+}
+
+int    Response::getReturnStatus(void) const;
+{
+    return (_returnStatus);
+}
+
+std::string    Response::getContent(void) const;
+{
+    return (_content);
+}

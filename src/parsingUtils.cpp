@@ -1,7 +1,6 @@
 
 #include "../inc/webserv.hpp"
 
-
 int strToInt(const std::string& str)
 {
     int result = 0;
@@ -16,7 +15,6 @@ int strToInt(const std::string& str)
         else
             break;
     }
-
     return (result * sign);
 }
 

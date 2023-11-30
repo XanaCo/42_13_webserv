@@ -19,11 +19,18 @@ class Response
 
         void        recieve();
 
+        void    setReturnStatus(int returnStatus);
+        void    setContent(int content);
+
+        int            getReturnStatus(void) const;
+        std::string    getContent(void) const;
+
     private:
         Response();
 
         uint16_t    _port;
         std::string _content;
+        int         _returnStatus;
 
 };
 std::ostream& operator<<(std::ostream& os, Response const& obj);

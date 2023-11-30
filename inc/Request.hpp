@@ -8,40 +8,6 @@
 
 # include "webserv.hpp"
 
-
-
-int findContent(std::string line)
-{
-    int size;
-    if (line.substr(0, 5) == "Host:")
-        return (HOST);
-    if (line.substr(0, 11) == "User-Agent:")
-        return (USER_AGENT);
-    if (line.substr(0, 7) == "Accept:")
-        return (ACCEPT);
-    if (line.substr(0, 17) == "Accept-Language:")
-        return (ACCEPT_LANGUAGE);
-    if (line.substr(0, 16) == "Accept-Encoding:")
-        return (ACCEPT_ENCODING);
-    if (line.substr(0, 14) == "Autorization:")
-        return (AUTOR);
-    if (line.substr(0, 13) == "Content-Type:")
-        return (CONTENT_TYPE);
-    if (line.substr(0, 15) == "Content-Lenght:")
-        return (CONTENT_LENGHT);
-    if (line.substr(0, 8) == "Referer:")
-        return (REFERER);
-    if (line.substr(0, 6) == "Cookie:")
-        return (COOKIES);
-    if (line.substr(0, 11) == "Connection:")
-        return (CONNECTION);
-    if (line.substr(0, 14) == "Cache-Control:")
-        return (CACHECONTROL);
-    if (line.substr(0, 1) == "{")
-        return (BODY_START);
-    return ();
-}
-
 {
     std::string request;
 
@@ -62,10 +28,31 @@ class Request
         Request(const std::string str);
         ~Request();
 
+        void        setMethod(int method);
+        void        setPath(std::string path);
+        void        setHost(std::string host);
+        void        setUserAgent(std::string userAgent);
+        void        setContentType(std::string contentType);
+        void        setContentLenght(std::string contentLenght);
+        void        setCookies(std::vector<std::string> cookies);
+        void        setConnection(std::string connection);
+        void        setBody(std::string body);
+    
+        int                         getMethod(void) const;
+        std::string                 getPath(void) const;
+        std::string                 getHost(void) const;
+        std::string                 getUserAgent(void) const;
+        std::string                 getContentType(void) const;
+        int                         getContentLenght(void) const;
+        std::vector<std::string>    getCookies(void) const;
+        std::string                 getConnection(void) const;
+        std::string                 getBody(void) const;
+
     private:
         Request();
 
         int                     _method;    // ok
+        std::string             _path;
         std::string             _host;      // www.example.com
         
         std::string             _userAgent; // Mozilla/5.0 (...)...
