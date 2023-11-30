@@ -5,10 +5,10 @@
 
 ServerInfo::ServerInfo() : _serverName("Default") {
 
-	this->_alive = true;
 	this->_Port = 0;
 	this->_Host = 0;
-	this->_Root = "www";
+	this->_Root = "";
+	this->_index = "";
 	/// set other params default
 
 	if (PRINT)
@@ -30,19 +30,15 @@ ServerInfo::~ServerInfo() {
 /*::: Operator Overloading ::: */
 
 std::ostream &operator<<(std::ostream &out, ServerInfo const &other) {
-
-	std::string answer;
-
-	(other.getIsAlive())? answer = "YES" : answer = "NO";
 		
 	out << other.getServerName()
 			<< " | Port: "
 			<< other.getPort()
 			<< " | Host: "
 			<< other.getHost()
-			<< " | Alive: "
-			<< answer
 			<< ".";
+
+			//all params
 
 	return out;
 }
@@ -62,11 +58,6 @@ in_port_t ServerInfo::getPort() const {
 in_addr_t ServerInfo::getHost() const {
 	
 	return this->_Host;
-}
-
-bool ServerInfo::getIsAlive() const {
-	
-	return this->_alive;
 }
 
 /*::: MEMBER FUNCTIONS :::*/
