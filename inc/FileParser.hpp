@@ -21,9 +21,10 @@ public:
 	std::vector<ServerInfo *> getAllServers() const;
 	int getNServers() const;
 
-	void cleanFile(std::string const &path);
-	std::string checkFileValid(std::string const &path);
-	void splitServers(std::vector<std::string> &rawServer);
+	void cleanFile();
+	std::string checkFileValid();
+	void splitServers();
+	// ServerInfo *stockServers(std::string const &rawServer)
 
 	class FileParserError : public std::exception {
 	
@@ -35,8 +36,8 @@ public:
 		
 		private:
 			std::string _errorMsg;
-
 	};
+	class SignalExit : public std::exception {};
 
 private:
 	FileParser();

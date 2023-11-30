@@ -19,7 +19,6 @@ Configuration file
 
 int	main(int argc, char **argv)
 {
-	(void)argv;
 	if (argc > 2)
 	{
 		std::cerr << "Webserv Error : Too many arguments" << std::endl;
@@ -27,12 +26,22 @@ int	main(int argc, char **argv)
 	}
 	try 
 	{
-		// signals first thing
-		// (argc == 1 valid)
-		// check argv[1] here (if it does not exist create it?)
-		//FileParser config(argv[1]); // parsing check here, number of servers set
-		TesterInfo config; // <- Test a toutes les infos par default!
-		//launch SERVER(FileParser.getServers()) // -> multiplexer()?
+		signal(SIGINT, signalHandler); // Clean exit, no leaks
+		signal(SIGQUIT, signalHandler); // Clean exit, no leaks
+		signal(SIGPIPE, signalHandler); // Ignore
+		
+		std::string filePath = (argc == 2? argv[1] : "configFiles/default.conf" );
+
+		//PARSING
+		FileParser infos(filePath);
+		infos.cleanFile();
+		printStringVector(infos.getRawFile()); // 
+		infos.splitServers();
+		std::vector<ServerInfo*> Servers = infos.getAllServers(); //Returns classified Servers Info
+		
+		//TesterInfo config; // TESTER
+		//sleep (5); to test signals!
+		//launchSERVER
 	}
 	catch (std::exception &e)
 	{

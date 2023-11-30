@@ -65,35 +65,41 @@ int FileParser::getNServers() const {
 
 /*::: MEMBER FUNCTIONS :::*/
 
-void FileParser::cleanFile(std::string const &path) {
+void FileParser::cleanFile() {
 
 	std::string allContent;
 	
-	allContent = checkFileValid(path);
+	allContent = checkFileValid();
 	eraseComments(allContent);
-
 	this->_rawFile = cSplitLine(allContent, " \f\t\n\r\v");
+
+	if (this->_rawFile.empty())
+		throw FileParserError("File is empty");
+
 
 }
 
-std::string FileParser::checkFileValid(std::string const &path) {
+std::string FileParser::checkFileValid() {
 
 	struct stat fileStat;
 	std::ifstream fileStream;
 	std::stringstream allContent;
+	std::string res;
 
-	if (path.empty() || !path.length())
-		throw FileParserError("Invalid Path");
-	if (stat(path.c_str(), &fileStat) == -1)
+	if (_filePath.empty() || !_filePath.length())
+		throw FileParserError("Invalid path");
+	if (stat(_filePath.c_str(), &fileStat) == -1)
 		throw FileParserError("Permission denied or Bad address");
 	if (!(fileStat.st_mode & S_IFREG))
-		throw FileParserError("Invalid File");
-	if (access(path.c_str(), R_OK) == -1)
+		throw FileParserError("Invalid file");
+	if (access(_filePath.c_str(), R_OK) == -1)
 		throw FileParserError("Not reading rights");
+	if (_filePath.find(".conf", _filePath.size() - 5) == std::string::npos) // .conf accepte
+		throw FileParserError("Wrong configuration file format");
 	
-	fileStream.open(path.c_str());
+	fileStream.open(_filePath.c_str());
 	if (fileStream.fail())
-		throw FileParserError("Failed to open File");
+		throw FileParserError("Failed to open file");
 	
 	allContent << fileStream.rdbuf();
 	fileStream.close();
@@ -101,10 +107,11 @@ std::string FileParser::checkFileValid(std::string const &path) {
 	return allContent.str();
 }
 
-void FileParser::splitServers(std::vector<std::string> &rawServer) {
+void FileParser::splitServers() {
 
-	(void)rawServer;
 	// // split blocks
+	printStringVector(_rawFile);
+
 	// Search for "server" + "{" (start)
 	// Search for "}" + "\0" | "server" (end)
 	// Must ignore { } inside
@@ -112,6 +119,10 @@ void FileParser::splitServers(std::vector<std::string> &rawServer) {
 
 	return;
 }
+
+// ServerInfo *FileParser::stockServers(std::string const &rawServer)
+
+// Check server config when all is stocked, just in case
 
 /*::: EXCEPTIONS :::*/
 
