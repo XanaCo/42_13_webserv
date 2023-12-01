@@ -24,7 +24,7 @@ public:
 	void cleanFile();
 	std::string checkFileValid();
 	void splitServers();
-	// ServerInfo *stockServers(std::string const &rawServer)
+	size_t serverEnd(size_t pos);
 
 	class FileParserError : public std::exception {
 	
@@ -50,9 +50,6 @@ private:
 	std::vector<ServerInfo *>	_allServers; // classified info
 	int 						_nServers; // counts each time we stock serverline
 
-
 };
-
-std::ostream &operator<<(std::ostream &out, FileParser const &FileParser);
 
 #endif

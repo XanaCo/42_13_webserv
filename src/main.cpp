@@ -35,12 +35,13 @@ int	main(int argc, char **argv)
 		//PARSING
 		FileParser infos(filePath);
 		infos.cleanFile();
-		printStringVector(infos.getRawFile()); // 
 		infos.splitServers();
+
 		std::vector<ServerInfo*> Servers = infos.getAllServers(); //Returns classified Servers Info
-		
-		//TesterInfo config; // TESTER
-		//sleep (5); to test signals!
+		printServersInfo(Servers);
+
+		//sleep (5); //to test signals, delete
+
 		//launchSERVER
 	}
 	catch (std::exception &e)

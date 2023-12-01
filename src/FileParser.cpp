@@ -5,9 +5,6 @@
 
 FileParser::FileParser(std::string const &filePath) : _filePath(filePath) {
 
-	// this->_rawFile;
-	// this->_rawServer;
-	// this->_allServers;
 	this->_nServers = 0;
 
 	if (PRINT)
@@ -24,16 +21,6 @@ FileParser::~FileParser() {
 		std::cout << RED << "Destructor: FileParser destroyed " << END_COLOR << std::endl;
 
 	return ;
-}
-
-/*::: Operator Overloading ::: */
-
-std::ostream &operator<<(std::ostream &out, FileParser const &other) {
-	
-	(void)other;
-	out << "all FileParserInfos here to debug";
-
-	return out;
 }
 
 /*::: ACCESSORS :::*/
@@ -94,7 +81,7 @@ std::string FileParser::checkFileValid() {
 		throw FileParserError("Invalid file");
 	if (access(_filePath.c_str(), R_OK) == -1)
 		throw FileParserError("Not reading rights");
-	if (_filePath.find(".conf", _filePath.size() - 5) == std::string::npos) // .conf accepte
+	if (_filePath.find(".conf", _filePath.size() - 5) == std::string::npos) // .conf accepted
 		throw FileParserError("Wrong configuration file format");
 	
 	fileStream.open(_filePath.c_str());
@@ -109,18 +96,64 @@ std::string FileParser::checkFileValid() {
 
 void FileParser::splitServers() {
 
-	// // split blocks
-	printStringVector(_rawFile);
+	size_t it;
+	int checkServ = 0;
 
-	// Search for "server" + "{" (start)
-	// Search for "}" + "\0" | "server" (end)
-	// Must ignore { } inside
-	// pushback each line, stock inside rawServer <vector>
+	if (_rawFile[0].compare("server") != 0)
+			throw FileParserError("Missing server in configuration file");
 
+	for (it = 0; it != _rawFile.size(); it++)
+	{
+		if (!_rawFile[it].compare("server"))
+			checkServ++;
+	}
+
+	for (it = 0; it != _rawFile.size(); it++)
+	{
+		if (!_rawFile[it].compare("server"))
+		{
+			if (!_rawFile[1 + it].compare("{"))
+				it = serverEnd(it);
+			else
+				throw FileParserError("Wrong keyword configuration");
+		}
+	}
+	// std::cout << _nServers << std::endl;
+	// std::cout << checkServ << std::endl;
+	// if (_nServers != checkServ)
+	// 	throw FileParserError("Wrong number of servers");
+	printStringVector(_rawServer);
 	return;
 }
 
-// ServerInfo *FileParser::stockServers(std::string const &rawServer)
+size_t FileParser::serverEnd(size_t pos) {
+	
+	std::string res;
+	bool closed = false;
+	bool location = false;
+	size_t it;
+
+	for (it = pos + 2; it != _rawFile.size() - 1; it++)
+	{
+		if (!_rawFile[it].compare("server") && !_rawFile[it + 1].compare("{") && _nServers > 0)  // we check for next keyword server
+			return (it);
+		else if (!_rawFile[it].compare("{") && !location) // we open location
+			location = true;
+		else if (!_rawFile[it].compare("}") && location) // we close location
+			location = false;
+		else if (!_rawFile[it].compare("}") && !closed) // we close all
+			closed = true;
+		else if (!_rawFile[it].compare("server") && _rawFile[it + 1].compare("{")) // check double server name
+			throw FileParserError("Wrong keyword configuration");
+		else if ((!_rawFile[it].compare("{") && location) || (!_rawFile[it].compare("}") && closed))
+			throw FileParserError("wrong brackets configuration");
+		else
+			res += _rawFile[it] + " ";
+	}
+	this->_nServers++;
+	this->_rawServer.push_back(res);
+	return it;
+}
 
 // Check server config when all is stocked, just in case
 

@@ -48,3 +48,9 @@ void	printStringVector(std::vector<std::string> stringVector) {
 		std::cout << stringVector[i] << std::endl;
 
 }
+
+void	printServersInfo(std::vector<ServerInfo *> stringVector) {
+
+	for (size_t i = 0; i < stringVector.size(); i++)
+		std::cout << stringVector[i] << std::endl;
+}
