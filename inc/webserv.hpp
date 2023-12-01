@@ -25,6 +25,7 @@
 # include <algorithm>
 # include <limits>
 # include <utility>
+# include <ctime>		// clock() -> a supprimer avant de push
 
 # include <unistd.h>
 # include <fcntl.h>
@@ -43,6 +44,7 @@
 # include <sys/stat.h>
 # include <sys/signal.h>
 // # include <signal.h>
+
 
 // ************************************************************************** //
 //  MACROS
@@ -145,10 +147,11 @@ void	multiplexer(void);
 void	signalHandler(int signal);
 void	printStringVector(std::vector<std::string> stringVector);
 
-void eraseComments(std::string &content);
-std::vector<std::string> cSplitLine(std::string line, char const *charset);
+void						eraseComments(std::string &content);
+std::vector<std::string>	cSplitLine(std::string line, char const *charset);
 
 // parsing utils
-std::vector<std::string> splitString(const std::string& input, char delimiter);
+int							strToInt(const std::string& str);
+std::vector<std::string>	splitString(const std::string& input, char delimiter);
 
 #endif

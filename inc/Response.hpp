@@ -9,26 +9,31 @@
 # define RESPONSE "\033[1;37mResponse\033[0m"
 
 # define BODY_SIZE_LIMIT 40960
-# define BUFFER_SIZE 4096
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 4096
+# endif
 
 class Response
 {
     public:
 
+        Response();
         Response(uint16_t port);
         ~Response();
 
-        void        recieve();
+        void    redirection(void);
+        bool    readRessource(const char* path, std::stringstream& content);
 
         void    setReturnStatus(int returnStatus);
         void    setContent(int content);
+        void    setPort(uint16_t port);
 
-        int            getReturnStatus(void) const;
-        std::string    getContent(void) const;
+        int             getReturnStatus(void) const;
+        std::string     getContent(void) const;
+        uint16_t        getPort(void) const;
+
 
     private:
-
-        Response();
 
         uint16_t    _port;
         std::string _content;

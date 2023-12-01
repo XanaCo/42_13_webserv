@@ -1,5 +1,9 @@
 #include "Client.hpp"
 
+// ************************************************************************** //
+//	CONSTRUCTOR / DESTRUCTOR
+// ************************************************************************** //
+
 Client::Client(void){
 
     return  ;
@@ -23,6 +27,10 @@ Client::~Client(void){
     return ;
 }
 
+// ************************************************************************** //
+//  OPERATORS
+// ************************************************************************** //
+
 Client &    Client::operator=(const Client & rhs){
 
     this->new_socket = rhs.new_socket;
@@ -30,3 +38,17 @@ Client &    Client::operator=(const Client & rhs){
     this->received = rhs.received;
     return *this;
 }
+
+// ************************************************************************** //
+//	LA GET-SET
+// ************************************************************************** //
+
+// void    Client::setReturnStatus(Request request)
+// {
+//     _request = request;
+// }
+
+// Request    Client::getReturnStatus(void) const
+// {
+//     return (_request);
+// }

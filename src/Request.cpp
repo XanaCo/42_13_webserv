@@ -5,19 +5,18 @@
 //	CONSTRUCTOR / DESTRUCTOR
 // ************************************************************************** //
 
-Request(const std::string str)
+Request::Request(void)
 {
     if (PRINT)
         std::cout << GREEN << "Request constructor called" << END_COLOR << std::endl;
-    this->setMethod(0);
-    this->setPath("");
-    this->setHost("");
-    this->setUserAgent("");
-    this->setContentType("");
-    this->setContentLenght(0);
-    // this->setCookies();
-    this->setConnection("");
-    this->setBody("");
+    this->resetValues();
+}
+
+Request::Request(const std::string str)
+{
+    if (PRINT)
+        std::cout << GREEN << "Request constructor called" << END_COLOR << std::endl;
+    this->fillContent(str);
 }
 
 Request::~Request()
@@ -52,7 +51,9 @@ std::ostream	&operator<<(std::ostream &os, Request &obj)
     os << REQUEST << " method: " <<obj.getMethod() << " path: " << obj.getPath();
     os << " host: " <<obj.getHost() << " user agent: " << obj.getUserAgent();
     os << " content type: " <<obj.getContentType() << " content lenght: " << obj.getContentLenght();
-    os << " cookies: " <<obj.getCookies() << " connection: " << obj.getConnection() << std::endl;
+    os << " cookies: ";
+    printStringVector(obj.getCookies());
+    os << std::endl << " connection: " << obj.getConnection() << std::endl;
     os << " body: " <<obj.getBody() << std::endl;
     return (os);
 }
@@ -61,50 +62,92 @@ std::ostream	&operator<<(std::ostream &os, Request &obj)
 //	METHODS
 // ************************************************************************** //
 
+void    Request::handle()
+{
+    if (this.getPath() == "/site")
+        ;// get the content of the right html file with 
+    else if (this.getPath() == "/site/scriptCGI")
+        ;// do the right script CGI
+}
+
 // ************************************************************************** //
 //	PARSING METHODS
 // ************************************************************************** //
 
-void fillContent(std::string line)
+void    Request::resetValues(void)
 {
-    int size = line.size();
+    this->setMethod(0);
+    this->setPath("");
+    this->setHost("");
+    this->setUserAgent("");
+    this->setContentType("");
+    this->setContentLenght(0);
+    // this->setCookies();
+    this->setConnection("");
+    this->setBody("");
+}
 
-    Request request;
+bool Request::fillContent(std::string request)
+{
+    time_t  startTime;
+    time_t  endTime;
+    clock(&startTime);
 
-    if (size >= 3 && line.substr(0, 3) == "GET")
+    std::vector<string> lines;
+    int size = lines.size();
+
+    for (int i = 0; i < size; i++;)
     {
-        request.setMethod(GET);
-        request.setPath(line.substr(4, size));
+        if (size >= 3 && line.substr(0, 3) == "GET")
+        {
+            this->setMethod(GET);
+            this->setPath(line.substr(4, size));
+        }
+        else if (size >= 4 && line.substr(0, 4) == "POST")
+        {
+            this->setMethod(POST);
+            this->setPath(line.substr(5, size));
+        }
+        else if (size >= 6 && line.substr(0, 6) == "DELETE")
+        {
+            this->setMethod(DELETE);
+            this->setPath(line.substr(7, size));
+        }
+        else if (size >= 5 && line.substr(0, 5) == "Host:")
+            this->setHost(line.substr(6, size));
+        else if (size >= 11 && line.substr(0, 11) == "User-Agent:")
+            this->setUserAgent(line.substr(12, size));
+        else if (size >= 13 && line.substr(0, 13) == "Content-Type:")
+            this->setContentType(line.substr(14, size));
+        else if (size >= 15 && line.substr(0, 15) == "Content-Lenght:")
+            this->setContentLenght(line.substr(16, size));
+        else if (size >= 6 && line.substr(0, 6) == "Cookie:")
+            this->setCookies(splitString(line.substr(7, size)));
+        else if (size >= 11 && line.substr(0, 11) == "Connection:")
+            this->setConnection(line.substr(12, size));
+        else if (size && line.substr(0, 1) == "{")
+        {
+            bool    in = true;
+            for (int j = i + 1; j < size; j++)
+            {
+                if (in)
+                    this->setBody(request.getBody().append(lines[i]));
+                if (!in && size && lines[i].substr(0, 1) == "{")
+                    in = true;
+                if (size && lines[i].substr(0, 1) == "}")
+                {
+                    in = false;
+                    break ;
+                }
+            }
+            return (!in);
+        }
     }
-    else if (size >= 4 && line.substr(0, 4) == "POST")
-    {
-        request.setMethod(POST);
-        request.setPath(line.substr(5, size));
-    }
-    else if (size >= 6 && line.substr(0, 6) == "DELETE")
-    {
-        request.setMethod(DELETE);
-        request.setPath(line.substr(7, size));
-    }
-    else if (size >= 5 && line.substr(0, 5) == "Host:")
-        request.setHost(line.substr(6, size));
-    else if (size >= 11 && line.substr(0, 11) == "User-Agent:")
-        request.setUserAgent(line.substr(12, size));
-    else if (size >= 13 && line.substr(0, 13) == "Content-Type:")
-        request.setContentType(line.substr(14, size));
-    else if (size >= 15 && line.substr(0, 15) == "Content-Lenght:")
-        request.setContentLenght(line.substr(16, size));
-    else if (size >= 6 && line.substr(0, 6) == "Cookie:")
-        request.setCookies(splitString(line.substr(7, size)));
-    else if (size >= 11 && line.substr(0, 11) == "Connection:")
-        request.setConnection(line.substr(12, size));
-    if (size && line.substr(0, 1) == "{")
-    {
-        return (true);
-        // fil body;
-    }
-    return ();
-    // return (OTHER_CONTENT);
+
+    clock(&endTime);
+    std::cout << REQUEST << " fillContent method : exec time : " << endTime - startTime << std::endl;
+
+    return (true);
 }
 // A voir si on decide de traiter ces elements :
     // if (line.substr(0, 7) == "Accept:")
@@ -119,22 +162,6 @@ void fillContent(std::string line)
     //     return (REFERER);
     // if (line.substr(0, 14) == "Cache-Control:")
     //     return (CACHECONTROL);
-
-void    fillBody(std::vector<std::string> lines)
-{
-    int     size = lines.size();
-    bool    in;
-
-    for (int i = 0; i < size, i++)
-    {
-        if (in)
-            request.setBody(request.getBody().append(lines[i]));
-        if (!in && size && lines[i].substr(0, 1) == "{")
-            in = true;
-        if (size && lines[i].substr(0, 1) == "}")
-            break ;
-    }
-}
 
 // ************************************************************************** //
 //	LA GET-SET

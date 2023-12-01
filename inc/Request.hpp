@@ -8,25 +8,14 @@
 
 # include "webserv.hpp"
 
-{
-    std::string request;
-
-    std::vector<std::string> lines = splitString(request, '\n');
-
-    int nb_lines = lines.size();
-    for (int i = 0; i < size; i++)
-    {
-        // checker quel est le mot clef
-        findContent(lines[i]);
-        // fill la bonne variable
-    }
-}
-
 class Request
 {
     public:
         Request(const std::string str);
         ~Request();
+
+        void        resetValues(void);
+        bool        fillContent(std::string request);
 
         void        setMethod(int method);
         void        setPath(std::string path);
@@ -51,32 +40,24 @@ class Request
     private:
         Request();
 
-        int                     _method;    // ok
-        std::string             _path;
-        std::string             _host;      // www.example.com
-        
-        std::string             _userAgent; // Mozilla/5.0 (...)...
+        int                         _method;
+        std::string                 _path;
+        std::string                 _host;      // www.example.com
+        std::string                 _userAgent; // Mozilla/5.0 (...)... (navigateur du client)
+        std::string                 _contentType;
+        int                         _contentLenght; // taille du body
+        std::vector<std::string>    _cookies;
+        std::string                 _connection;
+        std::string                 _body;
 
         // indique ce que le client peut traiter :
         // std::vector<std::string>    _accept;
         // std::vector<std::string>    _acceptLanguage;
         // std::vector<std::string>    _acceptEncoding;
-    
-        // autorisations
+        // autres :
         // std::string                 _autor;
-
-        std::string                 _contentType;
-        int                         _contentLenght; // taille du body
-
         // std::string                 _referer;
-
-        std::vector<std::string>    _cookies;
-
-        std::string                 _connection;
         // std::string                 _cacheControl;
-
-        std::string                 _body;
-
 
 };
 std::ostream& operator<<(std::ostream& os, Request const& obj);

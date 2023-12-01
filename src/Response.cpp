@@ -1,3 +1,4 @@
+
 #include "../inc/Response.hpp"
 
 // ************************************************************************** //
@@ -11,7 +12,7 @@ Response::Response(uint16_t port): _port(port)
 {
     if (PRINT)
         std::cout << GREEN << "Response constructor called" << END_COLOR << std::endl;
-    this->setReturnStatus(200);
+    this->setReturnStatus(200); // 100 maybe ?
     this->setContent("");
 }
 
@@ -29,14 +30,18 @@ Response	&Response::operator=(Response const &obj)
 {
     if (this != obj)
     {
-        _content = obj._content;
+        this->setPort(obj.getPort());
+        this->setContent(obj.getContent());
+        this->setReturnStatus(obj.getReturnStatus());
     }
     return (*this);
 }
 
 std::ostream	&operator<<(std::ostream &os, Response &obj)
 {
-    os << RESPONSE << "variable name :" << std::endl;
+    os << RESPONSE << " Port : " << this.getPort();
+    os << " return status : " << this.getReturnStatus() << std::endl;
+    os << "content : " << this.getContent() << std::endl;
     return (os);
 }
 
@@ -47,14 +52,15 @@ std::ostream	&operator<<(std::ostream &os, Response &obj)
 // pour l'instant je traite le cas ou nous n'avons pas l'information demande
 // on va donc demander l'information a un autre serveur.
 // dans le sujet on appelle ca une redirection
-void    Response::recieve()
+void    Response::redirection(void)
 {
     // Résolution du nom de domaine
     struct hostent* server = gethostbyname(host.c_str()); // /!\ la fonction n'est pas autorisee
     if (server == nullptr)
     {
-        std::cerr << "Erreur de résolution du nom de domaine." << std::endl;
-        return (1);
+        this->setReturnStatus(E_BAD_GATEWAY);
+        // std::cerr << "Erreur de résolution du nom de domaine." << std::endl;
+        return ;
     }
 
     // Création de la socket server
@@ -62,7 +68,7 @@ void    Response::recieve()
     if (sockfd < 0)
     {
         std::cerr << "Erreur lors de la création de la socket." << std::endl;
-        return (1);
+        return ;
     }
 
     // Configuration de l'adresse du serveur
@@ -72,9 +78,11 @@ void    Response::recieve()
     bcopy((char*)server->h_addr, (char*)&serverAddress.sin_addr.s_addr, server->h_length);  // on copie l'adresse IP du server qu'on a vu precedement
 
     // Connexion au serveur
-    if (connect(sockfd, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0) {
-        std::cerr << "Erreur lors de la connexion au serveur." << std::endl;
-        return (1);
+    if (connect(sockfd, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0)
+    {
+        this->setReturnStatus(E_SERVICE_UNAVAILABLE);
+        // std::cerr << "Erreur lors de la connexion au serveur." << std::endl;
+        return ;
     }
 
     char        buffer[BUFFER_SIZE];
@@ -85,9 +93,10 @@ void    Response::recieve()
     bytesRead = recv(sockfd, buffer, BUFFER_SIZE, 0);
     while (bytesRead)
     {
-        response.append(buffer, bytesRead);
+        this->setContent(this->getContent().append(buffer, bytesRead));
         bytesRead = recv(sockfd, buffer, BUFFER_SIZE, 0);
     }
+    this->setReturnStatus(S_OK);
 }
 
 // dans le cas de GET,
@@ -101,20 +110,20 @@ bool Ressource::readRessource(const char* path, std::stringstream& content)
 
 	if (stat(path, &sb) != 0)
     {
-        response.setReturnStatus(E_NOT_FOUND);
+        this->setReturnStatus(E_NOT_FOUND);
         // std::cerr << path << " : does not exist" << std::endl;
         return (false);
     }
 	if (!S_ISREG(sb.st_mode))
     {
-        response.setReturnStatus(E_CONFLICT); // je suis pas certain pour ce code d'erreur
+        this->setReturnStatus(E_CONFLICT); // je suis pas certain pour ce code d'erreur
         // std::cerr << path << " : is not a regular file" << std::endl;
         return (false);
     }
 	std::ifstream ifs(path);
 	if (!ifs.is_open())
     {
-        response.setReturnStatus(E_FORBIDDEN); // je suis pas certain pour ce code d'erreur
+        this->setReturnStatus(E_FORBIDDEN); // je suis pas certain pour ce code d'erreur
         // std::cerr << path << " : cant be opened" << std::endl;
 		return (false);
     }
@@ -122,7 +131,7 @@ bool Ressource::readRessource(const char* path, std::stringstream& content)
 	ifs.close();
 	if (!(this->getContent().tellp()))
     {
-        response.setReturnStatus(S_NO_CONTENT); // pas certain du return false;
+        this->setReturnStatus(S_NO_CONTENT); // pas certain du return false;
         // std::cerr << path << " : is empty" << std::endl;
         return (false);
     }
@@ -143,6 +152,11 @@ void    Response::setContent(int content)
     _content = content;
 }
 
+void    Response::setPort(uint16_t port)
+{
+    _port = port;
+}
+
 int    Response::getReturnStatus(void) const;
 {
     return (_returnStatus);
@@ -151,4 +165,9 @@ int    Response::getReturnStatus(void) const;
 std::string    Response::getContent(void) const;
 {
     return (_content);
+}
+
+uint16_t    Response::getPort(void) const;
+{
+    return (_port);
 }
