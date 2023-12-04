@@ -64,7 +64,6 @@
 // # include "Request.hpp"
 # include "Response.hpp"
 
-# include "TesterInfo.hpp" //  a effacer
 
 // ************************************************************************** //
 //  COLORS & PRINT
@@ -146,6 +145,7 @@ void	multiplexer(void);
 
 void	signalHandler(int signal);
 void	printStringVector(std::vector<std::string> stringVector);
+void	printServersInfo(std::vector<ServerInfo *> stringVector);
 
 void						eraseComments(std::string &content);
 std::vector<std::string>	cSplitLine(std::string line, char const *charset);

@@ -66,8 +66,8 @@ Une fois que la pull request est approuvee (par tous les membres, ou selon un po
 
 ### Prerequis
 
-- [ ] Arguments : Config file or Config file path
-- [ ] Pas exécuter un autre serveur web
+- [x] Arguments : Config file or Config file path
+- [x] Pas exécuter un autre serveur web
 - [ ] Le serveur ne doit jamais bloquer et le client doit être correctement renvoyé si nécessaire
 - [ ] Il doit être non bloquant et n’utiliser qu’un seul ```poll()``` (ou équivalent) pour toutes les opérations entrées/sorties entre le client et le serveur (listen inclus)
 - [ ] ```poll()``` (ou équivalent) doit vérifier la lecture et l’écriture en même temps

@@ -13,30 +13,48 @@ class ServerInfo {
 
 public:
 	ServerInfo();
+	ServerInfo(ServerInfo const &copy);
 	~ServerInfo();
 
+	ServerInfo	&operator=(ServerInfo const &other);
+
 	std::string getServerName() const;
+	struct sockaddr_in getSockAddress() const;
 	in_port_t getPort() const;
 	in_addr_t getHost() const;
-	//getRoot
-	//getIndex
-	//getMax
+	std::string getRoot() const;
+	std::string getIndex() const;
+	unsigned int getMaxClientBody() const;
+	std::vector<Location *> getLocations() const;
+	std::map<int, std::string> getErrorPages() const;
+	int getListen() const;
+	char getAllowed() const;
 
-	void setServerName(std::string name) const;
-	void setPort(in_port_t port) const;
-	void setHost(in_addr_t host) const;
+	void setServerName(std::string name);
+	void setSockAddress(struct sockaddr_in sockAd);
+	void setPort(in_port_t port);
+	void setHost(in_addr_t host);
+	void setRoot(std::string name);
+	void setIndex(std::string name);
+	void setMaxClientBody(unsigned int max);
+	void setLocations(std::vector<Location *> loc);
+	void setErrorPages(std::map<int, std::string> ePages);
+	void setListen(int port) ;
+	void setAllowed(char methods);
 
 	class ServerInfoError : public std::exception {
 	
 		public:
-			// ServerInfoError();
-			// virtual ~ServerInfoError();
-			const char *what() const throw();
+			ServerInfoError(std::string errorMsg) throw();
+			~ServerInfoError() throw();
+
+			virtual const char *what() const throw();
+
+		private:
+			std::string _errorMsg;
 	};
 
 private:
-	ServerInfo(ServerInfo const &copy);
-	ServerInfo	&operator=(ServerInfo const &other);
 
 	std::string					_serverName;
 	struct sockaddr_in			_sockAddress;
@@ -45,7 +63,7 @@ private:
 	std::string					_Root; // root path
 	std::string					_index; // path to index.html
 	unsigned int				_maxClientBody;
-	std::vector<Location *>		_location; // class location
+	std::vector<Location *>		_locations; // class Location with infos
 	std::map<int, std::string>	_errorPages; // 500 - path to error
 	int							_listen;
 	char						_allowedMethods;
