@@ -17,6 +17,8 @@ class Request
         void        resetValues(void);
         bool        fillContent(std::string request);
 
+        bool        isCompleted(void) const;
+
         void        setMethod(int method);
         void        setPath(std::string path);
         void        setHost(std::string host);
@@ -50,6 +52,8 @@ class Request
         std::string                 _connection;
         std::string                 _body;
 
+        bool                   _headerCompleted;
+        bool                   _bodyCompleted;
         // indique ce que le client peut traiter :
         // std::vector<std::string>    _accept;
         // std::vector<std::string>    _acceptLanguage;

@@ -28,17 +28,35 @@ class Response
         void    setContent(int content);
         void    setPort(uint16_t port);
 
+        void    setCgiOutput(std::string cgiOutput);
+        void    setPort(uint16_t port);
+        void    setPort(uint16_t port);
+
+        void    setCgiBytesWritten(long cgiBytesWritten);
+        void    setCgiFdRessource(int cgiFdRessource);
+
         int             getReturnStatus(void) const;
         std::string     getContent(void) const;
         uint16_t        getPort(void) const;
 
+        pid_t           getCgiPid(void) const;
+        int             getCgiFd(void) const;
+        std::string     getCgiOutput(void) const;
 
+        long            getCgiBytesWritten(void) const;
+        int             getCgiFdRessource(void) const;
     private:
 
         uint16_t    _port;
         std::string _content;
         int         _returnStatus;
 
+        pid_t       _cgiPid;
+        int         _cgiFd;
+        std::string _cgiOutput;
+
+        long        _cgiBytesWritten;
+        int         _cgiFdRessource;
 };
 std::ostream& operator<<(std::ostream& os, Response const& obj);
 

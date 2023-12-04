@@ -70,6 +70,11 @@ void    Request::handle()
         ;// do the right script CGI
 }
 
+bool    Request::isCompleted(void) const
+{
+    return (_headerCompleted && _bodyCompleted);
+}
+
 // ************************************************************************** //
 //	PARSING METHODS
 // ************************************************************************** //
@@ -85,6 +90,9 @@ void    Request::resetValues(void)
     // this->setCookies();
     this->setConnection("");
     this->setBody("");
+
+    this->setBodyCompleted(false);
+    this->setHeaderCompleted(false);
 }
 
 bool Request::fillContent(std::string request)
@@ -212,6 +220,16 @@ void    Request::setBody(std::string body)
     _body = body;
 }
 
+void    Request::setHeaderCompleted(bool headerCompleted)
+{
+    _headerCompleted = headerCompleted;
+}
+
+void    Request::setBodyCompleted(bool bodyCompleted)
+{
+    _bodyCompleted = bodyCompleted;
+}
+
 int    Request::getMethod(void) const
 {
     return (_method);
@@ -255,4 +273,14 @@ std::string    Request::getConnection(void) const
 std::string    Request::getBody(void) const
 {
     return (_body);
+}
+
+bool    Request::getHeaderCompleted(void)
+{
+    return (_headerCompleted);
+}
+
+bool    Request::getBodyCompleted(void)
+{
+    return (_bodyCompleted);
 }

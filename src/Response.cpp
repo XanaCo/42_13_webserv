@@ -30,9 +30,14 @@ Response	&Response::operator=(Response const &obj)
 {
     if (this != obj)
     {
-        this->setPort(obj.getPort());
-        this->setContent(obj.getContent());
-        this->setReturnStatus(obj.getReturnStatus());
+        _port = obj._port;
+        _content = obj._content;
+        _returnStatus = obj._returnStatus;
+        _cgiPid = obj._cgiPid;
+        _cgiFd = obj._cgiFd;
+        _cgiOutput = obj._cgiOutput;
+        _cgiBytesWritten = obj._cgiBytesWritten;
+        _cgiFdRessource = obj.cgiFdRessource;
     }
     return (*this);
 }
@@ -139,6 +144,46 @@ bool Ressource::readRessource(const char* path, std::stringstream& content)
 }
 
 // ************************************************************************** //
+//	CGI METHODS
+// ************************************************************************** //
+
+bool    Response::cgiRead()
+{
+    char    buffer[BUFFER_SIZE] = {};
+    int     bytesReaded;
+
+    // + gerer le timeout
+    bytesReaded = read(_cgiFd, buffer, BUFFER_SIZE);
+    if (!bytesReaded)
+        return (true);//
+    if (bytesReaded < 0)
+    {
+        returnStatus = E_INTERNAL_SERVER;
+        return (false);
+    }
+    _cgiOutput.append(buffer);
+    return (true);
+}
+
+bool    Response::cgiWrite()
+{
+    long    bytesWritten;
+
+    if (!(_method & POST))
+        return ;
+    
+    bytesWritten = write(_cgiFdRessource, body + _cgiBytesWritten, BUFFER_SIZE);
+    if (bytesWritten < 0)
+    {
+        
+        return (false);
+    }
+    _cgiBytesWritten += bytesWritten;
+    return (true);
+}
+
+
+// ************************************************************************** //
 //	LA GET-SET
 // ************************************************************************** //
 
@@ -157,6 +202,31 @@ void    Response::setPort(uint16_t port)
     _port = port;
 }
 
+void    Response::setCgiPid(pid_t cgiPid)
+{
+    _cgiPid = cgiPid;
+}
+
+void    Response::setCgiFd(int cgiFd)
+{
+    _cgiFd = cgiFd;
+}
+
+void    Response::setCgiOutput(std::string cgiOutput)
+{
+    _cgiOutput = cgiOutput;
+}
+
+void    Response::setCgiBytesWritten(long cgiBytesWritten)
+{
+    _cgiBytesWritten = cgiBytesWritten;
+}
+
+void    Response::setCgiFdRessource(int cgiFdRessource)
+{
+    _cgiFdRessource = cgiFdRessource;
+}
+
 int    Response::getReturnStatus(void) const;
 {
     return (_returnStatus);
@@ -170,4 +240,29 @@ std::string    Response::getContent(void) const;
 uint16_t    Response::getPort(void) const;
 {
     return (_port);
+}
+
+pid_t    Response::getCgiPid(void) const
+{
+    return (_cgiPid);
+}
+
+int    Response::getCgiFd(void) const
+{
+    return (_cgiFd);
+}
+
+std::string    Response::getCgiOutput(void) const
+{
+    return (_cgiOutput);
+}
+
+long    Response::getCgiBytesWritten(void) const
+{
+    return (_cgiBytesWritten);
+}
+
+int    Response::getCgiFdRessource(void) const
+{
+    return (_cgiFdRessource);
 }
