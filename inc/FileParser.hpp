@@ -18,13 +18,16 @@ public:
 	std::string const &getFilePath() const;
 	std::vector<std::string> getRawFile() const;
 	std::vector<std::string> getRawServer() const;
-	std::vector<ServerInfo *> getAllServers() const;
+	std::vector<ServerInfo> getAllServers() const;
 	int getNServers() const;
 
 	void cleanFile();
 	std::string checkFileValid();
 	void splitServers();
 	size_t serverEnd(size_t pos);
+	void stockServerInfo();
+	ServerInfo	stockInfos(std::vector<std::string> serverTab);
+
 
 	class FileParserError : public std::exception {
 	
@@ -47,9 +50,11 @@ private:
 	std::string const			_filePath;
 	std::vector<std::string>	_rawFile;
 	std::vector<std::string>	_rawServer;
-	std::vector<ServerInfo *>	_allServers; // classified info
-	int 						_nServers; // counts each time we stock serverline
+	std::vector<ServerInfo>		_allServers; // classified info
+	int 						_nServers;
 
 };
+
+std::ostream &operator<<(std::ostream &out, FileParser const &other);
 
 #endif
