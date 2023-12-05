@@ -8,12 +8,12 @@
 #ifndef WEBSERV_HPP
 # define WEBSERV_HPP
 
+# include <string>
 # include <iostream>
 # include <fstream>
 # include <sstream>
 # include <list>
 # include <map>
-# include <string>
 # include <vector>
 # include <cstdlib>
 # include <csignal>
@@ -62,7 +62,7 @@
 # include "ServerInfo.hpp"
 # include "Location.hpp"
 // # include "Request.hpp"
-# include "Response.hpp"
+// # include "Response.hpp"
 
 
 // ************************************************************************** //
@@ -77,7 +77,7 @@
 # define GREEN "\033[32;1m"
 # define END_COLOR "\033[0m"
 
-# define PRINT 1
+# define PRINT 0
 
 // ************************************************************************** //
 //  RETURN STATUS
@@ -145,7 +145,8 @@ void	multiplexer(void);
 
 void	signalHandler(int signal);
 void	printStringVector(std::vector<std::string> stringVector);
-void	printServersInfo(std::vector<ServerInfo *> stringVector);
+void	printServersInfo(std::vector<ServerInfo> stringVector);
+std::string	returnStringVector(std::vector<std::string> stringVector);
 
 void						eraseComments(std::string &content);
 std::vector<std::string>	cSplitLine(std::string line, char const *charset);

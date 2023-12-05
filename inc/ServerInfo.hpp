@@ -28,18 +28,20 @@ public:
 	std::vector<Location *> getLocations() const;
 	std::map<int, std::string> getErrorPages() const;
 	int getListen() const;
+	int getTimeout() const;
 	char getAllowed() const;
 
 	void setServerName(std::string name);
 	void setSockAddress(struct sockaddr_in sockAd);
-	void setPort(in_port_t port);
-	void setHost(in_addr_t host);
+	void setPort(std::string port);
+	void setHost(std::string host);
 	void setRoot(std::string name);
 	void setIndex(std::string name);
-	void setMaxClientBody(unsigned int max);
+	void setMaxClientBody(std::string max);
 	void setLocations(std::vector<Location *> loc);
 	void setErrorPages(std::map<int, std::string> ePages);
-	void setListen(int port) ;
+	void setListen(std::string port);
+	void setTimeout(std::string timeout);
 	void setAllowed(char methods);
 
 	class ServerInfoError : public std::exception {
@@ -66,6 +68,7 @@ private:
 	std::vector<Location *>		_locations; // class Location with infos
 	std::map<int, std::string>	_errorPages; // 500 - path to error
 	int							_listen;
+	int							_timeout;
 	char						_allowedMethods;
 
 };

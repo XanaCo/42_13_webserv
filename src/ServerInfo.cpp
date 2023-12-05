@@ -15,6 +15,7 @@ ServerInfo::ServerInfo() {
 	//this->_locations;
 	//this->_errorPages;
 	this->_listen = 0;
+	this->_timeout = 0;
 	this->_allowedMethods = 0;
 
 	if (PRINT)
@@ -36,6 +37,7 @@ ServerInfo::ServerInfo(ServerInfo const &copy) {
 		this->_locations = copy.getLocations();
 		this->_errorPages = copy.getErrorPages();
 		this->_listen = copy.getListen();
+		this->_timeout = copy.getTimeout();
 		this->_allowedMethods = copy.getAllowed();
 	}
 
@@ -71,6 +73,7 @@ ServerInfo	&ServerInfo::operator=(ServerInfo const &other) {
 		this->_locations = other.getLocations();
 		this->_errorPages = other.getErrorPages();
 		this->_listen = other.getListen();
+		this->_timeout = other.getTimeout();
 		this->_allowedMethods = other.getAllowed();
 	}
 
@@ -95,6 +98,8 @@ std::ostream &operator<<(std::ostream &out, ServerInfo const &other) {
 			<< other.getMaxClientBody()
 			<< " | Listen: "
 			<< other.getListen()
+			<< " | Timeout: "
+			<< other.getTimeout()
 			<< " | Allowed: "
 			<< other.getAllowed()
 			<< ".\n";
@@ -149,10 +154,14 @@ std::map<int, std::string> ServerInfo::getErrorPages() const {
 	return this->_errorPages;
 }
 
-
 int ServerInfo::getListen() const {
 
 	return this->_listen;
+}
+
+int ServerInfo::getTimeout() const {
+
+	return this->_timeout;
 }
 
 char ServerInfo::getAllowed() const {
@@ -169,17 +178,17 @@ void ServerInfo::setServerName(std::string name) {
 
 void ServerInfo::setSockAddress(struct sockaddr_in sockAd) {
 
-	this->_sockAddress = sockAd; // copie profonde?
+	this->_sockAddress = sockAd; // attention  copie profonde
 }
 
-void ServerInfo::setPort(in_port_t port) {
+void ServerInfo::setPort(std::string port) {
 
-	this->_Port = port;
+	this->_Port = strToInt(port); // attention  in_port_t
 }
 
-void ServerInfo::setHost(in_addr_t host) {
+void ServerInfo::setHost(std::string host) {
 
-	this->_Host = host;
+	this->_Host = strToInt(host); // attention  in_addr_t
 }
 
 void ServerInfo::setRoot(std::string name) {
@@ -192,9 +201,9 @@ void ServerInfo::setIndex(std::string name) {
 	this->_index = name;
 }
 
-void ServerInfo::setMaxClientBody(unsigned int max) {
+void ServerInfo::setMaxClientBody(std::string max) {
 
-	this->_maxClientBody = max;
+	this->_maxClientBody = strToInt(max); // attention unsigned int
 }
 
 void ServerInfo::setLocations(std::vector<Location *> loc) {
@@ -207,9 +216,14 @@ void ServerInfo::setErrorPages(std::map<int, std::string> ePages) {
 	this->_errorPages = ePages;  // copie profonde?
 }
 
-void ServerInfo::setListen(int port) {
+void ServerInfo::setListen(std::string port) {
 
-	this->_listen = port;
+	this->_listen = strToInt(port);
+}
+
+void ServerInfo::setTimeout(std::string timeout) {
+
+	this->_timeout = strToInt(timeout);
 }
 
 void ServerInfo::setAllowed(char methods) {
