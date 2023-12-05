@@ -39,6 +39,12 @@ Client &    Client::operator=(const Client & rhs){
     return *this;
 }
 
+std::ostream &  operator<<(std::ostream & o, Client const & rhs){
+
+    o << "This client is on socket n " << rhs.new_socket << " its received contains " << rhs.received << std::endl;
+    return o;
+}
+
 // ************************************************************************** //
 //	LA GET-SET
 // ************************************************************************** //

@@ -49,7 +49,7 @@ void    Base::add_to_poll_in(int socket)
     struct  pollfd  pfd;
 
     pfd.fd = socket;
-    pfd.events = POLL_IN;
+    pfd.events = POLLIN;
     this->pfds.push_back(pfd);
     this->sock_count++;
 }
@@ -59,9 +59,53 @@ void    Base::add_to_poll_out(int socket)
     struct  pollfd  pfd;
 
     pfd.fd = socket;
-    pfd.events = POLL_OUT;
+    pfd.events = POLLOUT;
     this->pfds.push_back(pfd);
     this->sock_count++;
+}
+
+void    Base::remove_from_servers(int socket){
+
+    for(unsigned int i = 0; i < this->servers.size() ; i++)
+    {
+        if (socket == servers[i].listen_socket)
+        {
+            //std::cout << "Server n " << socket << " trying to be erased" << std::endl;
+            servers.erase(servers.begin() + i);
+            //std::cout << "Server n " << socket << " erased" << std::endl;
+            break ;
+        }
+    }
+}
+
+void    Base::remove_from_clients(int socket){
+
+    for(unsigned int i = 0; i < this->clients.size() ; i++)
+    {
+        if (socket == clients[i].new_socket)
+        {
+            //std::cout << "Client n " << socket << " trying to be erased" << std::endl;
+            clients.erase(clients.begin() + i);
+            //std::cout << "Client n " << socket << " erased" << std::endl;
+            break ;
+        }
+    }
+}
+
+void    Base::remove_from_poll(int socket){
+
+    for(unsigned int i = 0; i < this->pfds.size() ; i++)
+    {
+        if (socket == pfds[i].fd)
+        {
+            //std::cout << "fd n " << socket << " trying to be erased from poll" << std::endl;
+            close(pfds[i].fd);
+            pfds.erase(pfds.begin() + i);
+            this->sock_count--;
+            //std::cout << "fd n " << socket << " erased from poll" << std::endl;
+            break ;
+        }
+    }
 }
 
 bool    Base::is_a_server(int socket)
@@ -122,21 +166,59 @@ Client &    Base::get_cli_from_sock(int client_sock){
     return clients[i];
 }
 
+struct pollfd    *Base::get_poll_from_sock(int client_sock){
+
+    unsigned int i = 0;
+    while (i < this->pfds.size())
+    {
+        if (pfds[i].fd == client_sock)
+            break ;
+        i++;
+    }
+    return (&pfds[i]);
+}
+
+void    Base::change_poll_event(int socket, int event){
+
+    struct pollfd   *tmp;
+
+    tmp = get_poll_from_sock(socket);
+    switch (event)
+    {
+        case 1 :
+            tmp->events = POLLOUT;
+            break ;
+        case 2 :
+            tmp->events = POLLIN;
+            break ;
+        default :
+            break ;
+    }
+    return ;
+}
+
 void    Base::receive_client_data(int client_sock){
 
-    Client  client(get_cli_from_sock(client_sock));
+    Client  &client = get_cli_from_sock(client_sock);
+    char   buffer[BUFFER_SIZE + 1];
 
-    int nbytes = recv(client.new_socket, client.buffer, sizeof client.buffer, 0);
+    int nbytes = recv(client.new_socket, buffer, sizeof buffer, 0);
 
     if (nbytes <= 0)
     {
-        std::cout << "Socket " << client.new_socket << " closed connection or recv failed" << std::endl;
+            std::cout << "Socket " << client.new_socket << " closed connection or recv failed" << std::endl;
+            remove_from_poll(client_sock);
+            remove_from_clients(client_sock);
+            return ;
     }
-    client.received += client.buffer;
+    client.received += buffer;
+    change_poll_event(client_sock, 1);
     std::cout << client.received << std::endl;
 }
 
-void    Base::check_read_operations(void){
+void    Base::review_poll(void){
+
+    char test[] = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 45\n\nPablo va bientot m'envoyer de belles reponses";
 
     for (int i = 0; i < this->sock_count; i++)
     {
@@ -146,17 +228,15 @@ void    Base::check_read_operations(void){
                 handle_new_connection(pfds[i].fd);
             else
                 receive_client_data(pfds[i].fd);
-                //std::cout << "client fd n " << pfds[i].fd << "ready to send data" << std::endl;
+        }
+        if(pfds[i].revents & POLLOUT)
+        {
+            int b_send;
+
+            b_send = send(pfds[i].fd, test, strlen(test), 0);
+            change_poll_event(pfds[i].fd, 2);
         }
     }
-}
-
-void    Base::review_poll(void){
-
-    this->check_read_operations();
-    //this->check_send_operations();
-
-
 }
 
 void    Base::start_servers(void) {

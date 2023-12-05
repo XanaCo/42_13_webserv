@@ -35,7 +35,6 @@ class   Client{
 
         struct  sockaddr_in address;
         std::string received;
-        char    buffer[BUFFER_SIZE];
 
         Client(void);
         Client(int socket, struct sockaddr_in *r_address);
@@ -52,5 +51,7 @@ class   Client{
         // Request     request;
         // Response    response;
 };
+
+std::ostream &  operator<<(std::ostream & o, Client const & rhs);  
 
 #endif
