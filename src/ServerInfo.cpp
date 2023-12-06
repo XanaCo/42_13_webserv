@@ -5,7 +5,7 @@
 
 ServerInfo::ServerInfo() {
 
-	this->_serverName = "";
+	this->_serverName = "Unknown";
 	this->_Port = 0;
 	this->_Host = 0;
 	this->_Root = "";
@@ -176,9 +176,11 @@ void ServerInfo::setServerName(std::string name) {
 	this->_serverName = name;
 }
 
-void ServerInfo::setSockAddress(struct sockaddr_in sockAd) {
+void ServerInfo::setSockAddress() {
 
-	this->_sockAddress = sockAd; // attention  copie profonde
+	this->_sockAddress.sin_port = _Port;
+	this->_sockAddress.sin_addr.s_addr = _Host;
+	this->_sockAddress.sin_family = AF_INET;
 }
 
 void ServerInfo::setPort(std::string port) {
@@ -223,7 +225,12 @@ void ServerInfo::setListen(std::string port) {
 
 void ServerInfo::setTimeout(std::string timeout) {
 
-	this->_timeout = strToInt(timeout);
+	int res = strToInt(timeout);
+
+	if (res < 1 || res > 120)
+		throw ServerInfoError("Invalid timeout value");
+
+	this->_timeout = res;
 }
 
 void ServerInfo::setAllowed(char methods) {

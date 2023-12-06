@@ -77,7 +77,7 @@
 # define GREEN "\033[32;1m"
 # define END_COLOR "\033[0m"
 
-# define PRINT 0
+# define PRINT 0 // changer a 1 pour voir les constructors/destructors des instances
 
 // ************************************************************************** //
 //  RETURN STATUS
@@ -145,31 +145,33 @@ typedef enum e_headerRq {
 	RP_COOKIES,
 	RP_SECURITY,
 	RP_COMPRESSIOM,
-}
+}	t_headerRq;
 
 // ************************************************************************** //
 //  PROTOTYPES
 // ************************************************************************** //
 
-// main program
-void	multiplexer(void);
+// Main program
+void						multiplexer(void);
 
-void	signalHandler(int signal);
-void	printStringVector(std::vector<std::string> stringVector);
-void	printServersInfo(std::vector<ServerInfo> stringVector);
-std::string	returnStringVector(std::vector<std::string> stringVector);
-
-void						eraseComments(std::string &content);
-std::vector<std::string>	cSplitLine(std::string line, char const *charset);
-
-// parsing utils
-int							strToInt(const std::string& str);
-std::vector<std::string>	splitString(const std::string& input, char delimiter);
+// General utils
+void						signalHandler(int signal);
 bool						containsParentDirectory(const std::string& str);
 void						compressionOfSlashes(std::string& str);
-
 bool						isAlphaDigit(char c);
 char						hexToChar(const std::string& hex);
 void						remplacerPercentEncoding(std::string& chaine);
+
+// Print and Debug utils
+void						printStringVector(std::vector<std::string> stringVector);
+void						printServersInfo(std::vector<ServerInfo> stringVector);
+std::string					returnStringVector(std::vector<std::string> stringVector);
+
+// Parsing utils
+int							strToInt(const std::string& str);
+std::vector<std::string>	splitString(const std::string& input, char delimiter);
+void						eraseComments(std::string &content);
+std::vector<std::string>	cSplitLine(std::string line, char const *charset);
+bool 						semiColonEnding(std::string &content);
 
 #endif

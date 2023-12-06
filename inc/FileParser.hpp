@@ -21,7 +21,7 @@ public:
 	std::vector<ServerInfo> getAllServers() const;
 	int getNServers() const;
 
-	void cleanFile();
+	void parseFile();
 	std::string checkFileValid();
 	void splitServers();
 	size_t serverEnd(size_t pos);
