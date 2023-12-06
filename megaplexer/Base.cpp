@@ -1,5 +1,7 @@
 #include "Base.hpp"
 
+// Constructors
+
 Base::Base() : servers(0), clients(0), pfds(0), sock_count(0){ 
     return ;
 }
@@ -19,9 +21,14 @@ Base::Base(const Base & rhs) {
     *this = rhs; 
 }
 
+
+// Destructors
+
 Base::~Base(){
     return ;
 }
+
+// Operator overload
 
 Base &  Base::operator=(const Base & rhs) { 
     this->servers = rhs.servers; 
@@ -29,6 +36,11 @@ Base &  Base::operator=(const Base & rhs) {
     this->pfds = rhs.pfds; 
     return *this;
 }
+
+// Methods
+
+
+// These functions are used to add into our 3 vectors depending of a port number or socket number
 
 void    Base::add_to_servers(char *port){
     
@@ -50,6 +62,7 @@ void    Base::add_to_poll_in(int socket)
 
     pfd.fd = socket;
     pfd.events = POLLIN;
+    pfd.revents = 0;
     this->pfds.push_back(pfd);
     this->sock_count++;
 }
@@ -60,9 +73,13 @@ void    Base::add_to_poll_out(int socket)
 
     pfd.fd = socket;
     pfd.events = POLLOUT;
+    pfd.revents = 0;
     this->pfds.push_back(pfd);
     this->sock_count++;
 }
+
+
+// These functions are used to remove items from our 3 vectors
 
 void    Base::remove_from_servers(int socket){
 
@@ -108,6 +125,8 @@ void    Base::remove_from_poll(int socket){
     }
 }
 
+// This function is used to identify if a given fd is a listening fd
+
 bool    Base::is_a_server(int socket)
 {
     for (unsigned int i = 0; i < this->servers.size(); i++)
@@ -117,6 +136,8 @@ bool    Base::is_a_server(int socket)
     }
     return false;
 }
+
+// These functions are used to return sockaddr_in or sockaddr_in->sin_addr
 
 void*   Base::get_in_addr(struct sockaddr *sa)
 {
@@ -134,6 +155,8 @@ void*   Base::get_in_sockaddr(struct sockaddr *sa){
     return (((struct sockaddr_in6*)sa));
 
 }
+
+// function used to accept new connection on listening socket
 
 void    Base::handle_new_connection(int serv_sock)
 {
@@ -153,6 +176,8 @@ void    Base::handle_new_connection(int serv_sock)
         this->add_to_clients(new_fd, (struct sockaddr_in*)this->get_in_sockaddr((struct sockaddr*)&remoteaddr));
     }
 }
+
+// function used to return a client/poll ref from its socket
 
 Client &    Base::get_cli_from_sock(int client_sock){
 
@@ -178,6 +203,8 @@ struct pollfd    *Base::get_poll_from_sock(int client_sock){
     return (&pfds[i]);
 }
 
+// function used to change a poll event
+
 void    Base::change_poll_event(int socket, int event){
 
     struct pollfd   *tmp;
@@ -185,10 +212,10 @@ void    Base::change_poll_event(int socket, int event){
     tmp = get_poll_from_sock(socket);
     switch (event)
     {
-        case 1 :
+        case pollout :
             tmp->events = POLLOUT;
             break ;
-        case 2 :
+        case pollin :
             tmp->events = POLLIN;
             break ;
         default :
@@ -196,6 +223,8 @@ void    Base::change_poll_event(int socket, int event){
     }
     return ;
 }
+
+// function used to receive data on a client
 
 void    Base::receive_client_data(int client_sock){
 
@@ -212,9 +241,11 @@ void    Base::receive_client_data(int client_sock){
             return ;
     }
     client.received += buffer;
-    change_poll_event(client_sock, 1);
+    change_poll_event(client_sock, pollout);
     std::cout << client.received << std::endl;
 }
+
+// function used to review the poll of fd
 
 void    Base::review_poll(void){
 
@@ -234,10 +265,12 @@ void    Base::review_poll(void){
             int b_send;
 
             b_send = send(pfds[i].fd, test, strlen(test), 0);
-            change_poll_event(pfds[i].fd, 2);
+            change_poll_event(pfds[i].fd, pollin);
         }
     }
 }
+
+// main loop that only call the poll reviewer
 
 void    Base::start_servers(void) {
 

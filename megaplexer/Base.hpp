@@ -4,10 +4,14 @@
 #include "Client.hpp"
 #include "Server.hpp"
 
+enum pollevents {
+    pollout = 1,
+    pollin = 2
+};
+
 class   Base{
 
     public :
-         
 
         std::vector<Server> servers;
         std::vector<Client> clients;
@@ -33,10 +37,10 @@ class   Base{
         bool    is_a_server(int socket);
         bool    is_a_client(int socket);
         void    handle_new_connection(int serv_sock);
-        void    receive_client_data(int client_sock);
+        void    receive_client_data(int client_sock); //Can be a client method
         void*   get_in_addr(struct sockaddr *sa);
         void*   get_in_sockaddr(struct sockaddr *sa);
-        Client &   get_cli_from_sock(int client_sock);
+        Client &   get_cli_from_sock(int client_sock);//Can also be a client method (unsure)
         struct pollfd   *get_poll_from_sock(int client_sock);
 
 };
