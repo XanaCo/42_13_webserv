@@ -69,7 +69,7 @@ private:
 	std::map<int, std::string>	_errorPages; // 500 - path to error
 	int							_listen;
 	int							_timeout;
-	char						_allowedMethods;
+	char						_allowedMethods; // needed?? already in locations
 
 };
 

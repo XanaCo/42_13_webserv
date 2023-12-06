@@ -226,10 +226,10 @@ void ServerInfo::setMaxClientBody(std::string max) {
 size_t ServerInfo::setLocations(std::vector<std::string> &serverTab, size_t pos) {
 
 	size_t it;
-	// bool methods = false;
+	Location locati(serverTab[pos]);
 	// bool cgi = false;
 
-	for (it = pos; it < serverTab.size(); it++)
+	for (it = pos + 1; it < serverTab.size(); it++)
 	{
 		if (!serverTab[it].compare("location"))
 			break;
@@ -237,21 +237,22 @@ size_t ServerInfo::setLocations(std::vector<std::string> &serverTab, size_t pos)
 		{
 			it++;
 			std::cout << "L Root : "<< serverTab[it] << std::endl;
-			//it < serverTab.size() && semiColonEnding(serverTab[it])
+			///check root first, then stock
+			//if (it < serverTab.size() && semiColonEnding(serverTab[it]))
+				//locati.setRoot();
 		}
 		else if (!serverTab[it].compare("allow_methods"))
 		{
-			//////3 args or !semicolon
+			//////3 args or !semicolon check errors
 			it++;
-			// methods = true;
-			std::cout << "L Methods : "<< serverTab[it] << std::endl;
 
 			for (size_t p = it; p < serverTab.size(); p++)
 			{
+				std::cout << "L Methods : "<< serverTab[p] << std::endl;
+				///check method first, then stock
 				this->_allowedMethods += *(serverTab[p]).c_str();
 				if (semiColonEnding(serverTab[p]))
 				{
-					// methods = false;
 					it = p;
 					break;
 				}
@@ -289,11 +290,11 @@ size_t ServerInfo::setLocations(std::vector<std::string> &serverTab, size_t pos)
 			std::cout << "L upload: "<< serverTab[it] << std::endl;
 			//it < serverTab.size() && semiColonEnding(serverTab[it])
 		}
-		// else
-		// {
-		// 	std::cout << "error here: "<< serverTab[it] << std::endl;
-		// 	throw ServerInfoError("Unexpected directive in configuration file");
-		// }
+		else
+		{
+			std::cout << "error here: "<< serverTab[it] << std::endl;
+			throw ServerInfoError("Unexpected directive in configuration file");
+		}
 	}
 	return it;
 }

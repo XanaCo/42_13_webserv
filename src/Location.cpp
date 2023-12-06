@@ -3,10 +3,10 @@
 
 /*::: CONSTRUCTORS :::*/
 
-Location::Location(std::string const &block) {
+Location::Location(std::string const &path) {
 
-	/// set params 
-	(void)block;
+	this->_pathName = path;
+
 	if (PRINT)
 		std::cout << GREEN << "Constructor: Location created " << END_COLOR << std::endl;
 
@@ -40,10 +40,3 @@ std::ostream &operator<<(std::ostream &out, Location const &other) {
 /*::: MEMBER FUNCTIONS :::*/
 
 // other functions here
-
-/*::: EXCEPTIONS :::*/
-
-const char *Location::LocationError::what() const throw() {
-
-	return YELLOW "Webserv Error : Location" END_COLOR;
-}
