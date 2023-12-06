@@ -35,14 +35,14 @@ public:
 	void setSockAddress();
 	void setPort(std::string port);
 	void setHost(std::string host);
-	void setRoot(std::string name);
-	void setIndex(std::string name);
+	void setRoot(std::string root);
+	void setIndex(std::string index);
 	void setMaxClientBody(std::string max);
-	void setLocations(std::vector<Location *> loc);
-	void setErrorPages(std::map<int, std::string> ePages);
 	void setListen(std::string port);
 	void setTimeout(std::string timeout);
 	void setAllowed(char methods);
+	size_t setErrorPages(std::vector<std::string> &serverTab, size_t pos);
+	size_t setLocations(std::vector<std::string> &serverTab, size_t pos);
 
 	class ServerInfoError : public std::exception {
 	

@@ -32,7 +32,6 @@ int	main(int argc, char **argv)
 		
 		std::string filePath = (argc == 2? argv[1] : "configFiles/default.conf" );
 
-		//PARSING
 		FileParser infos(filePath);
 		infos.parseFile();
 		
