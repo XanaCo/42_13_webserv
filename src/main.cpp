@@ -36,11 +36,12 @@ int	main(int argc, char **argv)
 		FileParser infos(filePath);
 		infos.cleanFile();
 		infos.splitServers();
+		//std::cout << infos << std::endl; // fileParser infos
+		infos.stockServerInfo();
+		
 
-		std::vector<ServerInfo*> Servers = infos.getAllServers(); //Returns classified Servers Info
-		printServersInfo(Servers);
-
-		//sleep (5); //to test signals, delete
+		// std::vector<ServerInfo> Servers = infos.getAllServers(); //Returns classified Servers Info
+		// printServersInfo(Servers);
 
 		//launchSERVER
 	}

@@ -45,14 +45,20 @@ void	signalHandler(int signal) {
 void	printStringVector(std::vector<std::string> stringVector) {
 
 	for (size_t i = 0; i < stringVector.size(); i++)
+	{
 		std::cout << stringVector[i] << std::endl;
+		std::cout << " ---------- " << std::endl;
+	}
 
 }
 
-void	printServersInfo(std::vector<ServerInfo *> stringVector) {
+void	printServersInfo(std::vector<ServerInfo> stringVector) {
 
 	for (size_t i = 0; i < stringVector.size(); i++)
+	{
 		std::cout << stringVector[i] << std::endl;
+		std::cout << " ---------- " << std::endl;
+	}
 }
 
 char hexToChar(const std::string& hex) {
@@ -60,6 +66,16 @@ char hexToChar(const std::string& hex) {
     int value;
     converter >> std::hex >> value;
     return static_cast<char>(value);
+}
+
+std::string	returnStringVector(std::vector<std::string> stringVector) {
+
+	std::string res;
+
+	for (size_t i = 0; i < stringVector.size(); i++)
+		res += stringVector[i] + " | ";
+
+	return res;
 }
 
 // ************************************************************************** //
@@ -128,3 +144,4 @@ void remplacerPercentEncoding(std::string& chaine)
     }
     chaine = resultat;
 }
+

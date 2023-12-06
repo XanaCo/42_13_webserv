@@ -24,16 +24,20 @@ class   Base{
         void    add_to_clients(int socket, struct sockaddr_in* address);
         void    add_to_poll_in(int socket);
         void    add_to_poll_out(int socket);
+        void    remove_from_servers(int socket);
+        void    remove_from_clients(int socket);
+        void    remove_from_poll(int socket);
         void    start_servers(void);
+        void    change_poll_event(int socket, int event);
         void    review_poll(void);
-        void    check_read_operations(void);
-        void    check_send_operations(void);
         bool    is_a_server(int socket);
+        bool    is_a_client(int socket);
         void    handle_new_connection(int serv_sock);
         void    receive_client_data(int client_sock);
         void*   get_in_addr(struct sockaddr *sa);
         void*   get_in_sockaddr(struct sockaddr *sa);
         Client &   get_cli_from_sock(int client_sock);
+        struct pollfd   *get_poll_from_sock(int client_sock);
 
 };
 
