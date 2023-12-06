@@ -32,7 +32,7 @@ public:
 	char getAllowed() const;
 
 	void setServerName(std::string name);
-	void setSockAddress(struct sockaddr_in sockAd);
+	void setSockAddress();
 	void setPort(std::string port);
 	void setHost(std::string host);
 	void setRoot(std::string name);

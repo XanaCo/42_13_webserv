@@ -34,12 +34,8 @@ int	main(int argc, char **argv)
 
 		//PARSING
 		FileParser infos(filePath);
-		infos.cleanFile();
-		infos.splitServers();
-		//std::cout << infos << std::endl; // fileParser infos
-		infos.stockServerInfo();
+		infos.parseFile();
 		
-
 		// std::vector<ServerInfo> Servers = infos.getAllServers(); //Returns classified Servers Info
 		// printServersInfo(Servers);
 

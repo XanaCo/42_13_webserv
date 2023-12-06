@@ -69,7 +69,7 @@ int FileParser::getNServers() const {
 
 /*::: MEMBER FUNCTIONS :::*/
 
-void FileParser::cleanFile() {
+void FileParser::parseFile() {
 
 	std::string allContent;
 	
@@ -79,6 +79,9 @@ void FileParser::cleanFile() {
 
 	if (this->_rawFile.empty())
 		throw FileParserError("File is empty");
+
+	splitServers();
+	stockServerInfo();
 
 }
 
@@ -153,9 +156,6 @@ size_t FileParser::serverEnd(size_t pos) {
 	bool location = false;
 	size_t it;
 
-	if (pos == _rawFile.size())
-		throw FileParserError("The end");
-
 	for (it = pos + 2; it != _rawFile.size(); it++)
 	{
 		if (!_rawFile[it].compare("server")) // we check for next keyword server
@@ -187,20 +187,19 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 	
 	ServerInfo newServer;
 	bool location = false;
-	bool error_page = false;
 
 	for (size_t it = 0; it < serverTab.size(); it++)
 	{
 		if (!serverTab[it].compare("server_name") && !location)
 		{
 			it++;
-			if(it < serverTab.size() && *(serverTab[it].rbegin()) == ';')
+			if(it < serverTab.size() && semiColonEnding(serverTab[it]))
 			{
-				if (newServer.getServerName() != "")
+				if (newServer.getServerName() != "" && newServer.getServerName() != "Unknown")
 					throw FileParserError("Server must have only one Name directive");
-				serverTab[it].erase(serverTab[it].end() - 1);
 				newServer.setServerName(serverTab[it]);
-				std::cout << serverTab[it] << std::endl;
+
+				std::cout << "server_name : " << serverTab[it] << std::endl;
 			}
 			else
 				throw FileParserError("server_name configuration error");
@@ -208,13 +207,13 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 		else if (!serverTab[it].compare("host") && !location)
 		{
 			it++;
-			if(it < serverTab.size() && *(serverTab[it].rbegin()) == ';')
+			if(it < serverTab.size() && semiColonEnding(serverTab[it]))
 			{
 				if (newServer.getHost())
 					throw FileParserError("Server must have only one Host directive");
-				serverTab[it].erase(serverTab[it].end() - 1);
 				newServer.setHost(serverTab[it]);
-				std::cout << serverTab[it] << std::endl;
+
+				std::cout << "Host : " << serverTab[it] << std::endl;
 			}
 			else
 				throw FileParserError("host configuration error");
@@ -222,11 +221,10 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 		else if (!serverTab[it].compare("listen") && !location)
 		{
 			it++;
-			if(it < serverTab.size() && *(serverTab[it].rbegin()) == ';')
+			if(it < serverTab.size() && semiColonEnding(serverTab[it]))
 			{
-				serverTab[it].erase(serverTab[it].end() - 1);
 				newServer.setPort(serverTab[it]);
-				std::cout << serverTab[it] << std::endl;
+				std::cout << "Listen : " << serverTab[it] << std::endl;
 			}
 			else
 				throw FileParserError("listen configuration error");
@@ -234,11 +232,10 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 		else if (!serverTab[it].compare("root") && !location)
 		{
 			it++;
-			if(it < serverTab.size() && *(serverTab[it].rbegin()) == ';')
+			if(it < serverTab.size() && semiColonEnding(serverTab[it]))
 			{
-				serverTab[it].erase(serverTab[it].end() - 1);
 				newServer.setRoot(serverTab[it]);
-				std::cout << serverTab[it] << std::endl;
+				std::cout << "Root : " << serverTab[it] << std::endl;
 			}
 			else
 				throw FileParserError("root configuration error");
@@ -246,11 +243,10 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 		else if (!serverTab[it].compare("index") && !location)
 		{
 			it++;
-			if(it < serverTab.size() && *(serverTab[it].rbegin()) == ';')
+			if(it < serverTab.size() && semiColonEnding(serverTab[it]))
 			{
-				serverTab[it].erase(serverTab[it].end() - 1);
 				newServer.setIndex(serverTab[it]);
-				std::cout << serverTab[it] << std::endl;
+				std::cout << "Index : " << serverTab[it] << std::endl;
 			}
 			else
 				throw FileParserError("index configuration error");
@@ -258,11 +254,10 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 		else if (!serverTab[it].compare("client_max_body_size") && !location)
 		{
 			it++;
-			if(it < serverTab.size() && *(serverTab[it].rbegin()) == ';')
+			if(it < serverTab.size() && semiColonEnding(serverTab[it]))
 			{
-				serverTab[it].erase(serverTab[it].end() - 1);
 				newServer.setMaxClientBody(serverTab[it]);
-				std::cout << serverTab[it] << std::endl;
+				std::cout << "CBS : " << serverTab[it] << std::endl;
 			}
 			else
 				throw FileParserError("client_max_size configuration error");
@@ -270,38 +265,38 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 		else if (!serverTab[it].compare("timeout") && !location)
 		{
 			it++;
-			if(it < serverTab.size() && *(serverTab[it].rbegin()) == ';')
+			if(it < serverTab.size() && semiColonEnding(serverTab[it]))
 			{
-				serverTab[it].erase(serverTab[it].end() - 1);
 				newServer.setTimeout(serverTab[it]);
-				std::cout << serverTab[it] << std::endl;
+				std::cout << "Timeout : " << serverTab[it] << std::endl;
 			}
 			else
 				throw FileParserError("timeout configuration error");
 		}
-		else if ((!serverTab[it].compare("error_page") && !location) || error_page)
+		else if ((!serverTab[it].compare("error_page") && !location)) // inside error pages
 		{
-			error_page = true;
 			it++;
 			if(it < serverTab.size()) // check next
-				std::cout << "we set error_pages here!" << std::endl;
+				std::cout << "error_page : " << serverTab[it] << std::endl;
 			// else
 			// 	throw FileParserError("error_page configuration error");
 		}
-		else if (!serverTab[it].compare("location") || location)
+		else if (!serverTab[it].compare("location"))
 		{
 			location = true;
+			if (!serverTab[it].compare("location") && location)
+				location = false;
 			it++;
 			if(it < serverTab.size() && *(serverTab[it].begin()) == '/') //check path
 				std::cout << "we set locations here!" << std::endl;	//check if root is set, path, stock everything else
 			// else
 			// 	throw FileParserError("location configuration error");
 		}
-		else
-			throw FileParserError("Unexpected directive in configuration file");
+		// else
+		// 	throw FileParserError("Unexpected directive in configuration file");
 
 	}
-	std::cout << newServer << std::endl;
+	std::cout << std::endl << newServer << std::endl;
 
 	return newServer;
 	
