@@ -61,12 +61,13 @@ void	printServersInfo(std::vector<ServerInfo> stringVector) {
 	}
 }
 
-char hexToChar(const std::string& hex) {
-    std::istringstream converter(hex);
-    int value;
-    converter >> std::hex >> value;
-    return static_cast<char>(value);
-}
+// DOUBLON
+// char hexToChar(const std::string& hex) {
+//     std::istringstream converter(hex);
+//     int value;
+//     converter >> std::hex >> value;
+//     return static_cast<char>(value);
+// }
 
 std::string	returnStringVector(std::vector<std::string> stringVector) {
 
@@ -82,11 +83,24 @@ std::string	returnStringVector(std::vector<std::string> stringVector) {
 //	CONTROLE QUALITE DU PATH DE LA RESSOURCE DEMANDEE
 // ************************************************************************** //
 
+// NE COMPILE PAS : CHECK NOUVELLE VERSION
+// bool	containsParentDirectory(const std::string& str)
+// {
+// 	int	size = str.length();
+
+// 	for (std::string::size_type i = 0; i < size; i++)
+// 	{
+//         if (str.substr(i, 3) == "../")
+//             return (true);
+//     }
+//     return (false);
+// }
+
 bool	containsParentDirectory(const std::string& str)
 {
-	int	size = str.length();
+	size_t	size = str.length();
 
-	for (std::string::size_type i = 0; i < size; i++)
+	for (size_t i = 0; i < size; i++)
 	{
         if (str.substr(i, 3) == "../")
             return (true);
@@ -122,11 +136,35 @@ char hexToChar(const std::string& hex)
     return (static_cast<char>(value));
 }
 
+// NE COMPILE PAS : CHECK NOUVELLE VERSION
+// void remplacerPercentEncoding(std::string& chaine)
+// {
+//     std::string				resultat;
+// 	int						size = chaine.length();
+//     std::string::size_type	i = 0;
+
+//     while (i < size)
+// 	{
+//         if (chaine[i] == '%' && i + 2 < size && isAlphaDigit(chaine[i + 1]) && isAlphaDigit(chaine[i + 2]))
+// 		{
+//             std::string hex = chaine.substr(i + 1, 2);
+//             resultat += hexToChar(hex);
+//             i += 3;
+//         }
+// 		else
+// 		{
+//             resultat += chaine[i];
+//             ++i;
+//         }
+//     }
+//     chaine = resultat;
+// }
+
 void remplacerPercentEncoding(std::string& chaine)
 {
-    std::string				resultat;
-	int						size = chaine.lenght();
-    std::string::size_type	i = 0;
+    std::string	resultat;
+	size_t		size = chaine.length();
+    size_t		i = 0;
 
     while (i < size)
 	{

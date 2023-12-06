@@ -77,7 +77,7 @@
 # define GREEN "\033[32;1m"
 # define END_COLOR "\033[0m"
 
-# define PRINT 0
+# define PRINT 0 // changer a 1 pour voir les constructors/destructors des instances
 
 // ************************************************************************** //
 //  RETURN STATUS
@@ -145,7 +145,7 @@ typedef enum e_headerRq {
 	RP_COOKIES,
 	RP_SECURITY,
 	RP_COMPRESSIOM,
-}
+}	t_headerRq;
 
 // ************************************************************************** //
 //  PROTOTYPES
