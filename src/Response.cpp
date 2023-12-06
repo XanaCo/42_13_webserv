@@ -12,8 +12,7 @@ Response::Response(uint16_t port): _port(port)
 {
     if (PRINT)
         std::cout << GREEN << "Response constructor called" << END_COLOR << std::endl;
-    this->setReturnStatus(200); // 100 maybe ?
-    this->setContent("");
+    this->resetValues();
 }
 
 Response::~Response()
@@ -141,6 +140,18 @@ bool Ressource::readRessource(const char* path, std::stringstream& content)
         return (false);
     }
 	return (true);
+}
+
+void    Response::resetValues(void)
+{
+    _port = 0;
+    _content = "";
+    _returnStatus = I_CONTIUE;
+    _cgiPid = 0;
+    _cgiFd = 0;
+    _cgiOutput = "";
+    _cgiBytesWritten = 0;
+    _cgiFdRessource = 0;
 }
 
 // ************************************************************************** //

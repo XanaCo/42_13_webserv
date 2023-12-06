@@ -52,6 +52,8 @@ class Request
         std::string                 _connection;
         std::string                 _body;
 
+        ServerInfo*                 _server;
+
         bool                   _headerCompleted;
         bool                   _bodyCompleted;
         // indique ce que le client peut traiter :

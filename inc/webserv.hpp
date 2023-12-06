@@ -95,9 +95,9 @@
 
 // Redirections
 # define R_MOVED_PERMANENTLY	301 // la ressource demandee a ete deplacee de maniere permanente vers une nouvelle URL
-# define R_FOUND				302 // 
+# define R_FOUND				302 // Humm, c'est interdit
 # define R_NOT_MODIFIED			304 // la ressource demandee n'a pas ete modifiee depuis la derniere fois ou il la demande
-# define R_TEMPORARY_REDIRECT	307 // 
+# define R_TEMPORARY_REDIRECT	307 // Humm, c'est interdit
 
 // Client errors
 # define E_BAD_REQUEST			400 // la requete n'a pas pu etre comprise ou traitee
@@ -117,24 +117,35 @@
 # define E_SERVICE_UNAVAILABLE	503 // le server n'est pas en mesure de traiter la demande du client pour le moment
 # define E_GATEWAY_TIMEOUT		504 // renvoye par un serveur proxi pour indiquer qu'il n'a pas recu de reponde de la part d'un serveur en amont
 
+typedef enum e_headerRequest {
+	RQ_METHOD,
+	RQ_HOST,
+	RQ_USER_AGENT,
+	RQ_ACCEPT,
+	RQ_ACCEPT_LANGUAGE,
+	RQ_ACCEPT_ENCODING,
+	RQ_AUTOR,
+	RQ_CONTENT_TYPE,
+	RQ_CONTENT_LENGHT,
+	RQ_REFERER,
+	RQ_COOKIES,
+	RQ_CONNECTION,
+	RQ_CACHECONTROL,
+	RQ_BODY_START,
+	RQ_OTHER_CONTENT
+}	t_headerRequest;
 
-typedef enum e_content {
-	METHOD,
-	HOST,
-	USER_AGENT,
-	ACCEPT,
-	ACCEPT_LANGUAGE,
-	ACCEPT_ENCODING,
-	AUTOR,
-	CONTENT_TYPE,
-	CONTENT_LENGHT,
-	REFERER,
-	COOKIES,
-	CONNECTION,
-	CACHECONTROL,
-	BODY_START,
-	OTHER_CONTENT
-}	t_content;
+typedef enum e_headerRq {
+	RP_CONNECTION,
+	RP_CACHECONTROL,
+	RP_DATE,
+	RP_CONTENT_TYPE,
+	RP_CONTENT_LENGHT,
+	RP_LOCATION,			// nouvelle URL de redirection
+	RP_COOKIES,
+	RP_SECURITY,
+	RP_COMPRESSIOM,
+}
 
 // ************************************************************************** //
 //  PROTOTYPES
@@ -153,5 +164,11 @@ std::vector<std::string>	cSplitLine(std::string line, char const *charset);
 // parsing utils
 int							strToInt(const std::string& str);
 std::vector<std::string>	splitString(const std::string& input, char delimiter);
+bool						containsParentDirectory(const std::string& str);
+void						compressionOfSlashes(std::string& str);
+
+bool						isAlphaDigit(char c);
+char						hexToChar(const std::string& hex);
+void						remplacerPercentEncoding(std::string& chaine);
 
 #endif

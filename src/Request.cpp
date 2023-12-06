@@ -65,7 +65,7 @@ std::ostream	&operator<<(std::ostream &os, Request &obj)
 void    Request::handle()
 {
     if (this.getPath() == "/site")
-        ;// get the content of the right html file with 
+        ;// get the content of the right html file with
     else if (this.getPath() == "/site/scriptCGI")
         ;// do the right script CGI
 }
@@ -73,6 +73,88 @@ void    Request::handle()
 bool    Request::isCompleted(void) const
 {
     return (_headerCompleted && _bodyCompleted);
+}
+
+// ************************************************************************** //
+//	CONTROLE QUALITE && CONSULTATION DES ARCHIVES
+// ************************************************************************** //
+
+// ici on a recu la requete et on cherche a savoir si elle est validee par la street
+bool    Request::checkup(void)
+{
+    // verification de la syntaxe
+    
+    // verification de la methode
+
+    // verification de la validite de l'URI
+
+    // verification de la version du protocole HTTP ?
+
+    // Verification des en-tetes de requete
+
+    // Verification de la taille du body
+
+    // Protections contre les attaques !?
+
+    return (true);
+}
+
+// ici la requete est validee et on cherche a savoir quel sous-serveur est concerne par cette derniere
+bool	Request::findHost(std::string host, vector<Server *> servers)
+{
+    int size = servers.size();
+
+    for (int i = 0; i < size; i++)
+    {
+		if (host == servers[i]->getHost())
+        {
+            // + link le server avec la requete
+    		return (true);
+        }
+    }
+
+	return (false);
+}
+
+// ici le host est identifie et on cherche a voir si la ressource est coherente
+bool    Request::findRessource()
+{
+    // on normalise le chemin, c'est a dire qu'on va enlever les '.' et '..'
+    // en fait on va pas accepter les .. car c'est pas securise, humm c'est interdit
+    // + compression des barres obliques "///" -> "/"
+
+    std::string path = _server->getPath() + _path;
+
+    if ()
+    compressionOfSlashes(path);
+
+    return (false);
+}
+
+// /!\ apparement quand on recois un requete il y a une phase de decodage
+// pour l'URI (le texte est encode en %XX base 16)
+
+// ************************************************************************** //
+//	LAS METHODAS (LA GETAS Y LA POSTAS Y LA DELETAS)
+// ************************************************************************** //
+
+// ici on a compris qu'on doit lire une ressource, on recupere le contenu de la ressource
+bool readRessource(const std::string& path, std::string& content)
+{
+    std::ifstream fichier(path.c_str());
+    if (fichier)
+    {
+        std::stringstream buffer;
+        buffer << fichier.rdbuf();
+        content = buffer.str();
+        fichier.close();
+        return (true);
+    }
+    else
+    {
+        std::cerr << "Erreur lors de la lecture du fichier : " << path << std::endl;
+        return (false);
+    }
 }
 
 // ************************************************************************** //
