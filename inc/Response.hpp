@@ -22,29 +22,30 @@ class Response
         Response(uint16_t port);
         ~Response();
 
+        Response    &operator=(Response const &obj);
+
         void    redirection(void);
         bool    readRessource(const char* path, std::stringstream& content);
         void    resetValues(void);
 
+        bool    cgiRead();
+        bool    cgiWrite();
+
         void    setReturnStatus(int returnStatus);
         void    setContent(int content);
         void    setPort(uint16_t port);
-
         void    setCgiOutput(std::string cgiOutput);
         void    setPort(uint16_t port);
         void    setPort(uint16_t port);
-
         void    setCgiBytesWritten(long cgiBytesWritten);
         void    setCgiFdRessource(int cgiFdRessource);
 
         int             getReturnStatus(void) const;
         std::string     getContent(void) const;
         uint16_t        getPort(void) const;
-
         pid_t           getCgiPid(void) const;
         int             getCgiFd(void) const;
         std::string     getCgiOutput(void) const;
-
         long            getCgiBytesWritten(void) const;
         int             getCgiFdRessource(void) const;
 

@@ -107,7 +107,7 @@ void    Response::redirection(void)
 // verifier le path est autorise dans le fichier de configuration
 // puis recuperer le contenu du fichier a l'aide de cette fonction :
 
-bool Ressource::readRessource(const char* path, std::stringstream& content)
+bool Ressource::readRessource(const char* path, std::stringstream& content) // doublon avec les fonctions des requetes ?
 {
 	struct stat sb;
     // Response    response;
@@ -193,87 +193,24 @@ bool    Response::cgiWrite()
     return (true);
 }
 
-
 // ************************************************************************** //
 //	LA GET-SET
 // ************************************************************************** //
 
-void    Response::setReturnStatus(int returnStatus)
-{
-    _returnStatus = returnStatus;
-}
+void    Response::setReturnStatus(int returnStatus) {returnStatus = returnStatus;}
+void    Response::setContent(int content) {_content = content;}
+void    Response::setPort(uint16_t port) {_port = port;}
+void    Response::setCgiPid(pid_t cgiPid) {_cgiPid = cgiPid;}
+void    Response::setCgiFd(int cgiFd) {_cgiFd = cgiFd;}
+void    Response::setCgiOutput(std::string cgiOutput) {_cgiOutput = cgiOutput;}
+void    Response::setCgiBytesWritten(long cgiBytesWritten) {_cgiBytesWritten = cgiBytesWritten;}
+void    Response::setCgiFdRessource(int cgiFdRessource) {_cgiFdRessource = cgiFdRessource;}
 
-void    Response::setContent(int content)
-{
-    _content = content;
-}
-
-void    Response::setPort(uint16_t port)
-{
-    _port = port;
-}
-
-void    Response::setCgiPid(pid_t cgiPid)
-{
-    _cgiPid = cgiPid;
-}
-
-void    Response::setCgiFd(int cgiFd)
-{
-    _cgiFd = cgiFd;
-}
-
-void    Response::setCgiOutput(std::string cgiOutput)
-{
-    _cgiOutput = cgiOutput;
-}
-
-void    Response::setCgiBytesWritten(long cgiBytesWritten)
-{
-    _cgiBytesWritten = cgiBytesWritten;
-}
-
-void    Response::setCgiFdRessource(int cgiFdRessource)
-{
-    _cgiFdRessource = cgiFdRessource;
-}
-
-int    Response::getReturnStatus(void) const;
-{
-    return (_returnStatus);
-}
-
-std::string    Response::getContent(void) const;
-{
-    return (_content);
-}
-
-uint16_t    Response::getPort(void) const;
-{
-    return (_port);
-}
-
-pid_t    Response::getCgiPid(void) const
-{
-    return (_cgiPid);
-}
-
-int    Response::getCgiFd(void) const
-{
-    return (_cgiFd);
-}
-
-std::string    Response::getCgiOutput(void) const
-{
-    return (_cgiOutput);
-}
-
-long    Response::getCgiBytesWritten(void) const
-{
-    return (_cgiBytesWritten);
-}
-
-int    Response::getCgiFdRessource(void) const
-{
-    return (_cgiFdRessource);
-}
+int             Response::getReturnStatus(void) const {return (_returnStatus);}
+std::string     Response::getContent(void) const {return (_content);}
+uint16_t        Response::getPort(void) const {return (_port);}
+pid_t           Response::getCgiPid(void) const {return (_cgiPid);}
+int             Response::getCgiFd(void) const {return (_cgiFd);}
+std::string     Response::getCgiOutput(void) const {return (_cgiOutput);}
+long            Response::getCgiBytesWritten(void) const {return (_cgiBytesWritten);}
+int             Response::getCgiFdRessource(void) const {return (_cgiFdRessource);}

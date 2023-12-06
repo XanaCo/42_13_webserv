@@ -62,13 +62,13 @@ std::ostream	&operator<<(std::ostream &os, Request &obj)
 //	METHODS
 // ************************************************************************** //
 
-void    Request::handle()
-{
-    if (this.getPath() == "/site")
-        ;// get the content of the right html file with
-    else if (this.getPath() == "/site/scriptCGI")
-        ;// do the right script CGI
-}
+// void    Request::handle()
+// {
+//     if (this.getPath() == "/site")
+//         ;// get the content of the right html file with
+//     else if (this.getPath() == "/site/scriptCGI")
+//         ;// do the right script CGI
+// }
 
 bool    Request::isCompleted(void) const
 {
@@ -139,7 +139,7 @@ bool    Request::findRessource()
 // ************************************************************************** //
 
 // ici on a compris qu'on doit lire une ressource, on recupere le contenu de la ressource
-bool readRessource(const std::string& path, std::string& content)
+bool Request::readRessource(const std::string& path, std::string& content)
 {
     std::ifstream fichier(path.c_str());
     if (fichier)
@@ -156,6 +156,37 @@ bool readRessource(const std::string& path, std::string& content)
         return (false);
     }
 }
+
+// ici on a compris qu'on doit supprimer une ressource. aller oust ! a la benne
+void Request::deleteRessource(const std::string& resource)
+{
+    if (resources.find(resource) != resources.end())
+    {
+        resources.erase(resource);
+        // std::cout << "ressource deleted : " << resource << std::endl;
+    }
+    else
+        std::cerr << "Delete error : ressource not found : " << resource << std::endl;
+}
+
+// ici on a compris qu'on doit creer une ressource. ..., et la lumiere fu
+void    Request::postRessource(const std::string& resource, const std::string& content)
+{
+    std::ofstream file(resource.c_str());
+    file << fileContent;
+    file.close();
+}
+// {
+//     if (resources.find(resource) != resources.end())
+//     {
+//         std::cerr << "Post error : Ressource already exist : " << resource << std::endl;
+//     }
+//     else
+//     {
+//         resources[resource] = content;
+//         // std::cout << "Ressource created : " << resource << std::endl;
+//     }
+// }
 
 // ************************************************************************** //
 //	PARSING METHODS
@@ -257,112 +288,26 @@ bool Request::fillContent(std::string request)
 //	LA GET-SET
 // ************************************************************************** //
 
-void    Request::setMethod(int method)
-{
-    _method = method;
-}
+void    Request::setMethod(int method) {_method = method;}
+void    Request::setPath(std::string path) {_path = path;}
+void    Request::setHost(std::string host) {_host = host;}
+void    Request::setUserAgent(std::string userAgent) {_userAgent = userAgent;}
+void    Request::setContentType(std::string contentType) {_contentType = contentType;}
+void    Request::setContentLenght(std::string contentLenght) {_contentLenght = contentLenght;}
+void    Request::setCookies(std::vector<std::string> cookies) {_cookies = cookies;}
+void    Request::setConnection(std::string connection) {_connection = connection;}
+void    Request::setBody(std::string body) {_body = body;}
+void    Request::setHeaderCompleted(bool headerCompleted) {_headerCompleted = headerCompleted;}
+void    Request::setBodyCompleted(bool bodyCompleted) {_bodyCompleted = bodyCompleted;}
 
-void    Request::setPath(std::string path)
-{
-    _path = path;
-}
-
-void    Request::setHost(std::string host)
-{
-    _host = host;
-}
-
-void    Request::setUserAgent(std::string userAgent)
-{
-    _userAgent = userAgent;
-}
-
-void    Request::setContentType(std::string contentType)
-{
-    _contentType = contentType;
-}
-
-void    Request::setContentLenght(std::string contentLenght)
-{
-    _contentLenght = contentLenght;
-}
-
-void    Request::setCookies(std::vector<std::string> cookies)
-{
-    _cookies = cookies;
-}
-
-void    Request::setConnection(std::string connection)
-{
-    _connection = connection;
-}
-
-void    Request::setBody(std::string body)
-{
-    _body = body;
-}
-
-void    Request::setHeaderCompleted(bool headerCompleted)
-{
-    _headerCompleted = headerCompleted;
-}
-
-void    Request::setBodyCompleted(bool bodyCompleted)
-{
-    _bodyCompleted = bodyCompleted;
-}
-
-int    Request::getMethod(void) const
-{
-    return (_method);
-}
-
-std::string    Request::getPath(void) const
-{
-    return (_path);
-}
-
-std::string    Request::getHost(void) const
-{
-    return (_host);
-}
-
-std::string    Request::getUserAgent(void) const
-{
-    return (_userAgent);
-}
-
-std::string    Request::getContentType(void) const
-{
-    return (_contentType);
-}
-
-int    Request::getContentLenght(void) const
-{
-    return (_contentLenght);
-}
-
-std::vector<std::string>    Request::getCookies(void) const
-{
-    return (_cookies);
-}
-
-std::string    Request::getConnection(void) const
-{
-    return (_connection);
-}
-
-std::string    Request::getBody(void) const
-{
-    return (_body);
-}
-
-bool    Request::getHeaderCompleted(void)
-{
-    return (_headerCompleted);
-}
-
-bool    Request::getBodyCompleted(void)
-{
-    return (_bodyCompleted);
-}
+int                         Request::getMethod(void) const {return (_method);}
+std::string                 Request::getPath(void) const {return (_path);}
+std::string                 Request::getHost(void) const {return (_host);}
+std::string                 Request::getUserAgent(void) const {return (_userAgent);}
+std::string                 Request::getContentType(void) const {return (_contentType);}
+int                         Request::getContentLenght(void) const {return (_contentLenght);}
+std::vector<std::string>    Request::getCookies(void) const {return (_cookies);}
+std::string                 Request::getConnection(void) const {return (_connection);}
+std::string                 Request::getBody(void) const {return (_body);}
+bool                        Request::getHeaderCompleted(void) {return (_headerCompleted);}
+bool                        Request::getBodyCompleted(void) {return (_bodyCompleted);}
