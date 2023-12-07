@@ -100,7 +100,7 @@ std::string FileParser::checkFileValid() {
 		throw FileParserError("Invalid file");
 	if (access(_filePath.c_str(), R_OK) == -1)
 		throw FileParserError("Not reading rights");
-	if (_filePath.find(".conf", _filePath.size() - 5) == std::string::npos) // .conf accepted
+	if (_filePath.find(".conf", _filePath.size() - 5) == std::string::npos)
 		throw FileParserError("Wrong configuration file format");
 	
 	fileStream.open(_filePath.c_str());
@@ -224,7 +224,7 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 			it++;
 			if(it < serverTab.size() && semiColonEnding(serverTab[it]))
 			{
-				if (newServer.getListen())
+				if (newServer.getListen() != "")
 					throw FileParserError("Server must have only one listen directive");
 				newServer.setPort(serverTab[it]);
 
@@ -317,7 +317,7 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 		else
 			throw FileParserError("Unexpected directive in configuration file");
 	}
-
+	newServer.setSockAddress();
 	return newServer;
 }
 

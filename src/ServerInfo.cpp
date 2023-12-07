@@ -11,7 +11,7 @@ ServerInfo::ServerInfo() {
 	this->_Root = "";
 	this->_index = "";
 	this->_maxClientBody = 0;
-	this->_listen = 0;
+	this->_listen = "";
 	this->_timeout = 0;
 
 	if (PRINT)
@@ -77,10 +77,11 @@ ServerInfo	&ServerInfo::operator=(ServerInfo const &other) {
 }
 
 std::ostream &operator<<(std::ostream &out, ServerInfo const &other) {
-		
-	
+
 	out << WHITE << "SERVER: "
 			<< other.getServerName()
+			<< " | SockAD: "
+			<< other.getSockAddress().sin_family
 			<< " | Port: "
 			<< other.getPort()
 			<< " | Host: "
@@ -147,7 +148,7 @@ std::vector<std::string> ServerInfo::getErrorPages() const {
 	return this->_errorPages;
 }
 
-int ServerInfo::getListen() const {
+std::string ServerInfo::getListen() const {
 
 	return this->_listen;
 }
@@ -176,9 +177,10 @@ void ServerInfo::setPort(std::string port) {
 	int res = strToInt(port);
 
 	if (res < 1 || res > 65535)
-		throw ServerInfoError("Invald port value");
+		throw ServerInfoError("Invalid port value");
 	
 	this->_Port = htons((u_int16_t)res);
+	setListen(port);
 }
 
 void ServerInfo::setHost(std::string host) {
@@ -236,36 +238,36 @@ size_t ServerInfo::setLocations(std::vector<std::string> &serverTab, size_t pos)
 				if (!serverTab[p].compare("GET"))
 				{	
 					if (!(!(methods & GET) && (methods += GET)))
-						throw ServerInfoError("The weird test of Pablo failed");
+						throw ServerInfoError("GET method is already added");
 				}
 				else if (!serverTab[p].compare("POST"))
 				{
 					if (!(!(methods & POST) && (methods += POST)))
-						throw ServerInfoError("The weird test of Pablo failed");
+						throw ServerInfoError("POST method is already added");
 				}
 				else if (!serverTab[p].compare("DELETE"))
 				{
 					if (!(!(methods & DELETE) && (methods += DELETE)))
-						throw ServerInfoError("The weird test of Pablo failed");
+						throw ServerInfoError("DELETE method is already added");
 				}
 				else if (!serverTab[p].compare("GET;") && semiColonEnding(serverTab[p]))
 				{
 					if (!(!(methods & GET) && (methods += GET)))
-						throw ServerInfoError("The weird test of Pablo failed");
+						throw ServerInfoError("GET method is already added");
 					it = p;
 					break;
 				}
 				else if (!serverTab[p].compare("POST;") && semiColonEnding(serverTab[p]))
 				{
 					if (!(!(methods & POST) && (methods += POST)))
-						throw ServerInfoError("The weird test of Pablo failed");
+						throw ServerInfoError("POST method is already added");
 					it = p;
 					break;
 				}
 				else if (!serverTab[p].compare("DELETE;") && semiColonEnding(serverTab[p]))
 				{
 					if (!(!(methods & DELETE) && (methods += DELETE)))
-						throw ServerInfoError("The weird test of Pablo failed");
+						throw ServerInfoError("DELETE method is already added");
 					it = p;
 					break;
 				}
@@ -315,23 +317,19 @@ size_t ServerInfo::setLocations(std::vector<std::string> &serverTab, size_t pos)
 			else
 				throw ServerInfoError("Invalid return declaration in location");
 		}
-		else if (!serverTab[it].compare("CGI")) ///TODO
+		else if (!serverTab[it].compare("CGI"))
 		{
 			it++;
-			for (size_t p = it; p < serverTab.size(); p++)
-			{
-				// if (*(serverTab[it].begin()) == '.py' || *(serverTab[it].begin()) == '.php')
-				// 	first
-				// else if (*(serverTab[it].begin()) == '/')
-				// 	deuxieme
-				std::cout << "L CGI : "<< serverTab[p] << std::endl;
-				if (semiColonEnding(serverTab[p]))
-				{
-					break;
-				}
+			size_t p;
 
-				it = p + 1;
+			for (p = it; p < serverTab.size(); p++)
+			{
+				if (semiColonEnding(serverTab[p]))
+					break;
+				locati.setLCgi(serverTab[p]);
 			}
+			locati.setLCgi(serverTab[p]);
+			it = p;
 		}
 		else if (!serverTab[it].compare("upload_dir"))
 		{
@@ -342,7 +340,10 @@ size_t ServerInfo::setLocations(std::vector<std::string> &serverTab, size_t pos)
 				throw ServerInfoError("Invalid upload_dir declaration in location");
 		}
 		else
+		{
+			std::cout << "error here: " << serverTab[it] << std::endl;
 			throw ServerInfoError("Unexpected directive in configuration file");
+		}
 	}
 	this->_locations.push_back(locati);
 	return it;
@@ -354,22 +355,18 @@ size_t ServerInfo::setErrorPages(std::vector<std::string> &serverTab, size_t pos
 
 	for (it = pos; it < serverTab.size(); it++)
 	{
-		std::cout << serverTab[it] << std::endl;
-		this->_errorPages.push_back(serverTab[it]);
 		if (semiColonEnding(serverTab[it]))
-		{
-			this->_errorPages.push_back(serverTab[it]);
 			break;
-		}
+		this->_errorPages.push_back(serverTab[it]);
 	}
-
-	///CHECK if error are good
+	this->_errorPages.push_back(serverTab[it]);
+	///CHECK if errorPages are good!! num / string <pair>
 	return it;
 }
 
 void ServerInfo::setListen(std::string port) {
 
-	this->_listen = strToInt(port);
+	this->_listen = port;
 }
 
 void ServerInfo::setTimeout(std::string timeout) {

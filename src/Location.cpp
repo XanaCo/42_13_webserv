@@ -82,7 +82,7 @@ std::ostream &operator<<(std::ostream &out, Location const &other) {
 			<< " | Index: "
 			<< (other.getLIndex()!= "" ? other.getLIndex() : "not defined")
 			<< " | Upload: "
-			<< (other.getLUploadDir() != "" ? "other.getLUploadDir" : "not defined")
+			<< (other.getLUploadDir() != "" ? other.getLUploadDir() : "not defined")
 			<< " | Return: "
 			<< other.getLReturn().first
 			<< " - "
@@ -155,9 +155,10 @@ void Location::setLIndex(std::string Lindex) {
 	this->_index = Lindex;
 }
 
-void Location::setLCgi(std::vector<std::string> Lcgi) {
+void Location::setLCgi(std::string Lcgi) {
 
-	this->_cgi = Lcgi; ///
+	//CHECK if .py || .php || begin par / VALID!!!
+	this->_cgi.push_back(Lcgi);
 }
 
 void Location::setLReturn(std::string Rerror, std::string Rpath) {

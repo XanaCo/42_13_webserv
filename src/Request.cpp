@@ -141,7 +141,7 @@ bool    Request::findRessource(std::string& path)
 // pour l'URI (le texte est encode en %XX base 16)
 
 // ************************************************************************** //
-//	LAS METHODAS (LA GETAS Y LA POSTAS Y LA DELETAS)
+//	LAS METHODAS (LAs GETAS Y LAs POSTAS Y LAs DELETAS)
 // ************************************************************************** //
 
 // ici on a compris qu'on doit lire une ressource, on recupere le contenu de la ressource

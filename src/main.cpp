@@ -35,11 +35,11 @@ int	main(int argc, char **argv)
 		FileParser infos(filePath);
 		infos.parseFile();
 		
-		// std::vector<ServerInfo> Servers = infos.getAllServers(); //Returns classified Servers Info
-		// printServersInfo(Servers);
+		std::vector<ServerInfo> Servers = infos.getAllServers(); //classified Servers
+		printServersInfo(Servers);
 
-		//launchSERVER
-	}
+		//launchSERVERClass(&Servers);
+ 	}
 	catch (std::exception &e)
 	{
 		std::cerr << e.what() << std::endl;
