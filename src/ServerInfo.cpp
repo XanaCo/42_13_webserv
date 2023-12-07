@@ -13,7 +13,6 @@ ServerInfo::ServerInfo() {
 	this->_maxClientBody = 0;
 	this->_listen = 0;
 	this->_timeout = 0;
-	this->_allowedMethods = 0;
 
 	if (PRINT)
 		std::cout << GREEN << "Default Server was created | Port: " << this->_Port << " | Host: " << this->_Host << END_COLOR << std::endl;
@@ -35,7 +34,6 @@ ServerInfo::ServerInfo(ServerInfo const &copy) {
 		this->_errorPages = copy.getErrorPages();
 		this->_listen = copy.getListen();
 		this->_timeout = copy.getTimeout();
-		this->_allowedMethods = copy.getAllowed();
 	}
 
 	if (PRINT)
@@ -43,7 +41,6 @@ ServerInfo::ServerInfo(ServerInfo const &copy) {
 
 	return ;
 }
-
 
 /*::: DESTRUCTORS :::*/
 
@@ -71,7 +68,6 @@ ServerInfo	&ServerInfo::operator=(ServerInfo const &other) {
 		this->_errorPages = other.getErrorPages();
 		this->_listen = other.getListen();
 		this->_timeout = other.getTimeout();
-		this->_allowedMethods = other.getAllowed();
 	}
 
 	if (PRINT)
@@ -82,7 +78,9 @@ ServerInfo	&ServerInfo::operator=(ServerInfo const &other) {
 
 std::ostream &operator<<(std::ostream &out, ServerInfo const &other) {
 		
-	out << other.getServerName()
+	
+	out << WHITE << "SERVER: "
+			<< other.getServerName()
 			<< " | Port: "
 			<< other.getPort()
 			<< " | Host: "
@@ -97,9 +95,7 @@ std::ostream &operator<<(std::ostream &out, ServerInfo const &other) {
 			<< other.getListen()
 			<< " | Timeout: "
 			<< other.getTimeout()
-			<< " | Allowed: "
-			<< other.getAllowed()
-			<< "\n";
+			<< "\n" << END_COLOR;
 
 	return out;
 }
@@ -141,7 +137,7 @@ unsigned int ServerInfo::getMaxClientBody() const {
 	return this->_maxClientBody;
 }
 
-std::vector<Location *> ServerInfo::getLocations() const {
+std::vector<Location> ServerInfo::getLocations() const {
 
 	return this->_locations;
 }
@@ -159,11 +155,6 @@ int ServerInfo::getListen() const {
 int ServerInfo::getTimeout() const {
 
 	return this->_timeout;
-}
-
-char ServerInfo::getAllowed() const {
-
-	return this->_allowedMethods;
 }
 
 /*::: SETERS :::*/
@@ -204,17 +195,13 @@ void ServerInfo::setHost(std::string host) {
 
 void ServerInfo::setRoot(std::string root) {
 
-
-
-
+	//CHECK VALID PATH
 	this->_Root = root;
 }
 
 void ServerInfo::setIndex(std::string index) {
 
-
-
-
+	//CHECK VALID PATH
 	this->_index = index;
 }
 
@@ -225,9 +212,8 @@ void ServerInfo::setMaxClientBody(std::string max) {
 
 size_t ServerInfo::setLocations(std::vector<std::string> &serverTab, size_t pos) {
 
-	size_t it;
 	Location locati(serverTab[pos]);
-	// bool cgi = false;
+	size_t it;
 
 	for (it = pos + 1; it < serverTab.size(); it++)
 	{
@@ -236,84 +222,159 @@ size_t ServerInfo::setLocations(std::vector<std::string> &serverTab, size_t pos)
 		else if (!serverTab[it].compare("root"))
 		{
 			it++;
-			std::cout << "L Root : "<< serverTab[it] << std::endl;
-			///check root first, then stock
-			//if (it < serverTab.size() && semiColonEnding(serverTab[it]))
-				//locati.setRoot();
+			if (it < serverTab.size() && semiColonEnding(serverTab[it]))
+				locati.setLRoot(serverTab[it]);
+			else
+				throw ServerInfoError("Invalid root declaration in location");
 		}
 		else if (!serverTab[it].compare("allow_methods"))
 		{
-			//////3 args or !semicolon check errors
+			char methods = 0;
 			it++;
-
 			for (size_t p = it; p < serverTab.size(); p++)
 			{
-				std::cout << "L Methods : "<< serverTab[p] << std::endl;
-				///check method first, then stock
-				this->_allowedMethods += *(serverTab[p]).c_str();
-				if (semiColonEnding(serverTab[p]))
+				if (!serverTab[p].compare("GET"))
+				{	
+					if (!(!(methods & GET) && (methods += GET)))
+						throw ServerInfoError("The weird test of Pablo failed");
+				}
+				else if (!serverTab[p].compare("POST"))
 				{
+					if (!(!(methods & POST) && (methods += POST)))
+						throw ServerInfoError("The weird test of Pablo failed");
+				}
+				else if (!serverTab[p].compare("DELETE"))
+				{
+					if (!(!(methods & DELETE) && (methods += DELETE)))
+						throw ServerInfoError("The weird test of Pablo failed");
+				}
+				else if (!serverTab[p].compare("GET;") && semiColonEnding(serverTab[p]))
+				{
+					if (!(!(methods & GET) && (methods += GET)))
+						throw ServerInfoError("The weird test of Pablo failed");
 					it = p;
 					break;
 				}
+				else if (!serverTab[p].compare("POST;") && semiColonEnding(serverTab[p]))
+				{
+					if (!(!(methods & POST) && (methods += POST)))
+						throw ServerInfoError("The weird test of Pablo failed");
+					it = p;
+					break;
+				}
+				else if (!serverTab[p].compare("DELETE;") && semiColonEnding(serverTab[p]))
+				{
+					if (!(!(methods & DELETE) && (methods += DELETE)))
+						throw ServerInfoError("The weird test of Pablo failed");
+					it = p;
+					break;
+				}
+				else
+					throw ServerInfoError("Invalid method declaration in location");
 			}
+			locati.setLAllowed(methods);
 		}
 		else if (!serverTab[it].compare("autoindex"))
 		{
 			it++;
-			std::cout << "L Autoindex : "<< serverTab[it] << std::endl;
-			//it < serverTab.size() && semiColonEnding(serverTab[it])
+			if (it < serverTab.size() && semiColonEnding(serverTab[it]))
+			{
+				if (locati.getLAutoindex() != false)
+					throw ServerInfoError("Location must have only one autoindex directive");
+				if (!serverTab[it].compare("on"))
+					locati.setLAutoindex(true);
+				else if (!serverTab[it].compare("off"))
+					locati.setLAutoindex(false);
+				else
+					throw ServerInfoError("Invalid autoindex declaration in location");
+			}
+			else
+				throw ServerInfoError("Invalid autoindex declaration in location");
 		}
 		else if (!serverTab[it].compare("index"))
 		{
 			it++;
-			std::cout << "L index : "<< serverTab[it] << std::endl;
-			//it < serverTab.size() && semiColonEnding(serverTab[it])
+			if (it < serverTab.size() && semiColonEnding(serverTab[it]))
+			{
+				if (locati.getLIndex() != "")
+					throw ServerInfoError("Location must have only one index directive");
+				locati.setLIndex(serverTab[it]);
+			}
+			else
+				throw ServerInfoError("Invalid index declaration in location");
 		}
 		else if (!serverTab[it].compare("return"))
 		{
-			///x2 ARGS
-			it++;
-			std::cout << "L return : "<< serverTab[it] << std::endl;
-			// it < serverTab.size() && semiColonEnding(serverTab[it])
+			it += 2;
+			if (it < serverTab.size() && semiColonEnding(serverTab[it]))
+			{
+				if (locati.getLReturn() != std::pair<int, std::string>(404, "/"))
+					throw ServerInfoError("Location must have only one return directive");
+				locati.setLReturn(serverTab[it - 1], serverTab[it]);
+			}
+			else
+				throw ServerInfoError("Invalid return declaration in location");
 		}
-		else if (!serverTab[it].compare("CGI"))
+		else if (!serverTab[it].compare("CGI")) ///TODO
 		{
-			//PLUSIEURS ARGS while !semicolon
 			it++;
-			std::cout << "L CGI : "<< serverTab[it] << std::endl;
-			//it < serverTab.size() && semiColonEnding(serverTab[it])
+			for (size_t p = it; p < serverTab.size(); p++)
+			{
+				// if (*(serverTab[it].begin()) == '.py' || *(serverTab[it].begin()) == '.php')
+				// 	first
+				// else if (*(serverTab[it].begin()) == '/')
+				// 	deuxieme
+				std::cout << "L CGI : "<< serverTab[p] << std::endl;
+				if (semiColonEnding(serverTab[p]))
+				{
+					break;
+				}
+
+				it = p + 1;
+			}
 		}
 		else if (!serverTab[it].compare("upload_dir"))
 		{
 			it++;
-			std::cout << "L upload: "<< serverTab[it] << std::endl;
-			//it < serverTab.size() && semiColonEnding(serverTab[it])
+			if (it < serverTab.size() && semiColonEnding(serverTab[it]))
+				locati.setLUploadDir(serverTab[it]);
+			else
+				throw ServerInfoError("Invalid upload_dir declaration in location");
 		}
 		else
-		{
-			std::cout << "error here: "<< serverTab[it] << std::endl;
 			throw ServerInfoError("Unexpected directive in configuration file");
-		}
 	}
+	this->_locations.push_back(locati);
 	return it;
 }
 
 size_t ServerInfo::setErrorPages(std::vector<std::string> &serverTab, size_t pos) {
 
+	std::vector<std::string> allErrorContent;
 	size_t it;
 
 	for (it = pos; it < serverTab.size(); it++)
 	{
 		std::cout << serverTab[it] << std::endl;
+		allErrorContent.push_back(serverTab[it]);
 		if (semiColonEnding(serverTab[it]))
 		{
+			allErrorContent.push_back(serverTab[it]);
 			break;
 		}
 	}
-	return it;
 
-	// this->_errorPages = // create pair;
+	// for (size_t i = 0; i < allErrorContent.size(); i++)
+	// {
+	// 	if (i % 2)
+	// 	{
+	// 		if (isdigit(strToInt(allErrorContent[i])))
+
+	// 	}
+	// }
+
+
+	return it;
 }
 
 void ServerInfo::setListen(std::string port) {
@@ -329,11 +390,6 @@ void ServerInfo::setTimeout(std::string timeout) {
 		throw ServerInfoError("Invalid timeout value");
 
 	this->_timeout = res;
-}
-
-void ServerInfo::setAllowed(char methods) {
-
-	this->_allowedMethods = methods;
 }
 
 /*::: EXCEPTIONS :::*/
