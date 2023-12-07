@@ -35,8 +35,8 @@ int	main(int argc, char **argv)
 		FileParser infos(filePath);
 		infos.parseFile();
 		
-		std::vector<ServerInfo> Servers = infos.getAllServers(); //Returns classified Servers Info
-		printServersInfo(Servers);
+		// std::vector<ServerInfo> Servers = infos.getAllServers(); //Returns classified Servers Info
+		// printServersInfo(Servers);
 
 		//launchSERVER
 	}

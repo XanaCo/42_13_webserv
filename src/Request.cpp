@@ -31,7 +31,7 @@ Request::~Request()
 
 Request	&Request::operator=(Request const &obj)
 {
-    if (this != obj)
+    if (this != &obj)
     {
         this->setMethod(obj.getMethod());
         this->setPath(obj.getPath());
@@ -99,16 +99,17 @@ bool    Request::checkup(void)
     return (true);
 }
 
+
 // ici la requete est validee et on cherche a savoir quel sous-serveur est concerne par cette derniere
-bool	Request::findHost(vector<Server *> servers)
+bool	Request::findHost(std::vector<ServerInfo> servers)
 {
     int size = servers.size();
 
     for (int i = 0; i < size; i++)
     {
-		if (_host == servers[i]->getHost())
+		if (_host == servers[i].getServerName())
         {
-            _server = servers[i];
+            _server = &servers[i];
             // + link le server avec la requete
     		return (true);
         }
@@ -124,10 +125,15 @@ bool    Request::findRessource(std::string& path)
     // en fait on va pas accepter les .. car c'est pas securise, humm c'est interdit
     // + compression des barres obliques "///" -> "/"
 
-    path = _server->getPath() + _path;
+    path = _server->getRoot() + _path;
+
 
     compressionOfSlashes(path);
-    
+    if (containsParentDirectory (path))
+	{
+		//_status MAJ
+		throw ServerInfo::ServerInfoError("Pablo is awesome and checked this error");
+	}
     return (true);
 }
 
@@ -286,7 +292,7 @@ bool Request::fillContent(std::string request)
 // ************************************************************************** //
 
 // 1- je fill la str de la requete dans la classe Requete
-// 2- je fais des verifs
+// 2- je fais des verifseadRessour
 // 3- je trouve le nom de la ressource
 // 4- je change le nom
 // 5- je recupere le contenu du fichier
@@ -310,6 +316,10 @@ void    Request::run(std::string strRequest, std::vector<std::string> serverList
         std::cerr << "on ne trouve par la ressource, qui a mange le dernier carre de chocolat ?" << std::endl;
         return ;
     }
+
+	std::vector<Location> loca = this->_server->getLocations();
+	loca.getLAllowed();
+
     this->readRessource(path);
 }
 

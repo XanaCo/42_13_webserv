@@ -22,7 +22,7 @@ class Request
         bool        isCompleted(void) const;
 
         bool        checkup(void);
-        bool	    findHost(std::string host, vector<Server *> servers);
+        bool	    findHost(std::string host, std::vector<Server *> servers);
         bool        findRessource();
 
         bool        readRessource(const std::string& path, std::string& content);
