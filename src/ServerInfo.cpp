@@ -379,6 +379,20 @@ void ServerInfo::setTimeout(std::string timeout) {
 	this->_timeout = res;
 }
 
+ /// TODO FINAL CHECK, all variables 'struct'
+void ServerInfo::checkAllInfos() {
+
+	// check root != ""
+	// check index != ""
+	// check client body
+	// check in locations :
+		//cgi
+		//return
+	//check error pages
+	//check listen != ""
+	this->setSockAddress();
+}
+
 /*::: EXCEPTIONS :::*/
 
 ServerInfo::ServerInfoError::ServerInfoError(std::string errorMsg) throw() : _errorMsg("Webserv Error : " + errorMsg) {}

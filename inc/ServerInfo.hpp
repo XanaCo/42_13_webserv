@@ -42,6 +42,8 @@ public:
 	size_t setErrorPages(std::vector<std::string> &serverTab, size_t pos);
 	size_t setLocations(std::vector<std::string> &serverTab, size_t pos);
 
+	void checkAllInfos(); /// FINAL CHECK, all variables 'struct'
+
 	class ServerInfoError : public std::exception {
 	
 		public:

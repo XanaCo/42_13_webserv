@@ -9,7 +9,7 @@
 class Location {
 
 public:
-	Location(std::string const &block);
+	Location(std::string const &path);
 	Location(Location const &copy);
 	~Location();
 

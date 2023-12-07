@@ -317,7 +317,7 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 		else
 			throw FileParserError("Unexpected directive in configuration file");
 	}
-	newServer.setSockAddress();
+	newServer.checkAllInfos();
 	return newServer;
 }
 
