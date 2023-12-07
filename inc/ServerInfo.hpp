@@ -26,7 +26,7 @@ public:
 	std::string getIndex() const;
 	unsigned int getMaxClientBody() const;
 	std::vector<Location> getLocations() const;
-	std::map<int, std::string> getErrorPages() const;
+	std::vector<std::string> getErrorPages() const;
 	int getListen() const;
 	int getTimeout() const;
 
@@ -64,7 +64,7 @@ private:
 	std::string					_index; // path to index.html
 	unsigned int				_maxClientBody;
 	std::vector<Location>		_locations; // class Location with infos
-	std::map<int, std::string>	_errorPages; // 500 - path to error
+	std::vector<std::string>	_errorPages; // 500 - path to error
 	int							_listen;
 	int							_timeout;
 

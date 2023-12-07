@@ -28,7 +28,6 @@ public:
 	void stockServerInfo();
 	ServerInfo	stockInfos(std::vector<std::string> serverTab);
 
-
 	class FileParserError : public std::exception {
 	
 		public:
@@ -47,10 +46,10 @@ private:
 	FileParser(FileParser const &copy);
 	FileParser	&operator=(FileParser const &other);
 
+	std::vector<ServerInfo>		_allServers; // classified info
 	std::string const			_filePath;
 	std::vector<std::string>	_rawFile;
 	std::vector<std::string>	_rawServer;
-	std::vector<ServerInfo>		_allServers; // classified info
 	int 						_nServers;
 
 };

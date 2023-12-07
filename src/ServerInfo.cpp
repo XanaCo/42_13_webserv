@@ -142,7 +142,7 @@ std::vector<Location> ServerInfo::getLocations() const {
 	return this->_locations;
 }
 
-std::map<int, std::string> ServerInfo::getErrorPages() const {
+std::vector<std::string> ServerInfo::getErrorPages() const {
 
 	return this->_errorPages;
 }
@@ -350,30 +350,20 @@ size_t ServerInfo::setLocations(std::vector<std::string> &serverTab, size_t pos)
 
 size_t ServerInfo::setErrorPages(std::vector<std::string> &serverTab, size_t pos) {
 
-	std::vector<std::string> allErrorContent;
 	size_t it;
 
 	for (it = pos; it < serverTab.size(); it++)
 	{
 		std::cout << serverTab[it] << std::endl;
-		allErrorContent.push_back(serverTab[it]);
+		this->_errorPages.push_back(serverTab[it]);
 		if (semiColonEnding(serverTab[it]))
 		{
-			allErrorContent.push_back(serverTab[it]);
+			this->_errorPages.push_back(serverTab[it]);
 			break;
 		}
 	}
 
-	// for (size_t i = 0; i < allErrorContent.size(); i++)
-	// {
-	// 	if (i % 2)
-	// 	{
-	// 		if (isdigit(strToInt(allErrorContent[i])))
-
-	// 	}
-	// }
-
-
+	///CHECK if error are good
 	return it;
 }
 
