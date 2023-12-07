@@ -30,7 +30,10 @@ public:
 	int getListen() const;
 	int getTimeout() const;
 	char getAllowed() const;
+    int get_socket(void) const;
+    std::string get_l_port(void) const;
 
+    bool set_listen_socket(std::string l_port);
 	void setServerName(std::string name);
 	void setSockAddress();
 	void setPort(std::string port);
@@ -58,6 +61,8 @@ public:
 
 private:
 
+    int                         _listen_socket;
+    std::string                 _l_port;
 	std::string					_serverName;
 	struct sockaddr_in			_sockAddress;
 	in_port_t					_Port; // uint_16

@@ -60,6 +60,8 @@ ServerInfo::~ServerInfo() {
 ServerInfo	&ServerInfo::operator=(ServerInfo const &other) {
 
 	if (this != &other) {
+        this->_listen_socket = other.get_socket();
+        this->_l_port = other.get_l_port();
 		this->_serverName = other.getServerName();
 		this->_Port = other.getPort();
 		this->_Host = other.getHost();
