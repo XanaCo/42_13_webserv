@@ -100,14 +100,15 @@ bool    Request::checkup(void)
 }
 
 // ici la requete est validee et on cherche a savoir quel sous-serveur est concerne par cette derniere
-bool	Request::findHost(std::string host, vector<Server *> servers)
+bool	Request::findHost(vector<Server *> servers)
 {
     int size = servers.size();
 
     for (int i = 0; i < size; i++)
     {
-		if (host == servers[i]->getHost())
+		if (_host == servers[i]->getHost())
         {
+            _server = servers[i];
             // + link le server avec la requete
     		return (true);
         }
@@ -117,18 +118,17 @@ bool	Request::findHost(std::string host, vector<Server *> servers)
 }
 
 // ici le host est identifie et on cherche a voir si la ressource est coherente
-bool    Request::findRessource()
+bool    Request::findRessource(std::string& path)
 {
     // on normalise le chemin, c'est a dire qu'on va enlever les '.' et '..'
     // en fait on va pas accepter les .. car c'est pas securise, humm c'est interdit
     // + compression des barres obliques "///" -> "/"
 
-    std::string path = _server->getPath() + _path;
+    path = _server->getPath() + _path;
 
-    if ()
     compressionOfSlashes(path);
-
-    return (false);
+    
+    return (true);
 }
 
 // /!\ apparement quand on recois un requete il y a une phase de decodage
@@ -150,11 +150,8 @@ bool Request::readRessource(const std::string& path, std::string& content)
         fichier.close();
         return (true);
     }
-    else
-    {
-        std::cerr << "Erreur lors de la lecture du fichier : " << path << std::endl;
-        return (false);
-    }
+    std::cerr << "Erreur lors de la lecture du fichier : " << path << std::endl;
+    return (false);
 }
 
 // ici on a compris qu'on doit supprimer une ressource. aller oust ! a la benne
@@ -283,6 +280,39 @@ bool Request::fillContent(std::string request)
     //     return (REFERER);
     // if (line.substr(0, 14) == "Cache-Control:")
     //     return (CACHECONTROL);
+
+// ************************************************************************** //
+//	MAIN METHOD
+// ************************************************************************** //
+
+// 1- je fill la str de la requete dans la classe Requete
+// 2- je fais des verifs
+// 3- je trouve le nom de la ressource
+// 4- je change le nom
+// 5- je recupere le contenu du fichier
+// 6- fin de la requete
+void    Request::run(std::string strRequest, std::vector<std::string> serverList)
+{
+    this->resetValues();
+    if (!this->fillContent(strRequest))
+    {
+        std::cerr << "au secours, on parse mal" << std::endl;
+        return ;
+    }
+    if (!this->findHost(serverList))
+    {
+        std::cerr << "on ne trouve pas l'ost, qui est le responsable ?" << std::endl;
+        return ;
+    }
+    std::string path;
+    if (!this->findRessource(path))
+    {
+        std::cerr << "on ne trouve par la ressource, qui a mange le dernier carre de chocolat ?" << std::endl;
+        return ;
+    }
+    this->readRessource(path);
+}
+
 
 // ************************************************************************** //
 //	LA GET-SET
