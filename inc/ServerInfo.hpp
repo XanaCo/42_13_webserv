@@ -25,8 +25,8 @@ public:
 	std::string getRoot() const;
 	std::string getIndex() const;
 	unsigned int getMaxClientBody() const;
-	std::vector<Location *> getLocations() const;
-	std::map<int, std::string> getErrorPages() const;
+	std::vector<Location> getLocations() const;
+	std::vector<std::string> getErrorPages() const;
 	int getListen() const;
 	int getTimeout() const;
 	char getAllowed() const;
@@ -43,7 +43,6 @@ public:
 	void setMaxClientBody(std::string max);
 	void setListen(std::string port);
 	void setTimeout(std::string timeout);
-	void setAllowed(char methods);
 	size_t setErrorPages(std::vector<std::string> &serverTab, size_t pos);
 	size_t setLocations(std::vector<std::string> &serverTab, size_t pos);
 
@@ -70,11 +69,10 @@ private:
 	std::string					_Root; // root path
 	std::string					_index; // path to index.html
 	unsigned int				_maxClientBody;
-	std::vector<Location *>		_locations; // class Location with infos
-	std::map<int, std::string>	_errorPages; // 500 - path to error
+	std::vector<Location>		_locations; // class Location with infos
+	std::vector<std::string>	_errorPages; // 500 - path to error
 	int							_listen;
 	int							_timeout;
-	char						_allowedMethods;
 
 };
 

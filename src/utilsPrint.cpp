@@ -15,8 +15,9 @@ void	printServersInfo(std::vector<ServerInfo> stringVector) {
 
 	for (size_t i = 0; i < stringVector.size(); i++)
 	{
-		std::cout << stringVector[i] << std::endl;
 		std::cout << " ---------- " << std::endl;
+		std::cout << stringVector[i] << std::endl;
+		printServerLocations(stringVector[i]);
 	}
 }
 
@@ -28,4 +29,13 @@ std::string	returnStringVector(std::vector<std::string> stringVector) {
 		res += stringVector[i] + " | ";
 
 	return res;
+}
+
+void	printServerLocations(ServerInfo Server) {
+
+	std::vector<Location> loc = Server.getLocations();
+
+	for (size_t i = 0; i < loc.size(); i++)
+		std::cout << loc[i] << std::endl;
+
 }

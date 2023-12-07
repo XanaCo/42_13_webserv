@@ -22,12 +22,14 @@ class Request
         bool        isCompleted(void) const;
 
         bool        checkup(void);
-        bool	    findHost(std::string host, vector<Server *> servers);
+        bool	    findHost(std::string host, std::vector<Server *> servers);
         bool        findRessource();
 
         bool        readRessource(const std::string& path, std::string& content);
         void        deleteRessource(const std::string& resource);
         void        postRessource(const std::string& resource, const std::string& content);
+
+        void        run(std::string strRequest);
 
         void        setMethod(int method);
         void        setPath(std::string path);
@@ -54,8 +56,8 @@ class Request
 
         int                         _method;
         std::string                 _path;
-        std::string                 _host;      // www.example.com
-        std::string                 _userAgent; // Mozilla/5.0 (...)... (navigateur du client)
+        std::string                 _host;          // www.example.com
+        std::string                 _userAgent;     // Mozilla/5.0 (...)... (navigateur du client)
         std::string                 _contentType;
         int                         _contentLenght; // taille du body
         std::vector<std::string>    _cookies;
@@ -66,6 +68,7 @@ class Request
 
         bool                        _headerCompleted;
         bool                        _bodyCompleted;
+
         // pas obligatoire a traiter apparement :
         // std::vector<std::string>    _accept;
         // std::vector<std::string>    _acceptLanguage;
