@@ -10,7 +10,7 @@ Base::Base(int argc, char **argv) : _clients(0), _sock_count(0){
     for (int i = 0; i + 1 < argc; i++)
     {
         this->add_to_servers(argv[i + 1]);
-        this->add_to_poll_in(_servers[i].listen_socket);
+        this->add_to_poll_in(_servers[i].get_socket());
         std::cout << _servers[i];
     }
     std::cout << std::endl << std::endl;
@@ -20,6 +20,7 @@ Base::Base(int argc, char **argv) : _clients(0), _sock_count(0){
 Base::Base(const Base & rhs) {
     *this = rhs; 
 }
+
 
 // Destructors
 
@@ -82,7 +83,7 @@ void    Base::remove_from_servers(int socket){
 
     for(unsigned int i = 0; i < this->_servers.size() ; i++)
     {
-        if (socket == _servers[i].listen_socket)
+        if (socket == _servers[i].get_socket())
         {
             //std::cout << "Server n " << socket << " trying to be erased" << std::endl;
             _servers.erase(_servers.begin() + i);
@@ -96,7 +97,7 @@ void    Base::remove_from_clients(int socket){
 
     for(unsigned int i = 0; i < this->_clients.size() ; i++)
     {
-        if (socket == _clients[i].new_socket)
+        if (socket == _clients[i].get_socket())
         {
             //std::cout << "Client n " << socket << " trying to be erased" << std::endl;
             _clients.erase(_clients.begin() + i);
@@ -165,7 +166,7 @@ void    Base::change_poll_event(int socket, int event){
 }
 
 // function used to receive data on a client
-
+/*
 void    Base::receive_client_data(int client_sock){
 
     Client  &client = get_cli_from_sock(client_sock);
@@ -182,7 +183,29 @@ void    Base::receive_client_data(int client_sock){
     }
     client.received += buffer;
     change_poll_event(client_sock, pollout);
-    std::cout << client.received << std::endl;
+    std::cout << client.get_received() << std::endl;
+}*/
+
+
+// This functions call send until the number of bytes to send is sent or error happened
+bool    Base::send_all(int s, char *buf, int *len){
+
+    int total = 0;
+    int b_left = *len;
+    int n;
+
+    while(total < *len)
+    {
+        n = send(s, buf+total, b_left, 0);
+        if (n == -1)
+            break;
+        total += n;
+        b_left -= n;
+    }
+    *len = total;
+    if (n == -1)
+        return false;
+    return true;
 }
 
 // These functions are used to return sockaddr_in or sockaddr_in->sin_addr
@@ -210,7 +233,7 @@ bool    Base::is_a_server(int socket)
 {
     for (unsigned int i = 0; i < this->_servers.size(); i++)
     {
-        if (_servers[i].listen_socket == socket)
+        if (_servers[i].get_socket() == socket)
             return true;
     }
     return false;
@@ -222,7 +245,7 @@ bool    Base::is_a_client(int socket)
 {
     for (unsigned int i = 0; i < this->_clients.size(); i++)
     {
-        if (_clients[i].new_socket == socket)
+        if (_clients[i].get_socket() == socket)
             return true;
     }
     return false;
@@ -235,7 +258,7 @@ Client &    Base::get_cli_from_sock(int client_sock){
     unsigned int i = 0;
     while (i < this->_clients.size())
     {
-        if (_clients[i].new_socket == client_sock)
+        if (_clients[i].get_socket() == client_sock)
             break ;
         i++;
     }
@@ -247,7 +270,7 @@ Server &    Base::get_serv_from_sock(int sock){
     unsigned int i = 0;
     while (i < this->_servers.size())
     {
-        if (_servers[i].listen_socket == sock)
+        if (_servers[i].get_socket() == sock)
             break ;
         i++;
     }
@@ -296,13 +319,21 @@ void    Base::review_poll(void){
             if (is_a_server(_pfds[i].fd))
                 handle_new_connection(_pfds[i].fd);
             else
-                receive_client_data(_pfds[i].fd);
+            {
+                if(!get_cli_from_sock(_pfds[i].fd).receive_data())
+                {
+                    remove_from_clients(_pfds[i].fd);
+                    remove_from_poll(_pfds[i].fd);
+                }
+                change_poll_event(_pfds[i].fd, pollout);
+            }
         }
         if(_pfds[i].revents & POLLOUT)
         {
-            int b_send;
+            int len = strlen(test);
 
-            b_send = send(_pfds[i].fd, test, strlen(test), 0);
+            if (!send_all(_pfds[i].fd, test, &len))
+                std::cout << "Only " << len << " bytes have been sent because of error" << std::endl;
             change_poll_event(_pfds[i].fd, pollin);
         }
     }

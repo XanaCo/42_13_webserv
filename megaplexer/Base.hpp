@@ -42,7 +42,8 @@ class   Base{
         void    handle_new_connection(int serv_sock);
         void    change_poll_event(int socket, int event);
         void    receive_client_data(int client_sock); //Can be a client method
-                                                    
+        bool    send_all(int s, char *buf, int *len);                                            
+
         //Return sockaddr_in or sockaddr_in->addr
         void*   get_in_addr(struct sockaddr *sa);
         void*   get_in_sockaddr(struct sockaddr *sa);
