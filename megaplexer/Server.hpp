@@ -24,6 +24,14 @@
 
 class   Server{
 
+    private :
+
+    int _listen_socket;
+    //int   _port;
+    std::string   _l_port;
+    //struct sockaddr_in _address; 
+    //socklen_t   _addrlen;
+
     public :
 
     Server();
@@ -32,20 +40,18 @@ class   Server{
     ~Server();
 
     Server & operator=(const Server & rhs);
+ 
+    // Getters and setters of private value
+    
+    int get_socket(void) const;
+    std::string get_l_port(void) const;
 
-    int listen_socket;
-    //int   port;
-    std::string   l_port;
-    //struct sockaddr_in address; 
-    //socklen_t   addrlen;
-
+    // Function that will set up the listening socket for the current instance
+    
     bool set_listen_socket(std::string l_port);
-
-    private :
 
 };
 
 std::ostream &  operator<<(std::ostream & o, Server const & rhs);
 
 #endif
-

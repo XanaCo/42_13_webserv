@@ -29,12 +29,15 @@
 
 class   Client{
 
+    private :
+
+        int _new_socket;
+        struct sockaddr_in _address;
+        std::string _received;
+        // Request     request;
+        // Response    response;
+
     public :
-
-        int new_socket;
-
-        struct  sockaddr_in address;
-        std::string received;
 
         Client(void);
         Client(int socket, struct sockaddr_in *r_address);
@@ -42,14 +45,19 @@ class   Client{
         ~Client(void);
         Client &   operator=(const Client & rhs);
 
+        // Getter / Setters
+        int get_socket(void) const;
+        struct sockaddr_in get_addr_struct(void) const;
+        std::string get_received(void) const;
+        void    set_socket(int sock);
+        void    set_addr_struct(struct sockaddr_in addr);
+        void    set_received(std::string buf);
         // void        setReturnStatus(Request request);
         // Request     getReturnStatus(void) const;
 
+        // Function to receive data from a client
+        bool    receive_data(void);
 
-    private :
-
-        // Request     request;
-        // Response    response;
 };
 
 std::ostream &  operator<<(std::ostream & o, Client const & rhs);  
