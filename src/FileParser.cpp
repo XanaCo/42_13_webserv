@@ -200,7 +200,7 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 					throw FileParserError("Server must have only one server_name directive");
 				newServer.setServerName(serverTab[it]);
 
-				std::cout << "server_name : " << serverTab[it] << std::endl;///
+				// std::cout << "server_name : " << serverTab[it] << std::endl;///
 			}
 			else
 				throw FileParserError("server_name configuration error");
@@ -214,7 +214,7 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 					throw FileParserError("Server must have only one host directive");
 				newServer.setHost(serverTab[it]);
 
-				std::cout << "Host : " << serverTab[it] << std::endl;///
+				// std::cout << "Host : " << serverTab[it] << std::endl;///
 			}
 			else
 				throw FileParserError("host configuration error");
@@ -228,7 +228,7 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 					throw FileParserError("Server must have only one listen directive");
 				newServer.setPort(serverTab[it]);
 
-				std::cout << "Listen : " << serverTab[it] << std::endl;///
+				// std::cout << "Listen : " << serverTab[it] << std::endl;///
 			}
 			else
 				throw FileParserError("listen configuration error");
@@ -242,7 +242,7 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 					throw FileParserError("Server must have only one root directive");
 				newServer.setRoot(serverTab[it]);
 
-				std::cout << "Root : " << serverTab[it] << std::endl;///
+				// std::cout << "Root : " << serverTab[it] << std::endl;///
 			}
 			else
 				throw FileParserError("root configuration error");
@@ -256,7 +256,7 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 					throw FileParserError("Server must have only one index directive");
 				newServer.setIndex(serverTab[it]);
 
-				std::cout << "Index : " << serverTab[it] << std::endl;///
+				// std::cout << "Index : " << serverTab[it] << std::endl;///
 			}
 			else
 				throw FileParserError("index configuration error");
@@ -270,7 +270,7 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 					throw FileParserError("Server must have only one client_max_body_size directive");
 				newServer.setMaxClientBody(serverTab[it]);
 
-				std::cout << "CBS : " << serverTab[it] << std::endl;///
+				// std::cout << "CBS : " << serverTab[it] << std::endl;///
 			}
 			else
 				throw FileParserError("client_max_size configuration error");
@@ -284,18 +284,16 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 					throw FileParserError("Server must have only one timeout directive");
 				newServer.setTimeout(serverTab[it]);
 
-				std::cout << "Timeout : " << serverTab[it] << std::endl;///
+				// std::cout << "Timeout : " << serverTab[it] << std::endl;///
 			}
 			else
 				throw FileParserError("timeout configuration error");
 		}
-		/////////////////////////errorpages and locations TODO
 		else if (!serverTab[it].compare("error_page") && !location)
 		{
 			it++;
 			error_pages = true;
 
-			std::cout << "Error_pages START : " << std::endl;
 			if(it < serverTab.size() && !semiColonEnding(serverTab[it]))
 			{
 				it = newServer.setErrorPages(serverTab, it);
@@ -310,7 +308,6 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 			location = true;
 			if(it < serverTab.size() && *(serverTab[it].begin()) == '/')
 			{
-				std::cout << "Location START : " << serverTab[it] << std::endl;///
 				it = newServer.setLocations(serverTab, it) - 1;
 				location = false;
 			}
@@ -319,12 +316,9 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 		}
 		else
 			throw FileParserError("Unexpected directive in configuration file");
-		
 	}
-	std::cout << std::endl << newServer << std::endl;
 
 	return newServer;
-	
 }
 
 void	FileParser::stockServerInfo() {

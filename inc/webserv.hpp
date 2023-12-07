@@ -166,6 +166,7 @@ void						remplacerPercentEncoding(std::string& chaine);
 void						printStringVector(std::vector<std::string> stringVector);
 void						printServersInfo(std::vector<ServerInfo> stringVector);
 std::string					returnStringVector(std::vector<std::string> stringVector);
+void						printServerLocations(ServerInfo Server);
 
 // Parsing utils
 int							strToInt(const std::string& str);
