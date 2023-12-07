@@ -187,122 +187,145 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 	
 	ServerInfo newServer;
 	bool location = false;
+	bool error_pages = false;
 
 	for (size_t it = 0; it < serverTab.size(); it++)
 	{
-		if (!serverTab[it].compare("server_name") && !location)
+		if (!serverTab[it].compare("server_name") && !location && !error_pages)
 		{
 			it++;
 			if(it < serverTab.size() && semiColonEnding(serverTab[it]))
 			{
 				if (newServer.getServerName() != "" && newServer.getServerName() != "Unknown")
-					throw FileParserError("Server must have only one Name directive");
+					throw FileParserError("Server must have only one server_name directive");
 				newServer.setServerName(serverTab[it]);
 
-				std::cout << "server_name : " << serverTab[it] << std::endl;
+				std::cout << "server_name : " << serverTab[it] << std::endl;///
 			}
 			else
 				throw FileParserError("server_name configuration error");
 		}
-		else if (!serverTab[it].compare("host") && !location)
+		else if (!serverTab[it].compare("host") && !location && !error_pages)
 		{
 			it++;
 			if(it < serverTab.size() && semiColonEnding(serverTab[it]))
 			{
 				if (newServer.getHost())
-					throw FileParserError("Server must have only one Host directive");
+					throw FileParserError("Server must have only one host directive");
 				newServer.setHost(serverTab[it]);
 
-				std::cout << "Host : " << serverTab[it] << std::endl;
+				std::cout << "Host : " << serverTab[it] << std::endl;///
 			}
 			else
 				throw FileParserError("host configuration error");
 		}
-		else if (!serverTab[it].compare("listen") && !location)
+		else if (!serverTab[it].compare("listen") && !location && !error_pages)
 		{
 			it++;
 			if(it < serverTab.size() && semiColonEnding(serverTab[it]))
 			{
+				if (newServer.getListen())
+					throw FileParserError("Server must have only one listen directive");
 				newServer.setPort(serverTab[it]);
-				std::cout << "Listen : " << serverTab[it] << std::endl;
+
+				std::cout << "Listen : " << serverTab[it] << std::endl;///
 			}
 			else
 				throw FileParserError("listen configuration error");
 		}
-		else if (!serverTab[it].compare("root") && !location)
+		else if (!serverTab[it].compare("root") && !location && !error_pages)
 		{
 			it++;
 			if(it < serverTab.size() && semiColonEnding(serverTab[it]))
 			{
+				if (newServer.getRoot() != "")
+					throw FileParserError("Server must have only one root directive");
 				newServer.setRoot(serverTab[it]);
-				std::cout << "Root : " << serverTab[it] << std::endl;
+
+				std::cout << "Root : " << serverTab[it] << std::endl;///
 			}
 			else
 				throw FileParserError("root configuration error");
 		}
-		else if (!serverTab[it].compare("index") && !location)
+		else if (!serverTab[it].compare("index") && !location && !error_pages)
 		{
 			it++;
 			if(it < serverTab.size() && semiColonEnding(serverTab[it]))
 			{
+				if (newServer.getIndex() != "")
+					throw FileParserError("Server must have only one index directive");
 				newServer.setIndex(serverTab[it]);
-				std::cout << "Index : " << serverTab[it] << std::endl;
+
+				std::cout << "Index : " << serverTab[it] << std::endl;///
 			}
 			else
 				throw FileParserError("index configuration error");
 		}
-		else if (!serverTab[it].compare("client_max_body_size") && !location)
+		else if (!serverTab[it].compare("client_max_body_size") && !location && !error_pages)
 		{
 			it++;
 			if(it < serverTab.size() && semiColonEnding(serverTab[it]))
 			{
+				if (newServer.getMaxClientBody())
+					throw FileParserError("Server must have only one client_max_body_size directive");
 				newServer.setMaxClientBody(serverTab[it]);
-				std::cout << "CBS : " << serverTab[it] << std::endl;
+
+				std::cout << "CBS : " << serverTab[it] << std::endl;///
 			}
 			else
 				throw FileParserError("client_max_size configuration error");
 		}
-		else if (!serverTab[it].compare("timeout") && !location)
+		else if (!serverTab[it].compare("timeout") && !location && !error_pages)
 		{
 			it++;
 			if(it < serverTab.size() && semiColonEnding(serverTab[it]))
 			{
+				if (newServer.getTimeout())
+					throw FileParserError("Server must have only one timeout directive");
 				newServer.setTimeout(serverTab[it]);
-				std::cout << "Timeout : " << serverTab[it] << std::endl;
+
+				std::cout << "Timeout : " << serverTab[it] << std::endl;///
 			}
 			else
 				throw FileParserError("timeout configuration error");
 		}
-		else if ((!serverTab[it].compare("error_page") && !location)) // inside error pages
+		/////////////////////////errorpages and locations TODO
+		else if (!serverTab[it].compare("error_page") && !location)
 		{
 			it++;
-			if(it < serverTab.size()) // check next
-				std::cout << "error_page : " << serverTab[it] << std::endl;
-			// else
-			// 	throw FileParserError("error_page configuration error");
-		}
-		else if (!serverTab[it].compare("location"))
-		{
-			location = true;
-			if (!serverTab[it].compare("location") && location)
-				location = false;
-			it++;
-			if(it < serverTab.size() && *(serverTab[it].begin()) == '/') //check path
-				std::cout << "we set locations here!" << std::endl;	//check if root is set, path, stock everything else
-			// else
-			// 	throw FileParserError("location configuration error");
-		}
-		// else
-		// 	throw FileParserError("Unexpected directive in configuration file");
+			error_pages = true;
 
+			std::cout << "Error_pages START : " << std::endl;
+			if(it < serverTab.size() && !semiColonEnding(serverTab[it]))
+			{
+				it = newServer.setErrorPages(serverTab, it);
+				error_pages = false;
+			}
+			else
+				throw FileParserError("error_page configuration error");
+		}
+		else if (!serverTab[it].compare("location") && !error_pages)
+		{
+			it++;
+			location = true;
+			if(it < serverTab.size() && *(serverTab[it].begin()) == '/')
+			{
+				std::cout << "Location START : " << serverTab[it] << std::endl;///
+				it = newServer.setLocations(serverTab, it) - 1;
+				location = false;
+			}
+			else
+				throw FileParserError("location configuration error");
+		}
+		else
+			throw FileParserError("Unexpected directive in configuration file");
+		
 	}
 	std::cout << std::endl << newServer << std::endl;
 
 	return newServer;
 	
 }
-
-
 
 void	FileParser::stockServerInfo() {
 
@@ -314,7 +337,6 @@ void	FileParser::stockServerInfo() {
 		serverSplit = cSplitLine(_rawServer[it], " ");
 		this->_allServers.push_back(stockInfos(serverSplit));
 	}
-	//printServersInfo(_allServers);
 }
 
 /*::: EXCEPTIONS :::*/

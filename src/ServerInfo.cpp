@@ -10,10 +10,7 @@ ServerInfo::ServerInfo() {
 	this->_Host = 0;
 	this->_Root = "";
 	this->_index = "";
-	//this->_sockAddress;
 	this->_maxClientBody = 0;
-	//this->_locations;
-	//this->_errorPages;
 	this->_listen = 0;
 	this->_timeout = 0;
 	this->_allowedMethods = 0;
@@ -102,7 +99,7 @@ std::ostream &operator<<(std::ostream &out, ServerInfo const &other) {
 			<< other.getTimeout()
 			<< " | Allowed: "
 			<< other.getAllowed()
-			<< ".\n";
+			<< "\n";
 
 	return out;
 }
@@ -185,22 +182,40 @@ void ServerInfo::setSockAddress() {
 
 void ServerInfo::setPort(std::string port) {
 
-	this->_Port = strToInt(port); // attention  in_port_t
+	int res = strToInt(port);
+
+	if (res < 1 || res > 65535)
+		throw ServerInfoError("Invald port value");
+	
+	this->_Port = htons((u_int16_t)res);
 }
 
 void ServerInfo::setHost(std::string host) {
 
-	this->_Host = strToInt(host); // attention  in_addr_t
+	struct sockaddr_in tmp;
+
+	if (!host.compare("localhost"))
+		host = "127.0.0.1";
+	if (!inet_pton(AF_INET, host.c_str(), &tmp.sin_addr))
+		throw ServerInfoError("Wrong IPv4 address format");
+
+	this->_Host = inet_addr(host.c_str());
 }
 
-void ServerInfo::setRoot(std::string name) {
+void ServerInfo::setRoot(std::string root) {
 
-	this->_Root = name;
+
+
+
+	this->_Root = root;
 }
 
-void ServerInfo::setIndex(std::string name) {
+void ServerInfo::setIndex(std::string index) {
 
-	this->_index = name;
+
+
+
+	this->_index = index;
 }
 
 void ServerInfo::setMaxClientBody(std::string max) {
@@ -208,14 +223,96 @@ void ServerInfo::setMaxClientBody(std::string max) {
 	this->_maxClientBody = strToInt(max); // attention unsigned int
 }
 
-void ServerInfo::setLocations(std::vector<Location *> loc) {
+size_t ServerInfo::setLocations(std::vector<std::string> &serverTab, size_t pos) {
 
-	this->_locations = loc;  // copie profonde?
+	size_t it;
+	// bool methods = false;
+	// bool cgi = false;
+
+	for (it = pos; it < serverTab.size(); it++)
+	{
+		if (!serverTab[it].compare("location"))
+			break;
+		else if (!serverTab[it].compare("root"))
+		{
+			it++;
+			std::cout << "L Root : "<< serverTab[it] << std::endl;
+			//it < serverTab.size() && semiColonEnding(serverTab[it])
+		}
+		else if (!serverTab[it].compare("allow_methods"))
+		{
+			//////3 args or !semicolon
+			it++;
+			// methods = true;
+			std::cout << "L Methods : "<< serverTab[it] << std::endl;
+
+			for (size_t p = it; p < serverTab.size(); p++)
+			{
+				this->_allowedMethods += *(serverTab[p]).c_str();
+				if (semiColonEnding(serverTab[p]))
+				{
+					// methods = false;
+					it = p;
+					break;
+				}
+			}
+		}
+		else if (!serverTab[it].compare("autoindex"))
+		{
+			it++;
+			std::cout << "L Autoindex : "<< serverTab[it] << std::endl;
+			//it < serverTab.size() && semiColonEnding(serverTab[it])
+		}
+		else if (!serverTab[it].compare("index"))
+		{
+			it++;
+			std::cout << "L index : "<< serverTab[it] << std::endl;
+			//it < serverTab.size() && semiColonEnding(serverTab[it])
+		}
+		else if (!serverTab[it].compare("return"))
+		{
+			///x2 ARGS
+			it++;
+			std::cout << "L return : "<< serverTab[it] << std::endl;
+			// it < serverTab.size() && semiColonEnding(serverTab[it])
+		}
+		else if (!serverTab[it].compare("CGI"))
+		{
+			//PLUSIEURS ARGS while !semicolon
+			it++;
+			std::cout << "L CGI : "<< serverTab[it] << std::endl;
+			//it < serverTab.size() && semiColonEnding(serverTab[it])
+		}
+		else if (!serverTab[it].compare("upload_dir"))
+		{
+			it++;
+			std::cout << "L upload: "<< serverTab[it] << std::endl;
+			//it < serverTab.size() && semiColonEnding(serverTab[it])
+		}
+		// else
+		// {
+		// 	std::cout << "error here: "<< serverTab[it] << std::endl;
+		// 	throw ServerInfoError("Unexpected directive in configuration file");
+		// }
+	}
+	return it;
 }
 
-void ServerInfo::setErrorPages(std::map<int, std::string> ePages) {
+size_t ServerInfo::setErrorPages(std::vector<std::string> &serverTab, size_t pos) {
 
-	this->_errorPages = ePages;  // copie profonde?
+	size_t it;
+
+	for (it = pos; it < serverTab.size(); it++)
+	{
+		std::cout << serverTab[it] << std::endl;
+		if (semiColonEnding(serverTab[it]))
+		{
+			break;
+		}
+	}
+	return it;
+
+	// this->_errorPages = // create pair;
 }
 
 void ServerInfo::setListen(std::string port) {
