@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ma Page HTML</title>
     <style>
-        /* Ajoutez votre CSS ici si nécessaire */
+        
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
@@ -16,6 +16,12 @@
             color: #fff;
             text-align: center;
             padding: 10px;
+        }
+
+        .flex-container {
+            display: flex;
+            /* flex-direction: column; */
+            justify-content: center;
         }
 
         main {
@@ -31,14 +37,52 @@
 
     <main>
 
-        <h3>Tester le projet :</h3>
-        <ul>
-            <form action="https://fr.wikipedia.org/wiki/Accueil" method="get" target="_blank">
-                <button type="submit">Test 1 : Redirection</button>
-            </form>
-            <!-- <li>Test 2</li>
-            <li>Test 3</li> -->
-        </ul>
+            <div class="flex-container">
+            <h3>Tester le projet :</h3>
+            </div>
+            
+            <div class="flex-container">    
+                <form action="https://fr.wikipedia.org/wiki/Accueil" method="get" target="_blank">
+                    <button type="submit">Test 1 : Redirection</button>
+                </form>
+                <!-- <li>Test 3</li> -->
+            </div>
+            <div class="flex-container">
+            <button id="sendRequestButton">Envoyer la requête</button>
+            </div>
+
+        <script>
+        document.getElementById('sendRequestButton').addEventListener('click', function() {
+            // Créer une instance de l'objet XMLHttpRequest
+            var xhr = new XMLHttpRequest();
+        
+            // Configurer la requête avec la méthode, l'URL et le type de requête
+            xhr.open('POST', 'http://localhost:8282/index.html', true);
+        
+            // Configurer les en-têtes de la requête
+            xhr.setRequestHeader('Content-Type', 'text/plain');
+        
+            // Fonction de rappel appelée lorsque la requête est terminée
+            xhr.onload = function()
+            {
+                if (xhr.status >= 200 && xhr.status < 300)
+                    console.log(xhr.responseText);
+                else
+                    console.error('La requête a échoué avec le statut : ' + xhr.status);
+            };
+        
+            // Gérer les erreurs réseau
+            xhr.onerror = function() {
+                console.error('Erreur réseau lors de la requête');
+            };
+        
+            // Récupérer les données du formulaire (dans cet exemple, vous pouvez définir le texte à envoyer)
+            var dataToSend = 'oui';
+        
+            // Envoyer la requête avec les données
+            xhr.send(dataToSend);
+        });
+        </script>
     </main>
 
     <footer>

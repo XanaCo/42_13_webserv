@@ -8,7 +8,7 @@
 
 # define RESPONSE "\033[1;37mResponse\033[0m"
 
-# define BODY_SIZE_LIMIT 40960
+// # define BODY_SIZE_LIMIT 40960 -> doublon avec un element du parsing
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 4096

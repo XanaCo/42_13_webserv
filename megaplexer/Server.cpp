@@ -1,12 +1,14 @@
 #include "Server.hpp"
 
+// Constructors
+
 Server::Server(void){
     return ;
 }
 
 Server::Server(std::string l_port){
 
-    this->l_port = l_port;
+    this->_l_port = l_port;
     this->set_listen_socket(l_port);
     //this->port = std::stoi(l_port);
 }
@@ -16,15 +18,19 @@ Server::Server(const Server & rhs){
     *this = rhs; 
 }
 
+// Destructos
+
 Server::~Server(void)
 {
     return ;
 }
 
+// Operator Overload
+
 Server &    Server::operator=(const Server & rhs) {
 
-    this->listen_socket = rhs.listen_socket; 
-    this->l_port = rhs.l_port; 
+    this->_listen_socket = rhs.get_socket(); 
+    this->_l_port = rhs.get_l_port(); 
     //this->address = rhs.address; 
     //this->addrlen = rhs.addrlen; 
     return *this;
@@ -32,9 +38,23 @@ Server &    Server::operator=(const Server & rhs) {
 
 std::ostream &  operator<<(std::ostream & o, Server const & rhs){
 
-    o << "Server n: " << rhs.listen_socket << " listening on port " << rhs.l_port << std::endl;
+    o << "Server n: " << rhs.get_socket() << " listening on port " << rhs.get_l_port() << std::endl;
     return o;
 }
+
+// Getters - Setters
+
+int     Server::get_socket(void) const{
+
+    return this->_listen_socket;
+}
+
+std::string Server::get_l_port(void) const{
+
+    return this->_l_port;
+}
+
+// Function that will set up the listening socket for the current instance
 
 bool    Server::set_listen_socket(std::string l_port){
 
@@ -66,5 +86,5 @@ bool    Server::set_listen_socket(std::string l_port){
     freeaddrinfo(ai);
     if (!p || listen(listener, 10) == -1)
         return (false);
-    return (this->listen_socket = listener, true);
+    return (this->_listen_socket = listener, true);
 }
