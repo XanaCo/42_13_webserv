@@ -197,19 +197,17 @@ void ServerInfo::setHost(std::string host) {
 
 void ServerInfo::setRoot(std::string root) {
 
-	//CHECK VALID PATH
 	this->_Root = root;
 }
 
 void ServerInfo::setIndex(std::string index) {
 
-	//CHECK VALID PATH
 	this->_index = index;
 }
 
 void ServerInfo::setMaxClientBody(std::string max) {
 
-	this->_maxClientBody = strToInt(max); // attention unsigned int
+	this->_maxClientBody = strToInt(max);
 }
 
 size_t ServerInfo::setLocations(std::vector<std::string> &serverTab, size_t pos) {
@@ -340,10 +338,7 @@ size_t ServerInfo::setLocations(std::vector<std::string> &serverTab, size_t pos)
 				throw ServerInfoError("Invalid upload_dir declaration in location");
 		}
 		else
-		{
-			std::cout << "error here: " << serverTab[it] << std::endl;
 			throw ServerInfoError("Unexpected directive in configuration file");
-		}
 	}
 	this->_locations.push_back(locati);
 	return it;
@@ -360,7 +355,7 @@ size_t ServerInfo::setErrorPages(std::vector<std::string> &serverTab, size_t pos
 		this->_errorPages.push_back(serverTab[it]);
 	}
 	this->_errorPages.push_back(serverTab[it]);
-	///CHECK if errorPages are good!! num / string <pair>
+
 	return it;
 }
 
@@ -379,17 +374,46 @@ void ServerInfo::setTimeout(std::string timeout) {
 	this->_timeout = res;
 }
 
- /// TODO FINAL CHECK, all variables 'struct'
 void ServerInfo::checkAllInfos() {
 
-	// check root != ""
-	// check index != ""
-	// check client body
-	// check in locations :
-		//cgi
-		//return
-	//check error pages
-	//check listen != ""
+	if (this->_Host == 0)
+		throw ServerInfoError("Server should have a root directive");
+	if (this->_Root == "")
+		throw ServerInfoError("Server should have a root directive");
+	if (this->_listen == "")
+		throw ServerInfoError("Server should have a listen directive");
+	if (this->_index == "")
+		throw ServerInfoError("Server should have an index directive");
+	if (this->_index != "")
+	{
+		std::string pathToIndex = this->_Root + "/" + this->_index;
+		if (!checkFileExists(pathToIndex))
+					throw ServerInfo::ServerInfoError("Invalid index path_to_file format");
+	}
+	if (this->_maxClientBody == 0)
+		throw ServerInfoError("Server should have a client_max_size_body directive");
+	if (!this->getLocations().empty())
+	{
+		for (size_t it = 0; it < this->getLocations().size(); it++)
+			this->getLocations()[it].checkLocationInfo();
+	}
+	if (!this->getErrorPages().empty())
+	{
+		for (size_t it = 0; it < this->getErrorPages().size(); it++)
+		{
+			if (it % 2 == 0)
+			{
+				if (isdigit(strToInt(this->getErrorPages()[it])))
+					throw ServerInfo::ServerInfoError("Invalid error page code format");
+			}
+			else
+			{
+				std::string pathToError = "site/" + this->getErrorPages()[it];
+				if (!checkFileExists(pathToError))
+					throw ServerInfo::ServerInfoError("Invalid error page path_to_file format");
+			}
+		}
+	}
 	this->setSockAddress();
 }
 

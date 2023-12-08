@@ -87,8 +87,6 @@ std::ostream &operator<<(std::ostream &out, Location const &other) {
 			<< other.getLReturn().first
 			<< " - "
 			<< other.getLReturn().second
-			// << " | CGI: "
-			// << other.getLCgi()
 			<< "\n" << END_COLOR;
 
 	return out;
@@ -140,13 +138,16 @@ char Location::getLAllowed() const {
 
 void Location::setLRoot(std::string Lroot) {
 
-	//CHECK PATH VALID!!!
+	if (!checkPathExists(Lroot))
+		throw ServerInfo::ServerInfoError("Invalid path in root location");
+
 	this->_pathRoot = Lroot;
 }
 
 void Location::setLUploadDir(std::string Lupload) {
 
-	//CHECK PATH VALID!!!
+	if (!checkPathExists(Lupload))
+		throw ServerInfo::ServerInfoError("Invalid path in upload_dir location");
 	this->_uploadDir = Lupload;
 }
 
@@ -157,7 +158,6 @@ void Location::setLIndex(std::string Lindex) {
 
 void Location::setLCgi(std::string Lcgi) {
 
-	//CHECK if .py || .php || begin par / VALID!!!
 	this->_cgi.push_back(Lcgi);
 }
 
@@ -165,11 +165,13 @@ void Location::setLReturn(std::string Rerror, std::string Rpath) {
 
 	int error = strToInt(Rerror);
 
-	if (error < 1 || error > 900)
+	if (error < 100 || error > 504)
 		throw ServerInfo::ServerInfoError("Invalid return error code in location");
 	if (*(Rpath.begin()) != '/')
 		throw ServerInfo::ServerInfoError("Invalid return path in location");
-	//CHECK PATH VALID!!!
+	if (!checkPathExists(Rpath))
+		throw ServerInfo::ServerInfoError("Invalid return path in location");
+
 	this->_return = std::pair<int, std::string>(error, Rpath);
 }
 
@@ -181,4 +183,43 @@ void Location::setLAutoindex(bool status) {
 void Location::setLAllowed(char methods) {
 
 	this->_allowedMethods = methods;
+}
+
+void Location::checkLocationInfo() {
+
+	if (this->_pathName == "")
+		throw ServerInfo::ServerInfoError("Location should have a name directive");
+	if (this->_pathRoot == "")
+		this->setLRoot("site/");
+	if (this->_uploadDir == "")
+		this->setLUploadDir("site/user/uploads");
+	if (this->_pathName == "/CGI")
+	{
+		for (size_t it = 0; it < this->getLCgi().size(); it++)
+		{
+			if (it % 2 == 0)
+			{
+				if (this->getLCgi()[it].compare(".py") && this->getLCgi()[it].compare(".php"))
+					throw ServerInfo::ServerInfoError("Wrong CGI script format");
+			}
+			else
+			{
+				if (!checkFileExists(this->getLCgi()[it]))
+					throw ServerInfo::ServerInfoError("Wrong CGI path_to_file format");
+			}
+		}
+	}
+	if (this->_index != "")
+	{
+		std::string pathToIndex = this->_pathRoot + this->_index;
+		if (!checkFileExists(pathToIndex))
+			throw ServerInfo::ServerInfoError("Invalid index path_to_file format");
+	}
+	if (this->_return.first < 100 || this->_return.first > 504)
+		throw ServerInfo::ServerInfoError("Wrong location code error format");
+	if (!this->_return.second.empty() && this->_return.second.compare("/"))
+	{
+		if (!checkPathExists(this->_return.second))
+			throw ServerInfo::ServerInfoError("Wrong location return path format");
+	}
 }

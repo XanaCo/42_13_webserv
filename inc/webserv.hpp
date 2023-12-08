@@ -27,6 +27,8 @@
 # include <utility>
 # include <ctime>		// clock() -> a supprimer avant de push
 
+#include <errno.h> /// EFFACER
+
 # include <unistd.h>
 # include <fcntl.h>
 # include <string.h>
@@ -175,5 +177,8 @@ void						eraseComments(std::string &content);
 std::vector<std::string>	cSplitLine(std::string line, char const *charset);
 bool 						semiColonEnding(std::string &content);
 std::pair<int, std::string>	createPairErrorPage(std::string num, std::string word);
+bool 						checkPathExists(std::string pathToCheck);
+bool 						checkFileExists(std::string fileToCheck);
+
 
 #endif

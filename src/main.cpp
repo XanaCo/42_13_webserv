@@ -36,7 +36,7 @@ int	main(int argc, char **argv)
 		infos.parseFile();
 		
 		std::vector<ServerInfo> Servers = infos.getAllServers(); //classified Servers
-		printServersInfo(Servers);
+		//printServersInfo(Servers);
 
 		//launchSERVERClass(&Servers);
  	}
