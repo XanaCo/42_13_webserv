@@ -61,6 +61,8 @@
 # include "FileParser.hpp"
 # include "ServerInfo.hpp"
 # include "Location.hpp"
+# include "Base.hpp"
+# include "Client.hpp"
 // # include "Request.hpp"
 // # include "Response.hpp"
 

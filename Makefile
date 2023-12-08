@@ -5,7 +5,7 @@
 NAME		= webserv
 
 # Compiler
-CPP			= c++
+CPP			= g++
 FLAGS		= -Wall -Wextra -Werror -MMD -MP -std=c++98 -g3
 EXTRAF		= -Wshadow #-Wno-shadow
 
@@ -23,6 +23,8 @@ RM			= rm -rf
 SRC			= main.cpp \
 			FileParser.cpp \
 			ServerInfo.cpp \
+			Base.cpp \
+			Client.cpp \
 			Location.cpp \
 			utilsParsing.cpp \
 			utilsPrint.cpp \
@@ -44,6 +46,8 @@ LF			= --leak-check=full \
 
 all : ${NAME}
 
+db :  ${DB}
+
 .c.o :
 	@ ${CPP} ${FLAGS} ${EXTRAF} -I ${INCLUDES} -c $< -o ${<:.cpp=.o}
 
@@ -55,6 +59,11 @@ ${BIN_PATH}%.o: ${SRC_PATH}%.cpp
 
 ${NAME} : ${OBJ}
 	@ ${CPP} -o ${NAME} -g ${FLAGS} ${EXTRAF} ${OBJ}
+	@ clear
+	@ toilet -f pagga.tlf --gay "Enjoy ${NAME} !"
+
+${DB} : ${OBJ}
+	@ g++ -o ${NAME} -g3 ${FLAGS} ${EXTRAF} ${OBJ}
 	@ clear
 	@ toilet -f pagga.tlf --gay "Enjoy ${NAME} !"
 

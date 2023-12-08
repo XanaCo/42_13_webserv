@@ -1,4 +1,4 @@
-#include "Base.hpp"
+#include "../inc/Base.hpp"
 
 // Constructors
 
@@ -6,15 +6,21 @@ Base::Base() : _servers(0), _clients(0), _pfds(0), _sock_count(0){
     return ;
 }
 
+/*
 Base::Base(int argc, char **argv) : _clients(0), _sock_count(0){
     for (int i = 0; i + 1 < argc; i++)
     {
         this->add_to_servers(argv[i + 1]);
-        this->add_to_poll_in(_servers[i].get_socket());
+        this->add_to_poll_in(_servers[i].getSocket());
         std::cout << _servers[i];
     }
     std::cout << std::endl << std::endl;
     return ;
+}*/
+
+Base::Base(std::vector<ServerInfo> & Servers){
+
+    this->_servers = Servers;
 }
 
 Base::Base(const Base & rhs) {
@@ -41,12 +47,13 @@ Base &  Base::operator=(const Base & rhs) {
 
 // These functions are used to add into our 3 vectors depending of a port number or socket number
 
+/*
 void    Base::add_to_servers(char *port){
     
-    Server  server(port);
+    ServerInfo  server(port);
 
     this->_servers.push_back(server);
-}
+}*/
 
 void    Base::add_to_clients(int socket, struct sockaddr_in* address){
 
@@ -83,7 +90,7 @@ void    Base::remove_from_servers(int socket){
 
     for(unsigned int i = 0; i < this->_servers.size() ; i++)
     {
-        if (socket == _servers[i].get_socket())
+        if (socket == _servers[i].getSocket())
         {
             //std::cout << "Server n " << socket << " trying to be erased" << std::endl;
             _servers.erase(_servers.begin() + i);
@@ -121,6 +128,34 @@ void    Base::remove_from_poll(int socket){
             break ;
         }
     }
+}
+
+bool    Base::is_first_server(int lim, std::string port){
+
+    int count = 0;
+
+    for (int i = 0; i <= lim; i++)
+    {
+        if(_servers[i].getListen() == port)
+            count++;
+        if (count > 1)
+            return false;
+    }
+    return true;
+}
+
+bool    Base::set_servers_sockets(void){
+
+    for (size_t i = 0; i < this->_servers.size(); i++)
+    {
+        if (is_first_server(i, _servers[i].getListen()))
+        {
+            if (!_servers[i].setListenSocket(_servers[i].getListen()))
+                return false;
+            std::cout << "Server n: " << _servers[i].getSocket() << " listening on port " << _servers[i].getListen() << std::endl;
+        }
+    }
+    return true;
 }
 
 // function used to accept new connection on listening socket
@@ -233,7 +268,7 @@ bool    Base::is_a_server(int socket)
 {
     for (unsigned int i = 0; i < this->_servers.size(); i++)
     {
-        if (_servers[i].get_socket() == socket)
+        if (_servers[i].getSocket() == socket)
             return true;
     }
     return false;
@@ -265,12 +300,12 @@ Client &    Base::get_cli_from_sock(int client_sock){
     return _clients[i];
 }
 
-Server &    Base::get_serv_from_sock(int sock){
+ServerInfo &    Base::get_serv_from_sock(int sock){
 
     unsigned int i = 0;
     while (i < this->_servers.size())
     {
-        if (_servers[i].get_socket() == sock)
+        if (_servers[i].getSocket() == sock)
             break ;
         i++;
     }
@@ -294,6 +329,9 @@ struct pollfd    *Base::get_poll_from_sock(int client_sock){
 
 void    Base::start_servers(void) {
 
+
+    if(!this->set_servers_sockets())
+        return ;
     while (1)
     {
        int  poll_count = poll(this->_pfds.data(), this->_pfds.size(), -1); 

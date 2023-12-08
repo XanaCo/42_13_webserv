@@ -5,6 +5,7 @@
 
 ServerInfo::ServerInfo() {
 
+    this->_listenSocket = 0;
 	this->_serverName = "Unknown";
 	this->_Port = 0;
 	this->_Host = 0;
@@ -23,13 +24,14 @@ ServerInfo::ServerInfo() {
 ServerInfo::ServerInfo(ServerInfo const &copy) {
 
 	if (this != &copy) {
+		this->_listenSocket = copy.getSocket();
 		this->_serverName = copy.getServerName();
 		this->_Port = copy.getPort();
 		this->_Host = copy.getHost();
 		this->_Root = copy.getRoot();
 		this->_index = copy.getIndex();
 		this->_sockAddress = copy.getSockAddress();
-		this->_maxClientBody = copy.getMaxClientBody();
+        this->_maxClientBody = copy.getMaxClientBody();
 		this->_locations = copy.getLocations();
 		this->_errorPages = copy.getErrorPages();
 		this->_listen = copy.getListen();
@@ -42,7 +44,7 @@ ServerInfo::ServerInfo(ServerInfo const &copy) {
 	return ;
 }
 
-/*::: DESTRUCTORS :::*/
+/*::: DESTRUCTORS :::*/ 
 
 ServerInfo::~ServerInfo() {
 
@@ -57,11 +59,10 @@ ServerInfo::~ServerInfo() {
 ServerInfo	&ServerInfo::operator=(ServerInfo const &other) {
 
 	if (this != &other) {
-        this->_listen_socket = other.get_socket();
-        this->_l_port = other.get_l_port();
+        this->_listenSocket = other.getSocket();
 		this->_serverName = other.getServerName();
 		this->_Port = other.getPort();
-		this->_Host = other.getHost();
+		this->_Host = other.getHost(); 
 		this->_Root = other.getRoot();
 		this->_index = other.getIndex();
 		this->_sockAddress = other.getSockAddress();
@@ -74,18 +75,19 @@ ServerInfo	&ServerInfo::operator=(ServerInfo const &other) {
 
 	if (PRINT)
 		std::cout << GREEN << "Server by = was created | Port: " << this->_Port << " | Host: " << this->_Host << END_COLOR << std::endl;
-
-	return *this;
+    return *this;
 }
 
 std::ostream &operator<<(std::ostream &out, ServerInfo const &other) {
 
 	out << WHITE << "SERVER: "
 			<< other.getServerName()
+        	<< " | Socket: "
+			<< other.getSocket()
 			<< " | SockAD: "
 			<< other.getSockAddress().sin_family
 			<< " | Port: "
-			<< other.getPort()
+			<< other.getPort() 
 			<< " | Host: "
 			<< other.getHost()
 			<< " | Root: "
@@ -94,7 +96,7 @@ std::ostream &operator<<(std::ostream &out, ServerInfo const &other) {
 			<< other.getIndex()
 			<< " | MaxBody: "
 			<< other.getMaxClientBody()
-			<< " | Listen: "
+			<< " | Listen: " 
 			<< other.getListen()
 			<< " | Timeout: "
 			<< other.getTimeout()
@@ -105,6 +107,11 @@ std::ostream &operator<<(std::ostream &out, ServerInfo const &other) {
 
 /*::: ACCESSORS :::*/
 
+int ServerInfo::getSocket() const{
+
+    return this->_listenSocket;
+}
+
 std::string ServerInfo::getServerName() const {
 
 	return this->_serverName;
@@ -113,7 +120,7 @@ std::string ServerInfo::getServerName() const {
 struct sockaddr_in ServerInfo::getSockAddress() const {
 
 	return this->_sockAddress;
-}
+} 
 
 in_port_t ServerInfo::getPort() const {
 	
@@ -134,7 +141,7 @@ std::string ServerInfo::getIndex() const {
 
 	return this->_index;
 }
-
+ 
 unsigned int ServerInfo::getMaxClientBody() const {
 
 	return this->_maxClientBody;
@@ -152,7 +159,7 @@ std::vector<std::string> ServerInfo::getErrorPages() const {
 
 std::string ServerInfo::getListen() const {
 
-	return this->_listen;
+	return this->_listen; 
 }
 
 int ServerInfo::getTimeout() const {
@@ -161,6 +168,41 @@ int ServerInfo::getTimeout() const {
 }
 
 /*::: SETERS :::*/
+
+
+bool    ServerInfo::setListenSocket(std::string l_port){
+
+    int listener;
+    int ret_addr;
+    int test = 1;
+    struct  addrinfo    hints, *ai, *p;
+
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_PASSIVE;
+    if ((ret_addr = getaddrinfo(NULL, l_port.c_str(), &hints, &ai)) != 0)
+        return (std::cerr << "selectserver : " << gai_strerror(ret_addr) << std::endl, false);
+    for (p = ai; p != NULL; p = p->ai_next)
+    {
+        listener = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+        if (listener < 0)
+            continue;
+        fcntl(listener, F_SETFL, O_NONBLOCK);
+        setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &test, sizeof(int));
+        if (bind(listener, p->ai_addr, p->ai_addrlen) < 0)
+        {
+            close(listener);
+            continue;
+        }
+        break ;
+    }
+    freeaddrinfo(ai);
+    if (!p || listen(listener, 10) == -1)
+        return (false);
+    return (this->_listenSocket = listener, true);
+}
+
 
 void ServerInfo::setServerName(std::string name) {
 
@@ -171,7 +213,7 @@ void ServerInfo::setSockAddress() {
 
 	this->_sockAddress.sin_port = _Port;
 	this->_sockAddress.sin_addr.s_addr = _Host;
-	this->_sockAddress.sin_family = AF_INET;
+    this->_sockAddress.sin_family = AF_INET;
 }
 
 void ServerInfo::setPort(std::string port) {
@@ -185,7 +227,7 @@ void ServerInfo::setPort(std::string port) {
 	setListen(port);
 }
 
-void ServerInfo::setHost(std::string host) {
+void ServerInfo::setHost(std::string host) { 
 
 	struct sockaddr_in tmp;
 
@@ -200,7 +242,7 @@ void ServerInfo::setHost(std::string host) {
 void ServerInfo::setRoot(std::string root) {
 
 	//CHECK VALID PATH
-	this->_Root = root;
+	this->_Root = root; 
 }
 
 void ServerInfo::setIndex(std::string index) {
@@ -218,7 +260,6 @@ size_t ServerInfo::setLocations(std::vector<std::string> &serverTab, size_t pos)
 
 	Location locati(serverTab[pos]);
 	size_t it;
-
 	for (it = pos + 1; it < serverTab.size(); it++)
 	{
 		if (!serverTab[it].compare("location"))
@@ -302,7 +343,7 @@ size_t ServerInfo::setLocations(std::vector<std::string> &serverTab, size_t pos)
 			{
 				if (locati.getLIndex() != "")
 					throw ServerInfoError("Location must have only one index directive");
-				locati.setLIndex(serverTab[it]);
+				locati.setLIndex(serverTab[it]); 
 			}
 			else
 				throw ServerInfoError("Invalid index declaration in location");

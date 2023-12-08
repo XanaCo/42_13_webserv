@@ -18,6 +18,7 @@ public:
 
 	ServerInfo	&operator=(ServerInfo const &other);
 
+    int getSocket() const;
 	std::string getServerName() const;
 	struct sockaddr_in getSockAddress() const;
 	in_port_t getPort() const;
@@ -30,10 +31,8 @@ public:
 	std::string getListen() const;
 	int getTimeout() const;
 	char getAllowed() const;
-    int get_socket(void) const;
-    std::string get_l_port(void) const;
 
-    bool set_listen_socket(std::string l_port);
+    bool setListenSocket(std::string l_port); // New
 	void setServerName(std::string name);
 	void setSockAddress();
 	void setPort(std::string port);
@@ -62,6 +61,7 @@ public:
 
 private:
 
+    int                         _listenSocket; // Socket/fd listening to new connections
 	std::string					_serverName; // HOST name
 	struct sockaddr_in			_sockAddress;
 	in_port_t					_Port; // uint_16

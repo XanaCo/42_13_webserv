@@ -1,5 +1,5 @@
-#include "Client.hpp"
-#include "Base.hpp"
+#include "../inc/Client.hpp"
+#include "../inc/Base.hpp"
 
 // ************************************************************************** //
 //	CONSTRUCTOR / DESTRUCTOR
@@ -92,6 +92,8 @@ void    Client::set_received(std::string buf){
 // {
 //     return (_request);
 // }
+
+// Work in progress
 
 bool    Client::receive_data(void){
 

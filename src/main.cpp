@@ -38,7 +38,8 @@ int	main(int argc, char **argv)
 		std::vector<ServerInfo> Servers = infos.getAllServers(); //classified Servers
 		printServersInfo(Servers);
 
-		//launchSERVERClass(&Servers);
+		Base    start(Servers);
+        start.start_servers();
  	}
 	catch (std::exception &e)
 	{

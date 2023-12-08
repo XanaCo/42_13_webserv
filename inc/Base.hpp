@@ -2,7 +2,7 @@
 # define BASE_H
 
 #include "Client.hpp"
-#include "Server.hpp"
+#include "ServerInfo.hpp"
 
 enum pollevents {
     pollout = 1,
@@ -13,7 +13,7 @@ class   Base{
 
     private :
 
-        std::vector<Server> _servers;
+        std::vector<ServerInfo> _servers;
         std::vector<Client> _clients;
         std::vector<struct pollfd>  _pfds;
         int _sock_count;
@@ -23,6 +23,7 @@ class   Base{
         
         Base(void);
         Base(int argc, char **argv);
+        Base(std::vector<ServerInfo> &  Servers);
         Base(const Base & rhs);
         ~Base(void);
         Base &  operator=(const Base & rhs);
@@ -39,6 +40,8 @@ class   Base{
         void    remove_from_poll(int socket);
 
         //Receive connections and change poll events
+        bool    is_first_server(int i, std::string port);
+        bool    set_servers_sockets(void);
         void    handle_new_connection(int serv_sock);
         void    change_poll_event(int socket, int event);
         void    receive_client_data(int client_sock); //Can be a client method
@@ -54,7 +57,7 @@ class   Base{
 
         //Getters of objects ref in each struct
         Client &   get_cli_from_sock(int client_sock);
-        Server &   get_serv_from_sock(int client_sock);
+        ServerInfo &   get_serv_from_sock(int client_sock);
         struct pollfd   *get_poll_from_sock(int client_sock);
 
         // Main loop after server creation
