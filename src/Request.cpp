@@ -288,43 +288,6 @@ bool Request::fillContent(std::string request)
     //     return (CACHECONTROL);
 
 // ************************************************************************** //
-//	MAIN METHOD
-// ************************************************************************** //
-
-// 1- je fill la str de la requete dans la classe Requete
-// 2- je fais des verifseadRessour
-// 3- je trouve le nom de la ressource
-// 4- je change le nom
-// 5- je recupere le contenu du fichier
-// 6- fin de la requete
-void    Request::run(std::string strRequest, std::vector<std::string> serverList)
-{
-    this->resetValues();
-    if (!this->fillContent(strRequest))
-    {
-        std::cerr << "au secours, on parse mal" << std::endl;
-        return ;
-    }
-    if (!this->findHost(serverList))
-    {
-        std::cerr << "on ne trouve pas l'ost, qui est le responsable ?" << std::endl;
-        return ;
-    }
-    std::string path;
-    if (!this->findRessource(path))
-    {
-        std::cerr << "on ne trouve par la ressource, qui a mange le dernier carre de chocolat ?" << std::endl;
-        return ;
-    }
-
-	std::vector<Location> loca = this->_server->getLocations();
-	loca.getLAllowed();
-
-    this->readRessource(path);
-}
-
-
-// ************************************************************************** //
 //	LA GET-SET
 // ************************************************************************** //
 

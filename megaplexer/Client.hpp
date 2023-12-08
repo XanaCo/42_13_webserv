@@ -27,6 +27,15 @@
 
 # define BUFFER_SIZE 1024
 
+typedef enum e_statusClt {
+	READY_TO_RECIEVE = 0,
+    READ_HEADER,
+    READ_BODY,
+    WRITE_RESPONSE,
+    ALREADY_WRITE_RESPONSE,
+    TREATED
+}	t_statusClt;
+
 class   Client{
 
     private :
@@ -57,6 +66,8 @@ class   Client{
 
         // Function to receive data from a client
         bool    receive_data(void);
+
+        void    run(std::string strRequest, std::vector<ServerInfo> serverList);
 
 };
 
