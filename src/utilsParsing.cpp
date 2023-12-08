@@ -91,3 +91,29 @@ std::pair<int, std::string> createPairErrorPage(std::string num, std::string wor
 
 	return std::pair<int, std::string>(n, word);
 }
+
+bool checkPathExists(std::string pathToCheck) {
+
+	struct stat filestat;
+	
+	if (pathToCheck.empty() || !pathToCheck.length())
+		return false;
+	if (stat(pathToCheck.c_str(), &filestat) == -1)
+		return false;
+	if (!(filestat.st_mode & S_IFDIR))
+		return false;
+	return true;
+}
+
+bool checkFileExists(std::string fileToCheck) {
+
+	struct stat filestat;
+	
+	if (fileToCheck.empty() || !fileToCheck.length())
+		return false;
+	if (stat(fileToCheck.c_str(), &filestat) == -1)
+		return false;
+	if (!(filestat.st_mode & S_IFREG))
+		return false;
+	return true;
+}

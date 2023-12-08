@@ -45,7 +45,7 @@ public:
 	size_t setErrorPages(std::vector<std::string> &serverTab, size_t pos);
 	size_t setLocations(std::vector<std::string> &serverTab, size_t pos);
 
-	void checkAllInfos(); /// FINAL CHECK, all variables 'struct'
+	void checkAllInfos();
 
 	class ServerInfoError : public std::exception {
 	
@@ -74,7 +74,6 @@ private:
 	std::string					_listen; // PORT in string type
 	int							_timeout;
 
-	//std::vector<std::pair<int, std::string> >	_errorPages; // 500 - path to error
 };
 
 std::ostream &operator<<(std::ostream &out, ServerInfo const &ServerInfo);
