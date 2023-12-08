@@ -27,7 +27,7 @@ public:
 	unsigned int getMaxClientBody() const;
 	std::vector<Location> getLocations() const;
 	std::vector<std::string> getErrorPages() const;
-	int getListen() const;
+	std::string getListen() const;
 	int getTimeout() const;
 	char getAllowed() const;
     int get_socket(void) const;
@@ -46,6 +46,8 @@ public:
 	size_t setErrorPages(std::vector<std::string> &serverTab, size_t pos);
 	size_t setLocations(std::vector<std::string> &serverTab, size_t pos);
 
+	void checkAllInfos(); /// FINAL CHECK, all variables 'struct'
+
 	class ServerInfoError : public std::exception {
 	
 		public:
@@ -60,20 +62,19 @@ public:
 
 private:
 
-    int                         _listen_socket;
-    std::string                 _l_port;
-	std::string					_serverName;
+	std::string					_serverName; // HOST name
 	struct sockaddr_in			_sockAddress;
 	in_port_t					_Port; // uint_16
 	in_addr_t					_Host; // uint_32
 	std::string					_Root; // root path
 	std::string					_index; // path to index.html
 	unsigned int				_maxClientBody;
-	std::vector<Location>		_locations; // class Location with infos
+	std::vector<Location>		_locations; // Location INSTANCES with classified info
 	std::vector<std::string>	_errorPages; // 500 - path to error
-	int							_listen;
+	std::string					_listen; // PORT in string type
 	int							_timeout;
 
+	//std::vector<std::pair<int, std::string> >	_errorPages; // 500 - path to error
 };
 
 std::ostream &operator<<(std::ostream &out, ServerInfo const &ServerInfo);

@@ -174,5 +174,6 @@ std::vector<std::string>	splitString(const std::string& input, char delimiter);
 void						eraseComments(std::string &content);
 std::vector<std::string>	cSplitLine(std::string line, char const *charset);
 bool 						semiColonEnding(std::string &content);
+std::pair<int, std::string>	createPairErrorPage(std::string num, std::string word);
 
 #endif

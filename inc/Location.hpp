@@ -9,7 +9,7 @@
 class Location {
 
 public:
-	Location(std::string const &block);
+	Location(std::string const &path);
 	Location(Location const &copy);
 	~Location();
 
@@ -27,7 +27,7 @@ public:
 	void setLRoot(std::string Lroot);
 	void setLUploadDir(std::string Lupload);
 	void setLIndex(std::string Lindex);
-	void setLCgi(std::vector<std::string> Lcgi);
+	void setLCgi(std::string Lcgi);
 	void setLReturn(std::string Rerror, std::string Rpath);
 	void setLAutoindex(bool status);
 	void setLAllowed(char methods);

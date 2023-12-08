@@ -79,3 +79,15 @@ bool semiColonEnding(std::string &content) {
 	return false;
 
 }
+
+std::pair<int, std::string> createPairErrorPage(std::string num, std::string word) {
+
+	int n = strToInt(num);
+
+	if (n < 1 || n > 599)
+		throw ServerInfo::ServerInfoError("Invalid return error code in location");
+	if (word.empty() || word.find(".html", word.size() - 5) == std::string::npos)
+		throw ServerInfo::ServerInfoError("Invalid return path in location");
+
+	return std::pair<int, std::string>(n, word);
+}
