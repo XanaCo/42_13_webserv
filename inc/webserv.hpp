@@ -27,8 +27,6 @@
 # include <utility>
 # include <ctime>		// clock() -> a supprimer avant de push
 
-#include <errno.h> /// EFFACER
-
 # include <unistd.h>
 # include <fcntl.h>
 # include <string.h>
