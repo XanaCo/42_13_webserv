@@ -29,8 +29,6 @@ class Request
         void        deleteRessource(const std::string& resource);
         void        postRessource(const std::string& resource, const std::string& content);
 
-        void        run(std::string strRequest);
-
         void        setMethod(int method);
         void        setPath(std::string path);
         void        setHost(std::string host);
