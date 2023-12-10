@@ -152,6 +152,7 @@ bool    Base::set_servers_sockets(void){
         {
             if (!_servers[i].setListenSocket(_servers[i].getListen()))
                 return false;
+            add_to_poll_in(_servers[i].getSocket());
             std::cout << "Server n: " << _servers[i].getSocket() << " listening on port " << _servers[i].getListen() << std::endl;
         }
     }
