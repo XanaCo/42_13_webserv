@@ -1,7 +1,9 @@
 
 #include "../inc/FileParser.hpp"
 
-/*::: CONSTRUCTORS :::*/
+// ************************************************************************** //
+//	CONSTRUCTOR / DESTRUCTOR
+// ************************************************************************** //
 
 FileParser::FileParser(std::string const &filePath) : _filePath(filePath) {
 
@@ -13,8 +15,6 @@ FileParser::FileParser(std::string const &filePath) : _filePath(filePath) {
 	return ;
 }
 
-/*::: DESTRUCTORS :::*/
-
 FileParser::~FileParser() {
 
 	if (PRINT)
@@ -22,6 +22,10 @@ FileParser::~FileParser() {
 
 	return ;
 }
+
+// ************************************************************************** //
+//  OPERATORS
+// ************************************************************************** //
 
 std::ostream &operator<<(std::ostream &out, FileParser const &other) {
 
@@ -38,7 +42,9 @@ std::ostream &operator<<(std::ostream &out, FileParser const &other) {
 	return out;
 }
 
-/*::: ACCESSORS :::*/
+// ************************************************************************** //
+//	LA GET-SET
+// ************************************************************************** //
 
 std::string const &FileParser::getFilePath() const {
 
@@ -65,7 +71,9 @@ int FileParser::getNServers() const {
 	return this->_nServers;
 }
 
-/*::: MEMBER FUNCTIONS :::*/
+// ************************************************************************** //
+//	METHODS
+// ************************************************************************** //
 
 void FileParser::parseFile() {
 
@@ -316,7 +324,9 @@ void	FileParser::stockServerInfo() {
 	}
 }
 
-/*::: EXCEPTIONS :::*/
+// ************************************************************************** //
+//	EXCEPTIONS
+// ************************************************************************** //
 
 FileParser::FileParserError::FileParserError(std::string errorMsg) throw() : _errorMsg("Webserv Error : " + errorMsg) {}
 

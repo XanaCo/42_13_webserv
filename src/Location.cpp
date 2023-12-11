@@ -1,7 +1,9 @@
 
 #include "../inc/Location.hpp"
 
-/*::: CONSTRUCTORS :::*/
+// ************************************************************************** //
+//	CONSTRUCTOR / DESTRUCTOR
+// ************************************************************************** //
 
 Location::Location(std::string const &path) {
 
@@ -38,8 +40,6 @@ Location::Location(Location const &copy) {
 	return ;
 }
 
-/*::: DESTRUCTORS :::*/
-
 Location::~Location() {
 
 	if (PRINT)
@@ -48,7 +48,9 @@ Location::~Location() {
 	return ;
 }
 
-/*::: Operator Overloading :::*/
+// ************************************************************************** //
+//  OPERATORS
+// ************************************************************************** //
 
 Location &Location::operator=(Location const &other) {
 
@@ -92,7 +94,9 @@ std::ostream &operator<<(std::ostream &out, Location const &other) {
 	return out;
 }
 
-/*::: ACCESSORS :::*/
+// ************************************************************************** //
+//	LA GET-SET
+// ************************************************************************** //
 
 std::string Location::getLPathName() const {
 
@@ -133,8 +137,6 @@ char Location::getLAllowed() const {
 
 	return this->_allowedMethods;
 }
-
-/*::: MEMBER FUNCTIONS :::*/
 
 void Location::setLRoot(std::string Lroot) {
 
@@ -184,6 +186,10 @@ void Location::setLAllowed(char methods) {
 
 	this->_allowedMethods = methods;
 }
+
+// ************************************************************************** //
+//	METHODS
+// ************************************************************************** //
 
 void Location::checkLocationInfo() {
 
