@@ -144,6 +144,22 @@ bool    Base::is_first_server(int lim, std::string port){
     return true;
 }
 
+ServerInfo &    Base::get_first_server(const ServerInfo & curr){
+
+    for (size_t i = 0; i < _servers.size(); i++)
+    {
+        if (_servers[i].getListen() == curr.getListen())
+            return (_servers[i]);
+    }
+    return (_servers[0]);
+}
+
+void    Base::assign_socket_same_port(ServerInfo & curr, ServerInfo & same){
+
+    curr.setSameListen(same.getSocket()); 
+    return ;
+}
+
 bool    Base::set_servers_sockets(void){
 
     for (size_t i = 0; i < this->_servers.size(); i++)
@@ -153,7 +169,12 @@ bool    Base::set_servers_sockets(void){
             if (!_servers[i].setListenSocket(_servers[i].getListen()))
                 return false;
             add_to_poll_in(_servers[i].getSocket());
-            std::cout << "Server n: " << _servers[i].getSocket() << " listening on port " << _servers[i].getListen() << std::endl;
+            std::cout << "Server named : " << _servers[i].getServerName() << " listening on port " << _servers[i].getListen() << " and socket n " << _servers[i].getSocket() << std::endl;
+        }
+        else
+        {
+            assign_socket_same_port(_servers[i], get_first_server(_servers[i]));
+            std::cout << "Server named : " << _servers[i].getServerName() << " listening on port " << _servers[i].getListen() << " and socket n " << _servers[i].getSocket() << std::endl;
         }
     }
     return true;

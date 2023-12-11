@@ -41,6 +41,8 @@ class   Base{
 
         //Receive connections and change poll events
         bool    is_first_server(int i, std::string port);
+        void    assign_socket_same_port(ServerInfo & curr, ServerInfo & same);
+        ServerInfo &    get_first_server(const ServerInfo & curr);
         bool    set_servers_sockets(void);
         void    handle_new_connection(int serv_sock);
         void    change_poll_event(int socket, int event);

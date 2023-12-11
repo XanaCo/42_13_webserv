@@ -33,6 +33,7 @@ public:
 	char getAllowed() const;
 
     bool setListenSocket(std::string l_port); // New
+    void setSameListen(int same);
 	void setServerName(std::string name);
 	void setSockAddress();
 	void setPort(std::string port);

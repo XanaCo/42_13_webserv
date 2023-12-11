@@ -203,6 +203,11 @@ bool    ServerInfo::setListenSocket(std::string l_port){
     return (this->_listenSocket = listener, true);
 }
 
+void    ServerInfo::setSameListen(int same){
+
+    this->_listenSocket = same;
+}
+
 
 void ServerInfo::setServerName(std::string name) {
 
