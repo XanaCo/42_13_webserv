@@ -56,17 +56,16 @@
 </head>
 <body>
     <h1>Sorting Hat Ceremony</h1>
-    <form action="/cgi/sortingHat.cgi" method="post">
+    <form action="scriptCGI/sortHat.py" method="post">
         <label for="name">Your Name:</label>
         <input type="text" id="name" name="name" required>
         <br>
         <p>Select your animal totem:</p>
         <select id="creature" name="creature" required>
-			<option value=""></option>
-            <option value="Guepard">Guepard</option>
-            <option value="Crab">Crab</option>
-            <option value="Octopus">Octopus</option>
 			<option value="Capybara">Capybara</option>
+            <option value="Octopus">Octopus</option>
+            <option value="Crab">Crab</option>
+            <option value="Guepard">Guepard</option>
         </select>
         <br>
         <input type="submit" value="Discover Your House">
