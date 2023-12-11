@@ -192,12 +192,13 @@ void    Base::handle_new_connection(int serv_sock)
     addrlen = sizeof remoteaddr;
     new_fd = accept(serv_sock, (struct sockaddr*)&remoteaddr, &addrlen);
     if (new_fd == -1)
-        std::cout << "Error accepting connection" << std::endl;
+        std::cout << "Error accepting connection" << std::endl; //See with Ana for exception
     else
     {
         this->add_to_poll_in(new_fd);
         std::cout << "New connection from " << inet_ntop(remoteaddr.ss_family, get_in_addr((struct sockaddr*)&remoteaddr), remoteIP, INET6_ADDRSTRLEN) << " on socket n " << new_fd << std::endl; 
-        this->add_to_clients(new_fd, (struct sockaddr_in*)this->get_in_sockaddr((struct sockaddr*)&remoteaddr));
+        this->add_to_clients(new_fd, (struct sockaddr_in*)this->get_in_sockaddr((struct sockaddr*)&remoteaddr)); //Add the adress to clients and maybe see the same for server but i think ana did it
+        std::cout << get_cli_from_sock(new_fd) << std::endl;
     }
 }
 

@@ -187,9 +187,9 @@ bool    ServerInfo::setListenSocket(std::string l_port){
     {
         listener = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
         if (listener < 0)
-            continue;
-        fcntl(listener, F_SETFL, O_NONBLOCK);
-        setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &test, sizeof(int));
+            continue; //Set an error/exception about socket setting
+        fcntl(listener, F_SETFL, O_NONBLOCK); // Check return value to throw error/exception
+        setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &test, sizeof(int)); // Check return value to throw exception
         if (bind(listener, p->ai_addr, p->ai_addrlen) < 0)
         {
             close(listener);

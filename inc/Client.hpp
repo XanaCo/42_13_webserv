@@ -26,6 +26,13 @@
 // # include <Response.hpp>
 
 # define BUFFER_SIZE 1024
+# define READ_READY 0
+# define HEADER_READING 1
+# define BODY_READING 2
+# define REQUEST_RECEIVED 3
+# define RESPONSE_BUILT 4
+# define RESPONSE_SENDING 5
+# define RESPONSE_SENT 6
 
 class   Client{
 
@@ -34,6 +41,7 @@ class   Client{
         int _new_socket;
         struct sockaddr_in _address;
         std::string _received;
+        int _client_status;
         // Request     request;
         // Response    response;
 
@@ -49,9 +57,12 @@ class   Client{
         int get_socket(void) const;
         struct sockaddr_in get_addr_struct(void) const;
         std::string get_received(void) const;
+        int get_status(void) const;
+        std::string display_status(void) const;
         void    set_socket(int sock);
         void    set_addr_struct(struct sockaddr_in addr);
         void    set_received(std::string buf);
+        void    set_status(int status);
         // void        setReturnStatus(Request request);
         // Request     getReturnStatus(void) const;
 
