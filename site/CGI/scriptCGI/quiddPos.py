@@ -33,3 +33,6 @@ print(f"<h1>Position Assignment</h1>")
 print(f"<p>{name}, you are a <strong>{position}</strong>.</p>")
 print("</body></html>")
 
+# security
+if __name__ == "__main__":
+	main()

@@ -33,3 +33,6 @@ print(f"<h1>Sorting Hat Result</h1>")
 print(f"<p>{name}, you belong to <strong>{selected_house}</strong>.</p>")
 print("</body></html>")
 
+# security
+if __name__ == "__main__":
+	main()

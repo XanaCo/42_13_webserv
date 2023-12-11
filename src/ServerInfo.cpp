@@ -1,7 +1,9 @@
 
 #include "../inc/ServerInfo.hpp"
 
-/*::: CONSTRUCTORS :::*/
+// ************************************************************************** //
+//	CONSTRUCTOR / DESTRUCTOR
+// ************************************************************************** //
 
 ServerInfo::ServerInfo() {
 
@@ -44,8 +46,6 @@ ServerInfo::ServerInfo(ServerInfo const &copy) {
 	return ;
 }
 
-/*::: DESTRUCTORS :::*/ 
-
 ServerInfo::~ServerInfo() {
 
 	if (PRINT)
@@ -54,7 +54,9 @@ ServerInfo::~ServerInfo() {
 	return ;
 }
 
-/*::: Operator Overloading ::: */
+// ************************************************************************** //
+//  OPERATORS
+// ************************************************************************** //
 
 ServerInfo	&ServerInfo::operator=(ServerInfo const &other) {
 
@@ -105,7 +107,9 @@ std::ostream &operator<<(std::ostream &out, ServerInfo const &other) {
 	return out;
 }
 
-/*::: ACCESSORS :::*/
+// ************************************************************************** //
+//	LA GET-SET
+// ************************************************************************** //
 
 int ServerInfo::getSocket() const{
 
@@ -166,9 +170,6 @@ int ServerInfo::getTimeout() const {
 
 	return this->_timeout;
 }
-
-/*::: SETERS :::*/
-
 
 bool    ServerInfo::setListenSocket(std::string l_port){
 
@@ -423,6 +424,10 @@ void ServerInfo::setTimeout(std::string timeout) {
 	this->_timeout = res;
 }
 
+// ************************************************************************** //
+//	METHODS
+// ************************************************************************** //
+
 void ServerInfo::checkAllInfos() {
 
 	if (this->_Host == 0)
@@ -466,7 +471,9 @@ void ServerInfo::checkAllInfos() {
 	this->setSockAddress();
 }
 
-/*::: EXCEPTIONS :::*/
+// ************************************************************************** //
+//	EXCEPTIONS
+// ************************************************************************** //
 
 ServerInfo::ServerInfoError::ServerInfoError(std::string errorMsg) throw() : _errorMsg("Webserv Error : " + errorMsg) {}
 
