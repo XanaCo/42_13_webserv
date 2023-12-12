@@ -18,7 +18,7 @@ Base::Base(int argc, char **argv) : _clients(0), _sock_count(0){
     return ;
 }*/
 
-Base::Base(std::vector<ServerInfo> & Servers){
+Base::Base(std::vector<ServerInfo> & Servers) :  _clients(0), _pfds(0), _sock_count(0){
 
     this->_servers = Servers;
 }
@@ -358,6 +358,7 @@ void    Base::start_servers(void) {
     while (1)
     {
        int  poll_count = poll(this->_pfds.data(), this->_pfds.size(), -1); 
+       //std::cout << "poll is called" << std::endl;
        if (poll_count == -1)
        {
            std::cout << "Error in polling sockets" << std::endl;
@@ -386,7 +387,7 @@ void    Base::review_poll(void){
                     remove_from_clients(_pfds[i].fd);
                     remove_from_poll(_pfds[i].fd);
                 }
-                change_poll_event(_pfds[i].fd, pollout);
+                //change_poll_event(_pfds[i].fd, pollout);
             }
         }
         if(_pfds[i].revents & POLLOUT)
@@ -395,7 +396,7 @@ void    Base::review_poll(void){
 
             if (!send_all(_pfds[i].fd, test, &len))
                 std::cout << "Only " << len << " bytes have been sent because of error" << std::endl;
-            change_poll_event(_pfds[i].fd, pollin);
+            //change_poll_event(_pfds[i].fd, pollin);
         }
     }
 }

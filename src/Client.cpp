@@ -15,6 +15,7 @@ Client::Client(int socket, struct sockaddr_in *r_address){
     _new_socket = socket;
     _address = *r_address;
     _client_status = READ_READY;
+    _bytes_received = 0;
     return  ;
 }
 
@@ -141,18 +142,25 @@ void    Client::set_bytes_received(int nbytes){
 
 // Work in progress
 
-void    receive_header_data(char *buffer, int nbytes){
+void    Client::receive_header_data(char *buffer, int nbytes){
+
+    if (this->_client_status == READ_READY && nbytes > 0)
+        this->_client_status = HEADER_READING;
+    this->_received += buffer;
+    this->_bytes_received += nbytes;
 
     return ;
 }
 
-void    receive_body_data(char *buffer, int nbytes){
+/*void    receive_body_data(char *buffer, int nbytes){
 
+    this->_received += buffer;
+    this->_bytes_received += nbytes;
     return ;
 }
+*/
 
-
-bool    Client::receive_request(void){
+bool    Client::receive_data(void){
 
     char   buffer[BUFFER_SIZE + 1];
 
@@ -168,14 +176,12 @@ bool    Client::receive_request(void){
         std::cout << "Client " << *this << " encountered error while recv" << std::endl; // See for exception and handling of recv error
         return false;
     }
-    /*else
+    else
     {
         if (this->_client_status == READ_READY || this->_client_status == HEADER_READING)
             this->receive_header_data(buffer, nbytes);
         else if (this->_client_status == BODY_READING)
             this->receive_body_data(buffer, nbytes);
-    }*/
-    this->_received += buffer;
-    std::cout << this->_received << std::endl;
+    }
     return true;
 }

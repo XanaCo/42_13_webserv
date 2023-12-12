@@ -25,7 +25,7 @@
 // # include <Request.hpp>
 // # include <Response.hpp>
 
-# define BUFFER_SIZE 1024
+# define BUFFER_SIZE 2
 # define READ_READY 0
 # define HEADER_READING 1
 # define BODY_READING 2
@@ -70,7 +70,7 @@ class   Client{
         // Request     getReturnStatus(void) const;
 
         // Function to receive data from a client
-        bool    receive_request(void);
+        bool    receive_data(void);
         void    receive_header_data(char *buffer, int nbytes);
         void    receive_body_data(char *buffer, int nbytes);
 
