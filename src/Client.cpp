@@ -72,6 +72,11 @@ int Client::get_status(void) const{
     return this->_client_status;
 }
 
+int Client::get_bytes_received(void) const{
+
+    return this->_bytes_received;
+}
+
 std::string    Client::display_status(void) const{
 
     switch (this->_client_status)
@@ -119,6 +124,11 @@ void    Client::set_status(int status){
     return ;
 }
 
+void    Client::set_bytes_received(int nbytes){
+
+    this->_bytes_received = nbytes;
+}
+
 // void    Client::setReturnStatus(Request request)
 // {
 //     _request = request;
@@ -131,17 +141,40 @@ void    Client::set_status(int status){
 
 // Work in progress
 
-bool    Client::receive_data(void){
+void    receive_header_data(char *buffer, int nbytes){
+
+    return ;
+}
+
+void    receive_body_data(char *buffer, int nbytes){
+
+    return ;
+}
+
+
+bool    Client::receive_request(void){
 
     char   buffer[BUFFER_SIZE + 1];
 
-    int nbytes = recv(this->_new_socket, buffer, sizeof buffer, 0);
-
-    if (nbytes <= 0)
+    memset(buffer, 0, BUFFER_SIZE);
+    int nbytes = recv(this->_new_socket, buffer, BUFFER_SIZE, 0);
+    if (nbytes == 0)
     {
-            std::cout << "Socket " << this->_new_socket << " closed connection or recv failed" << std::endl;
-            return false;
+        std::cout << "Client " << *this << " closed connection" << std::endl; // Handle a client closing
+        return false;
     }
+    else if (nbytes < 0)
+    {
+        std::cout << "Client " << *this << " encountered error while recv" << std::endl; // See for exception and handling of recv error
+        return false;
+    }
+    /*else
+    {
+        if (this->_client_status == READ_READY || this->_client_status == HEADER_READING)
+            this->receive_header_data(buffer, nbytes);
+        else if (this->_client_status == BODY_READING)
+            this->receive_body_data(buffer, nbytes);
+    }*/
     this->_received += buffer;
     std::cout << this->_received << std::endl;
     return true;
