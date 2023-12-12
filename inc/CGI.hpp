@@ -26,10 +26,13 @@ public:
 private:
 	Cgi();
 
-	int		_pipe[2];
+	int		_pipeIn[2];
+	int		_pipeOut[2];
 	Request *_request;
 	Response *_response;
-	std::map<std::string, std::string> _envi;
+	std::map<std::string, std::string> _envpMap;
+	char **_envpToExec;
+	char **_argvToExec;
 
 };
 
