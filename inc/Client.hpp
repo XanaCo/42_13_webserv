@@ -25,7 +25,7 @@
 // # include <Request.hpp>
 // # include <Response.hpp>
 
-# define BUFFER_SIZE 2
+# define BUFFER_SIZE 1024
 # define READ_READY 0
 # define HEADER_READING 1
 # define BODY_READING 2

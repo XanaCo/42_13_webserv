@@ -148,17 +148,17 @@ void    Client::receive_header_data(char *buffer, int nbytes){
         this->_client_status = HEADER_READING;
     this->_received += buffer;
     this->_bytes_received += nbytes;
-
+    std::cout << this->_received << std::endl;
     return ;
 }
 
-/*void    receive_body_data(char *buffer, int nbytes){
+void    Client::receive_body_data(char *buffer, int nbytes){
 
     this->_received += buffer;
     this->_bytes_received += nbytes;
     return ;
 }
-*/
+
 
 bool    Client::receive_data(void){
 
