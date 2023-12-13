@@ -142,13 +142,38 @@ void    Client::set_bytes_received(int nbytes){
 
 // Work in progress
 
+bool    Client::found_header_end(size_t *found) const {
+
+    if ((*found = _received.find("\r\n\r\n")) != std::string::npos)
+        return true;
+    return false;
+}
+
+std::string Client::curated_header(size_t end){
+
+    std::string header = _received.substr(0, end);
+    _received = _received.substr(end, _received.size());
+    return header; 
+}
+
 void    Client::receive_header_data(char *buffer, int nbytes){
 
+    size_t *found = 0;
     if (this->_client_status == READ_READY && nbytes > 0)
         this->_client_status = HEADER_READING;
     this->_received += buffer;
     this->_bytes_received += nbytes;
-    std::cout << this->_received << std::endl;
+    if (found_header_end(found))
+    {
+        //Passer le header complet a Pablo _request->fillContent(string)
+        //send_to_pablo(curated_header(_received));
+        std::string header = curated_header(*found);
+        std::cout << header << std::endl;
+        std::cout << "_received still got : " << std::endl << _received << std::endl;
+        this->_client_status = BODY_READING;
+        return ;
+    }
+//    std::cout << this->_received << std::endl;
     return ;
 }
 

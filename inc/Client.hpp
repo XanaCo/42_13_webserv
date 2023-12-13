@@ -71,6 +71,8 @@ class   Client{
 
         // Function to receive data from a client
         bool    receive_data(void);
+        bool    found_header_end(size_t *found) const;
+        std::string curated_header(size_t end);
         void    receive_header_data(char *buffer, int nbytes);
         void    receive_body_data(char *buffer, int nbytes);
 
