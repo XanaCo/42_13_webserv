@@ -76,9 +76,9 @@ std::map<std::string, std::string>  Cgi::getCGIEnv() const {
 	//request specific:
 		//SERVER_PROTOCOL - "HTTP/1.1" Format: protocol/revision
 		//SERVER_PORT - intToString(server->_Port).c_str()
-		//REQUEST_METHOD - server->getMethods().c_str()
+		//REQUEST_METHOD - server->getMethod().c_str() // /!\ ici c'est un int
 		//PATH_INFO - request->URIPathInfo (extra info about the script directory location)
-		//PATH_TRANSLATED - request->URIPath (path to the script to use)
+		//PATH_TRANSLATED - request->getPath() (path to the script to use)
 		//SCRIPT_NAME - virtual path of the script
 		//QUERY_STRING - request->URIQuery (string apres character ? in URL)
 		
@@ -86,8 +86,8 @@ std::map<std::string, std::string>  Cgi::getCGIEnv() const {
 		//REMOTE_ADDR - request->_ClientAddress (IP address of the client)
 		//AUTH_TYPE - "Basic"
 
-		//CONTENT_TYPE - request->_contentType (MIME type of the data sent to the CGI script)
-		//CONTENT_LENGTH -request->_contentLength (length in bytes of the request body)
+		//CONTENT_TYPE - request->getContentType (MIME type of the data sent to the CGI script)
+		//CONTENT_LENGTH -request->getContentLength (length in bytes of the request body)
 
 		//a voir si besoin- HTTP_ACCEPT - The MIME types which the client will accept, as given by HTTP headers. Other protocols may need to get this information from elsewhere. Each item in this list should be separated by commas as per the HTTP spec. Format: type/subtype, type/subtype
 		// a voir si besoin- HTTP_USER_AGENT - The browser the client is using to send the request. General format: software/version library/version.
@@ -101,8 +101,8 @@ std::map<std::string, std::string>  Cgi::getCGIEnv() const {
 //executeScript
 	//pipe(_pipe)
 	//response->setCGIpipe(_pipe[0])
-	//response->setCGIpid(fork())  ->// response->_pid = fork()
-	//if response->_pid == 0 we are in child process
+	//response->setCgiPid(fork())  ->// response->_pid = fork()
+	//if response->getCgiPid() == 0 we are in child process
 		//dup2 for input
 		//dup2 for output
 		//setEnvi
