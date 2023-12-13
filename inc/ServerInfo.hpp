@@ -5,7 +5,6 @@
 # define SERVERINFO_HPP
 
 # include "webserv.hpp"
-# include "Location.hpp"
 
 class Location;
 
@@ -46,6 +45,8 @@ public:
 	size_t setLocations(std::vector<std::string> &serverTab, size_t pos);
 
 	void checkAllInfos(); /// FINAL CHECK, all variables 'struct'
+
+	bool	findRessource(std::string path, std::string& newPath) const;
 
 	class ServerInfoError : public std::exception {
 	

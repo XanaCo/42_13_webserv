@@ -1,13 +1,14 @@
 #ifndef BASE_H
 # define BASE_H
 
-#include "Client.hpp"
-#include "ServerInfo.hpp"
+# include "webserv.hpp"
 
 enum pollevents {
     pollout = 1,
     pollin = 2
 };
+
+class  Client;
 
 class   Base{
 

@@ -67,7 +67,6 @@ class   Client{
         // Function to receive data from a client
         bool    receive_data(void);
 
-        void    run(std::string strRequest, std::vector<ServerInfo> serverList);
 
 };
 

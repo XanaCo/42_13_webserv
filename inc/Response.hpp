@@ -25,18 +25,22 @@ class Response
         Response    &operator=(Response const &obj);
 
         void    redirection(void);
-        bool    readRessource(const char* path, std::stringstream& content);
         void    resetValues(void);
+
+        // bool        readRessource(const std::string& path, std::string& content);
+        void        readRessource(std::string path);
+        void        deleteRessource(const std::string path);
+        void        postRessource(const std::string path);
 
         bool    cgiRead();
         bool    cgiWrite();
 
         void    setReturnStatus(int returnStatus);
-        void    setContent(int content);
+        void    setContent(std::string content);
         void    setPort(uint16_t port);
+        void    setCgiPid(pid_t cgiPid);
+        void    setCgiFd(int cgiFd);
         void    setCgiOutput(std::string cgiOutput);
-        void    setPort(uint16_t port);
-        void    setPort(uint16_t port);
         void    setCgiBytesWritten(long cgiBytesWritten);
         void    setCgiFdRessource(int cgiFdRessource);
 

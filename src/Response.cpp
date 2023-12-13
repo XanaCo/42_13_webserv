@@ -6,7 +6,7 @@
 // ************************************************************************** //
 
 const std::string host = "en.wikipedia.org";
-const std::string path = "/wiki/Main_Page";
+// const std::string path = "/wiki/Main_Page";
 
 Response::Response(uint16_t port): _port(port)
 {
@@ -27,8 +27,8 @@ Response::~Response()
 
 Response	&Response::operator=(Response const &obj)
 {
-    if (this != obj)
-    {
+    // if (this != obj)
+    // {
         _port = obj._port;
         _content = obj._content;
         _returnStatus = obj._returnStatus;
@@ -36,16 +36,16 @@ Response	&Response::operator=(Response const &obj)
         _cgiFd = obj._cgiFd;
         _cgiOutput = obj._cgiOutput;
         _cgiBytesWritten = obj._cgiBytesWritten;
-        _cgiFdRessource = obj.cgiFdRessource;
-    }
+        _cgiFdRessource = obj._cgiFdRessource;
+    // }
     return (*this);
 }
 
 std::ostream	&operator<<(std::ostream &os, Response &obj)
 {
-    os << RESPONSE << " Port : " << this.getPort();
-    os << " return status : " << this.getReturnStatus() << std::endl;
-    os << "content : " << this.getContent() << std::endl;
+    os << RESPONSE << " Port : " << obj.getPort();
+    os << " return status : " << obj.getReturnStatus() << std::endl;
+    os << "content : " << obj.getContent() << std::endl;
     return (os);
 }
 
@@ -60,7 +60,7 @@ void    Response::redirection(void)
 {
     // Résolution du nom de domaine
     struct hostent* server = gethostbyname(host.c_str()); // /!\ la fonction n'est pas autorisee
-    if (server == nullptr)
+    if (!server)
     {
         this->setReturnStatus(E_BAD_GATEWAY);
         // std::cerr << "Erreur de résolution du nom de domaine." << std::endl;
@@ -103,44 +103,67 @@ void    Response::redirection(void)
     this->setReturnStatus(S_OK);
 }
 
-// dans le cas de GET,
-// verifier le path est autorise dans le fichier de configuration
-// puis recuperer le contenu du fichier a l'aide de cette fonction :
+// ************************************************************************** //
+//	GET / POST / DELETE
+// ************************************************************************** //
 
-bool Ressource::readRessource(const char* path, std::stringstream& content) // doublon avec les fonctions des requetes ?
+void    Response::readRessource(std::string path)
 {
+    const char*       cPath = path.c_str();
 	struct stat sb;
     // Response    response;
 
-	if (stat(path, &sb) != 0)
+	if (stat(cPath, &sb) != 0)
     {
         this->setReturnStatus(E_NOT_FOUND);
         // std::cerr << path << " : does not exist" << std::endl;
-        return (false);
+        return ;
     }
 	if (!S_ISREG(sb.st_mode))
     {
         this->setReturnStatus(E_CONFLICT); // je suis pas certain pour ce code d'erreur
         // std::cerr << path << " : is not a regular file" << std::endl;
-        return (false);
+        return ;
     }
-	std::ifstream ifs(path);
+	std::ifstream ifs(cPath);
 	if (!ifs.is_open())
     {
         this->setReturnStatus(E_FORBIDDEN); // je suis pas certain pour ce code d'erreur
         // std::cerr << path << " : cant be opened" << std::endl;
-		return (false);
+		return ;
     }
-	this->setContent(ifs.rdbuf());
-	ifs.close();
-	if (!(this->getContent().tellp()))
-    {
-        this->setReturnStatus(S_NO_CONTENT); // pas certain du return false;
-        // std::cerr << path << " : is empty" << std::endl;
-        return (false);
-    }
-	return (true);
+    // changer le READ RESSOURCE
+	// this->setContent(ifs.rdbuf());
+	// ifs.close();
+	// if (!(this->getContent().tellp()))
+    // {
+    //     this->setReturnStatus(S_NO_CONTENT); // pas certain du return false;
+    //     // std::cerr << path << " : is empty" << std::endl;
+    //     return ;
+    // }
+    // this->setReturnStatus(S_OK);
+	return ;
 }
+
+void    Response::postRessource(const std::string path)
+{
+    std::ofstream file(path.c_str());
+    // file << fileContent;
+    file.close();
+}
+
+void Response::deleteRessource(const std::string path)
+{
+    (void)path;
+    // if (resources.find(path) != resources.end())
+    // {
+    //     resources.erase(path);
+    //     // std::cout << "ressource deleted : " << resource << std::endl;
+    // }
+    // else
+    //     std::cerr << "Delete error : resource not found : " << resource << std::endl;
+}
+
 
 void    Response::resetValues(void)
 {
@@ -158,47 +181,47 @@ void    Response::resetValues(void)
 //	CGI METHODS
 // ************************************************************************** //
 
-bool    Response::cgiRead()
-{
-    char    buffer[BUFFER_SIZE] = {};
-    int     bytesReaded;
+// bool    Response::cgiRead()
+// {
+//     char    buffer[BUFFER_SIZE] = {};
+//     int     bytesReaded;
 
-    // + gerer le timeout
-    bytesReaded = read(_cgiFd, buffer, BUFFER_SIZE);
-    if (!bytesReaded)
-        return (true);//
-    if (bytesReaded < 0)
-    {
-        returnStatus = E_INTERNAL_SERVER;
-        return (false);
-    }
-    _cgiOutput.append(buffer);
-    return (true);
-}
+//     // + gerer le timeout
+//     bytesReaded = read(_cgiFd, buffer, BUFFER_SIZE);
+//     if (!bytesReaded)
+//         return (true);//
+//     if (bytesReaded < 0)
+//     {
+//         _returnStatus = E_INTERNAL_SERVER;
+//         return (false);
+//     }
+//     _cgiOutput.append(buffer);
+//     return (true);
+// }
 
-bool    Response::cgiWrite()
-{
-    long    bytesWritten;
+// bool    Response::cgiWrite()
+// {
+//     long    bytesWritten;
 
-    if (!(_method & POST))
-        return ;
+//     // if (!(_method & POST))
+//     //     return ;
     
-    bytesWritten = write(_cgiFdRessource, body + _cgiBytesWritten, BUFFER_SIZE);
-    if (bytesWritten < 0)
-    {
+//     bytesWritten = write(_cgiFdRessource, body + _cgiBytesWritten, BUFFER_SIZE);
+//     if (bytesWritten < 0)
+//     {
         
-        return (false);
-    }
-    _cgiBytesWritten += bytesWritten;
-    return (true);
-}
+//         return (false);
+//     }
+//     _cgiBytesWritten += bytesWritten;
+//     return (true);
+// }
 
 // ************************************************************************** //
 //	LA GET-SET
 // ************************************************************************** //
 
 void    Response::setReturnStatus(int returnStatus) {returnStatus = returnStatus;}
-void    Response::setContent(int content) {_content = content;}
+void    Response::setContent(std::string content) {_content = content;}
 void    Response::setPort(uint16_t port) {_port = port;}
 void    Response::setCgiPid(pid_t cgiPid) {_cgiPid = cgiPid;}
 void    Response::setCgiFd(int cgiFd) {_cgiFd = cgiFd;}

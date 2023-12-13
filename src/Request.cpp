@@ -101,7 +101,7 @@ bool    Request::checkup(void)
 
 
 // ici la requete est validee et on cherche a savoir quel sous-serveur est concerne par cette derniere
-bool	Request::findHost(std::vector<ServerInfo> servers)
+bool	Request::findHost(std::vector<ServerInfo> servers, ServerInfo &server)
 {
     int size = servers.size();
 
@@ -109,7 +109,7 @@ bool	Request::findHost(std::vector<ServerInfo> servers)
     {
 		if (_host == servers[i].getServerName())
         {
-            _server = &servers[i];
+            server = servers[i];
             // + link le server avec la requete
     		return (true);
         }
@@ -119,23 +119,23 @@ bool	Request::findHost(std::vector<ServerInfo> servers)
 }
 
 // ici le host est identifie et on cherche a voir si la ressource est coherente
-bool    Request::findRessource(std::string& path)
-{
-    // on normalise le chemin, c'est a dire qu'on va enlever les '.' et '..'
-    // en fait on va pas accepter les .. car c'est pas securise, humm c'est interdit
-    // + compression des barres obliques "///" -> "/"
+// bool    Request::findRessource(std::string& path)
+// {
+//     // on normalise le chemin, c'est a dire qu'on va enlever les '.' et '..'
+//     // en fait on va pas accepter les .. car c'est pas securise, humm c'est interdit
+//     // + compression des barres obliques "///" -> "/"
 
-    path = _server->getRoot() + _path;
+//     path = _server->getRoot() + _path;
 
 
-    compressionOfSlashes(path);
-    if (containsParentDirectory (path))
-	{
-		//_status MAJ
-		throw ServerInfo::ServerInfoError("Pablo is awesome and checked this error");
-	}
-    return (true);
-}
+//     compressionOfSlashes(path);
+//     if (containsParentDirectory (path))
+// 	{
+// 		//_status MAJ
+// 		throw ServerInfo::ServerInfoError("Pablo is awesome and checked this error");
+// 	}
+//     return (true);
+// }
 
 // /!\ apparement quand on recois un requete il y a une phase de decodage
 // pour l'URI (le texte est encode en %XX base 16)
@@ -145,40 +145,21 @@ bool    Request::findRessource(std::string& path)
 // ************************************************************************** //
 
 // ici on a compris qu'on doit lire une ressource, on recupere le contenu de la ressource
-bool Request::readRessource(const std::string& path, std::string& content)
-{
-    std::ifstream fichier(path.c_str());
-    if (fichier)
-    {
-        std::stringstream buffer;
-        buffer << fichier.rdbuf();
-        content = buffer.str();
-        fichier.close();
-        return (true);
-    }
-    std::cerr << "Erreur lors de la lecture du fichier : " << path << std::endl;
-    return (false);
-}
+// bool Request::readRessource(const std::string& path, std::string& content)
+// {
+//     std::ifstream fichier(path.c_str());
+//     if (fichier)
+//     {
+//         std::stringstream buffer;
+//         buffer << fichier.rdbuf();
+//         content = buffer.str();
+//         fichier.close();
+//         return (true);
+//     }
+//     std::cerr << "Erreur lors de la lecture du fichier : " << path << std::endl;
+//     return (false);
+// }
 
-// ici on a compris qu'on doit supprimer une ressource. aller oust ! a la benne
-void Request::deleteRessource(const std::string& resource)
-{
-    if (resources.find(resource) != resources.end())
-    {
-        resources.erase(resource);
-        // std::cout << "ressource deleted : " << resource << std::endl;
-    }
-    else
-        std::cerr << "Delete error : ressource not found : " << resource << std::endl;
-}
-
-// ici on a compris qu'on doit creer une ressource. ..., et la lumiere fu
-void    Request::postRessource(const std::string& resource, const std::string& content)
-{
-    std::ofstream file(resource.c_str());
-    file << fileContent;
-    file.close();
-}
 // {
 //     if (resources.find(resource) != resources.end())
 //     {
@@ -215,47 +196,47 @@ bool Request::fillContent(std::string request)
 {
     time_t  startTime;
     time_t  endTime;
-    clock(&startTime);
+    startTime = clock();
 
-    std::vector<string> lines;
+    std::vector<std::string> lines = splitString(request, '\n');
     int size = lines.size();
 
-    for (int i = 0; i < size; i++;)
+    for (int i = 0; i < size; i++)
     {
-        if (size >= 3 && line.substr(0, 3) == "GET")
+        if (size >= 3 && lines[i].substr(0, 3) == "GET")
         {
             this->setMethod(GET);
-            this->setPath(line.substr(4, size));
+            this->setPath(lines[i].substr(4, size));
         }
-        else if (size >= 4 && line.substr(0, 4) == "POST")
+        else if (size >= 4 && lines[i].substr(0, 4) == "POST")
         {
             this->setMethod(POST);
-            this->setPath(line.substr(5, size));
+            this->setPath(lines[i].substr(5, size));
         }
-        else if (size >= 6 && line.substr(0, 6) == "DELETE")
+        else if (size >= 6 && lines[i].substr(0, 6) == "DELETE")
         {
             this->setMethod(DELETE);
-            this->setPath(line.substr(7, size));
+            this->setPath(lines[i].substr(7, size));
         }
-        else if (size >= 5 && line.substr(0, 5) == "Host:")
-            this->setHost(line.substr(6, size));
-        else if (size >= 11 && line.substr(0, 11) == "User-Agent:")
-            this->setUserAgent(line.substr(12, size));
-        else if (size >= 13 && line.substr(0, 13) == "Content-Type:")
-            this->setContentType(line.substr(14, size));
-        else if (size >= 15 && line.substr(0, 15) == "Content-Lenght:")
-            this->setContentLenght(line.substr(16, size));
-        else if (size >= 6 && line.substr(0, 6) == "Cookie:")
-            this->setCookies(splitString(line.substr(7, size)));
-        else if (size >= 11 && line.substr(0, 11) == "Connection:")
-            this->setConnection(line.substr(12, size));
-        else if (size && line.substr(0, 1) == "{")
+        else if (size >= 5 && lines[i].substr(0, 5) == "Host:")
+            this->setHost(lines[i].substr(6, size));
+        else if (size >= 11 && lines[i].substr(0, 11) == "User-Agent:")
+            this->setUserAgent(lines[i].substr(12, size));
+        else if (size >= 13 && lines[i].substr(0, 13) == "Content-Type:")
+            this->setContentType(lines[i].substr(14, size));
+        else if (size >= 15 && lines[i].substr(0, 15) == "Content-Lenght:")
+            this->setContentLenght(atoi(lines[i].substr(16, size).c_str()));
+        else if (size >= 6 && lines[i].substr(0, 6) == "Cookie:")
+            this->setCookies(splitString(lines[i].substr(7, size), ' '));
+        else if (size >= 11 && lines[i].substr(0, 11) == "Connection:")
+            this->setConnection(lines[i].substr(12, size));
+        else if (size && lines[i].substr(0, 1) == "{")
         {
             bool    in = true;
             for (int j = i + 1; j < size; j++)
             {
                 if (in)
-                    this->setBody(request.getBody().append(lines[i]));
+                    this->setBody(_body.append(lines[i]));
                 if (!in && size && lines[i].substr(0, 1) == "{")
                     in = true;
                 if (size && lines[i].substr(0, 1) == "}")
@@ -268,7 +249,7 @@ bool Request::fillContent(std::string request)
         }
     }
 
-    clock(&endTime);
+    endTime = clock();
     std::cout << REQUEST << " fillContent method : exec time : " << endTime - startTime << std::endl;
 
     return (true);
@@ -296,7 +277,7 @@ void    Request::setPath(std::string path) {_path = path;}
 void    Request::setHost(std::string host) {_host = host;}
 void    Request::setUserAgent(std::string userAgent) {_userAgent = userAgent;}
 void    Request::setContentType(std::string contentType) {_contentType = contentType;}
-void    Request::setContentLenght(std::string contentLenght) {_contentLenght = contentLenght;}
+void    Request::setContentLenght(int contentLenght) {_contentLenght = contentLenght;}
 void    Request::setCookies(std::vector<std::string> cookies) {_cookies = cookies;}
 void    Request::setConnection(std::string connection) {_connection = connection;}
 void    Request::setBody(std::string body) {_body = body;}

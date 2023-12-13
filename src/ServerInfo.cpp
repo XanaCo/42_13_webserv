@@ -436,6 +436,20 @@ void ServerInfo::checkAllInfos() {
 	this->setSockAddress();
 }
 
+bool	ServerInfo::findRessource(std::string path, std::string& newPath) const
+{
+	std::string	nameDir = getNameDir(path);
+	for (long unsigned int i = 0; i < _locations.size(); i++)
+	{
+		if (nameDir == _locations[i].getLPathName())
+		{
+			newPath = _Root + getNameFile(path);
+			return (true);
+		}
+	}
+	return (false);
+}
+
 /*::: EXCEPTIONS :::*/
 
 ServerInfo::ServerInfoError::ServerInfoError(std::string errorMsg) throw() : _errorMsg("Webserv Error : " + errorMsg) {}
@@ -446,3 +460,5 @@ const char *ServerInfo::ServerInfoError::what() const throw() {
 
 	return (_errorMsg.c_str());
 }
+
+

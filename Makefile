@@ -25,6 +25,8 @@ SRC			= main.cpp \
 			ServerInfo.cpp \
 			Base.cpp \
 			Client.cpp \
+			Request.cpp \
+			Response.cpp \
 			Location.cpp \
 			utilsParsing.cpp \
 			utilsPrint.cpp \

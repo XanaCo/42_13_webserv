@@ -5,7 +5,6 @@
 # define FILEPARSER_HPP
 
 # include "webserv.hpp"
-# include "ServerInfo.hpp"
 
 class ServerInfo;
 

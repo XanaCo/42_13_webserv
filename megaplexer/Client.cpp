@@ -50,36 +50,7 @@ std::ostream &  operator<<(std::ostream & o, Client const & rhs){
 //  OPERATORS
 // ************************************************************************** //
 
-void    run(std::string strRequest, std::vector<ServerInfo> serverList)
-{
 
-    // si jamais on a fini de recevoir la requete mais qu'on a rien construit en reponse
-    _request.resetValues();
-    _response.resetValues();
-
-    if (!_request.fillContent(strRequest))
-    {
-        std::cerr << "au secours, on parse mal" << std::endl;
-        return ;
-    }
-    if (!this->findHost(serverList))
-    {
-        std::cerr << "on ne trouve pas l'ost, qui est le responsable ?" << std::endl;
-        return ;
-    }
-    std::string path;
-    if (!this->findRessource(path))
-    {
-        std::cerr << "on ne trouve par la ressource, qui a mange le dernier carre de chocolat ?" << std::endl;
-        return ;
-    }
-
-	std::vector<Location> loca = this->_server->getLocations();
-	loca.getLAllowed();
-
-    this->readRessource(path);
-
-}
 
 
 // ************************************************************************** //

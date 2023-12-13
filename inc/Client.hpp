@@ -1,31 +1,16 @@
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
 
-# include <iostream>
-# include <string>
-# include <cstring>
-# include <fcntl.h>
-# include <errno.h>
-# include <netdb.h>
-# include <sys/socket.h>
-# include <sys/socket.h>
-# include <arpa/inet.h>
-# include <sys/select.h>
-# include <sys/types.h>
-# include <dirent.h>
-# include <poll.h>
-# include <sys/epoll.h>
-# include <sys/wait.h>
-# include <sys/stat.h>
-# include <signal.h>
-# include <unistd.h>
-# include <cstdio>
-# include <vector>
+# include "webserv.hpp"
 
-// # include <Request.hpp>
-// # include <Response.hpp>
 
-# define BUFFER_SIZE 1024
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 1024
+# endif
+
+class ServerInfo;
+class Request;
+class Response;
 
 class   Client{
 
@@ -34,8 +19,8 @@ class   Client{
         int _new_socket;
         struct sockaddr_in _address;
         std::string _received;
-        // Request     request;
-        // Response    response;
+        Request     *_request;
+        Response   *_response;
 
     public :
 
@@ -57,6 +42,7 @@ class   Client{
 
         // Function to receive data from a client
         bool    receive_data(void);
+        void    run(std::string strRequest, std::vector<ServerInfo> serverList);
 
 };
 

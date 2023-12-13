@@ -8,13 +8,16 @@
 
 # include "webserv.hpp"
 
+class   ServerInfo;
+
 class Request
 {
     public:
+        Request();
         Request(const std::string str);
         ~Request();
 
-        Request &operator=(Request const &obj)
+        Request &operator=(Request const &obj);
 
         void        resetValues(void);
         bool        fillContent(std::string request);
@@ -22,22 +25,20 @@ class Request
         bool        isCompleted(void) const;
 
         bool        checkup(void);
-        bool	    findHost(std::string host, std::vector<Server *> servers);
+        bool        findHost(std::vector<ServerInfo> servers, ServerInfo &server);
         bool        findRessource();
-
-        bool        readRessource(const std::string& path, std::string& content);
-        void        deleteRessource(const std::string& resource);
-        void        postRessource(const std::string& resource, const std::string& content);
 
         void        setMethod(int method);
         void        setPath(std::string path);
         void        setHost(std::string host);
         void        setUserAgent(std::string userAgent);
         void        setContentType(std::string contentType);
-        void        setContentLenght(std::string contentLenght);
+        void        setContentLenght(int contentLenght);
         void        setCookies(std::vector<std::string> cookies);
         void        setConnection(std::string connection);
         void        setBody(std::string body);
+        void        setHeaderCompleted(bool headerCompleted);
+        void        setBodyCompleted(bool bodyCompleted);
     
         int                         getMethod(void) const;
         std::string                 getPath(void) const;
@@ -48,9 +49,10 @@ class Request
         std::vector<std::string>    getCookies(void) const;
         std::string                 getConnection(void) const;
         std::string                 getBody(void) const;
+        bool                        getHeaderCompleted(void);
+        bool                        getBodyCompleted(void);
 
     private:
-        Request();
 
         int                         _method;
         std::string                 _path;

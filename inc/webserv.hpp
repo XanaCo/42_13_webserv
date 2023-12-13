@@ -63,8 +63,8 @@
 # include "Location.hpp"
 # include "Base.hpp"
 # include "Client.hpp"
-// # include "Request.hpp"
-// # include "Response.hpp"
+# include "Request.hpp"
+# include "Response.hpp"
 
 
 // ************************************************************************** //
@@ -177,5 +177,7 @@ void						eraseComments(std::string &content);
 std::vector<std::string>	cSplitLine(std::string line, char const *charset);
 bool 						semiColonEnding(std::string &content);
 std::pair<int, std::string>	createPairErrorPage(std::string num, std::string word);
+std::string 				getNameDir(const std::string& path);
+std::string					getNameFile(const std::string& path);
 
 #endif

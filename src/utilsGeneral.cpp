@@ -82,3 +82,23 @@ void remplacerPercentEncoding(std::string& chaine) {
 	}
 	chaine = resultat;
 }
+
+std::string getNameDir(const std::string& path)
+{
+    size_t lastSep = path.find_last_of('/');
+    
+    if (lastSep != std::string::npos)
+        return path.substr(0, lastSep);
+    else
+        return ".";
+}
+
+std::string getNameFile(const std::string& path)
+{
+    size_t lastSep = path.find_last_of('/');
+
+    // Si aucun séparateur n'est trouvé, le chemin est probablement juste le nom de fichier
+    if (lastSep == std::string::npos)
+        return path;
+    return (path.substr(lastSep + 1));
+}
