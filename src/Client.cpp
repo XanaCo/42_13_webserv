@@ -172,9 +172,9 @@ void    Client::receive_header_data(char *buffer, int nbytes){
         //send_to_pablo(curated_header(_received));
         _header = curated_header(found);
         _header_bytes = found + 4;
-        std::cout << "Header : "<<  _header << std::endl;
+        std::cout << "Header : "<< _header << std::endl;
         std::cout << std::endl << "_received still got : " << std::endl << _received << std::endl;
-        //this->_client_status = BODY_READING;
+        this->_client_status = BODY_READING;
         //_request->fillContent(_header + _body)
         return ;
     }
@@ -183,6 +183,7 @@ void    Client::receive_header_data(char *buffer, int nbytes){
 }
 
 void    Client::receive_body_data(char *buffer, int nbytes){
+
 
     this->_received += buffer;
     this->_bytes_received += nbytes;
