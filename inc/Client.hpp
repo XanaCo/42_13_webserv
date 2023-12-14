@@ -25,7 +25,7 @@
 // # include <Request.hpp>
 // # include <Response.hpp>
 
-# define BUFFER_SIZE 1024
+# define BUFFER_SIZE 30
 # define READ_READY 0
 # define HEADER_READING 1
 # define BODY_READING 2
@@ -41,8 +41,12 @@ class   Client{
         int _new_socket;
         struct sockaddr_in _address;
         std::string _received;
+        std::string _header;
+        std::string _body;
         int _client_status;
         int _bytes_received;
+        int _header_bytes;
+        int _body_bytes;
         // Request     request;
         // Response    response;
 
