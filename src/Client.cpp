@@ -15,6 +15,9 @@ Client::Client(int socket, struct sockaddr_in *r_address){
     _new_socket = socket;
     _address = *r_address;
     _client_status = READ_READY;
+    _bytes_received = 0;
+    _header_bytes = 0;
+    _body_bytes = 0;
     return  ;
 }
 
@@ -72,6 +75,11 @@ int Client::get_status(void) const{
     return this->_client_status;
 }
 
+int Client::get_bytes_received(void) const{
+
+    return this->_bytes_received;
+}
+
 std::string    Client::display_status(void) const{
 
     switch (this->_client_status)
@@ -119,6 +127,11 @@ void    Client::set_status(int status){
     return ;
 }
 
+void    Client::set_bytes_received(int nbytes){
+
+    this->_bytes_received = nbytes;
+}
+
 // void    Client::setReturnStatus(Request request)
 // {
 //     _request = request;
@@ -131,18 +144,76 @@ void    Client::set_status(int status){
 
 // Work in progress
 
+bool    Client::found_header_end(size_t *found) const {
+
+    *found = _received.find("\r\n\r\n");
+    if ( *found != std::string::npos)
+        return true;
+    return false;
+}
+
+std::string Client::curated_header(size_t end){
+
+    std::string header = _received.substr(0, end + 4);
+    _received = _received.substr((end + 4), _received.size());
+    return header; 
+}
+
+void    Client::receive_header_data(char *buffer, int nbytes){
+
+    size_t found = 0;
+    if (this->_client_status == READ_READY && nbytes > 0)
+        this->_client_status = HEADER_READING;
+    this->_received += buffer;
+    this->_bytes_received += nbytes;
+    if (found_header_end(&found))
+    {
+        //Passer le header complet a Pablo _request->fillContent(string)
+        //send_to_pablo(curated_header(_received));
+        _header = curated_header(found);
+        _header_bytes = found + 4;
+        std::cout << "Header : "<<  _header << std::endl;
+        std::cout << std::endl << "_received still got : " << std::endl << _received << std::endl;
+        //this->_client_status = BODY_READING;
+        //_request->fillContent(_header + _body)
+        return ;
+    }
+//    std::cout << this->_received << std::endl;
+    return ;
+}
+
+void    Client::receive_body_data(char *buffer, int nbytes){
+
+    this->_received += buffer;
+    this->_bytes_received += nbytes;
+    return ;
+}
+
+
 bool    Client::receive_data(void){
 
     char   buffer[BUFFER_SIZE + 1];
 
-    int nbytes = recv(this->_new_socket, buffer, sizeof buffer, 0);
-
-    if (nbytes <= 0)
+    memset(buffer, 0, BUFFER_SIZE);
+    int nbytes = recv(this->_new_socket, buffer, BUFFER_SIZE, 0);
+    if (this->_client_status == READ_READY)
+        this->_bytes_received = 0;
+    if (nbytes == 0)
     {
-            std::cout << "Socket " << this->_new_socket << " closed connection or recv failed" << std::endl;
-            return false;
+        std::cout << "Client " << *this << " closed connection" << std::endl; // Handle a client closing
+        return false;
     }
-    this->_received += buffer;
-    std::cout << this->_received << std::endl;
+    else if (nbytes < 0)
+    {
+        std::cout << "Client " << *this << " encountered error while recv" << std::endl; // See for exception and handling of recv error
+        return false;
+    }
+    else
+    {
+        if (this->_client_status == READ_READY || this->_client_status == HEADER_READING)
+            this->receive_header_data(buffer, nbytes);
+        else if (this->_client_status == BODY_READING)
+            this->receive_body_data(buffer, nbytes);
+    }
     return true;
 }
