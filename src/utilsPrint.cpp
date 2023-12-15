@@ -40,3 +40,9 @@ void	printServerLocations(ServerInfo Server) {
 	}
 
 }
+
+void printCharTab(char **charTab) {  // A TESTER
+
+	for (size_t it = 0; charTab[it] != NULL; it++)
+		std::cout << charTab[it] << std::endl;
+}

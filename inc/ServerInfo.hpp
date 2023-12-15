@@ -32,6 +32,7 @@ public:
 	char getAllowed() const;
 
     bool setListenSocket(std::string l_port); // New
+    void setSameListen(int same);
 	void setServerName(std::string name);
 	void setSockAddress();
 	void setPort(std::string port);
@@ -44,7 +45,7 @@ public:
 	size_t setErrorPages(std::vector<std::string> &serverTab, size_t pos);
 	size_t setLocations(std::vector<std::string> &serverTab, size_t pos);
 
-	void checkAllInfos(); /// FINAL CHECK, all variables 'struct'
+	void checkAllInfos();
 
 	bool	findRessource(std::string path, std::string& newPath) const;
 
@@ -75,7 +76,6 @@ private:
 	std::string					_listen; // PORT in string type
 	int							_timeout;
 
-	//std::vector<std::pair<int, std::string> >	_errorPages; // 500 - path to error
 };
 
 std::ostream &operator<<(std::ostream &out, ServerInfo const &ServerInfo);

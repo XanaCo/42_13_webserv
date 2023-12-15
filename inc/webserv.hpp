@@ -169,6 +169,7 @@ void						printStringVector(std::vector<std::string> stringVector);
 void						printServersInfo(std::vector<ServerInfo> stringVector);
 std::string					returnStringVector(std::vector<std::string> stringVector);
 void						printServerLocations(ServerInfo Server);
+void 						printCharTab(char **charTab);
 
 // Parsing utils
 int							strToInt(const std::string& str);
@@ -179,5 +180,10 @@ bool 						semiColonEnding(std::string &content);
 std::pair<int, std::string>	createPairErrorPage(std::string num, std::string word);
 std::string 				getNameDir(const std::string& path);
 std::string					getNameFile(const std::string& path);
+bool 						checkPathExists(std::string pathToCheck);
+bool 						checkFileExists(std::string fileToCheck);
+char 						**mapToCharTab(std::map<std::string, std::string> mapToConvert);
+void 						freeCharTab(char **charTab);
+void						deEncodingHexa(std::string& chaine);
 
 #endif

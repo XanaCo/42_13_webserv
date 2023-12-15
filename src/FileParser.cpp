@@ -1,7 +1,9 @@
 
 #include "../inc/FileParser.hpp"
 
-/*::: CONSTRUCTORS :::*/
+// ************************************************************************** //
+//	CONSTRUCTOR / DESTRUCTOR
+// ************************************************************************** //
 
 FileParser::FileParser(std::string const &filePath) : _filePath(filePath) {
 
@@ -13,8 +15,6 @@ FileParser::FileParser(std::string const &filePath) : _filePath(filePath) {
 	return ;
 }
 
-/*::: DESTRUCTORS :::*/
-
 FileParser::~FileParser() {
 
 	if (PRINT)
@@ -22,6 +22,10 @@ FileParser::~FileParser() {
 
 	return ;
 }
+
+// ************************************************************************** //
+//  OPERATORS
+// ************************************************************************** //
 
 std::ostream &operator<<(std::ostream &out, FileParser const &other) {
 
@@ -35,12 +39,12 @@ std::ostream &operator<<(std::ostream &out, FileParser const &other) {
 			<< other.getNServers()
 			<< "\n";
 
-			// allServers missing : vector of ServerInfo
-
 	return out;
 }
 
-/*::: ACCESSORS :::*/
+// ************************************************************************** //
+//	LA GET-SET
+// ************************************************************************** //
 
 std::string const &FileParser::getFilePath() const {
 
@@ -67,7 +71,9 @@ int FileParser::getNServers() const {
 	return this->_nServers;
 }
 
-/*::: MEMBER FUNCTIONS :::*/
+// ************************************************************************** //
+//	METHODS
+// ************************************************************************** //
 
 void FileParser::parseFile() {
 
@@ -158,18 +164,18 @@ size_t FileParser::serverEnd(size_t pos) {
 
 	for (it = pos + 2; it != _rawFile.size(); it++)
 	{
-		if (!_rawFile[it].compare("server")) // we check for next keyword server
+		if (!_rawFile[it].compare("server"))
 		{
 			this->_rawServer.push_back(res);
 			return (it);
 		}
-		else if (!_rawFile[it].compare("{") && !location) // we open location
+		else if (!_rawFile[it].compare("{") && !location)
 			location = true;
-		else if (!_rawFile[it].compare("}") && location) // we close location
+		else if (!_rawFile[it].compare("}") && location)
 			location = false;
-		else if (!_rawFile[it].compare("}") && !closed) // we close all
+		else if (!_rawFile[it].compare("}") && !closed)
 			closed = true;
-		else if (!_rawFile[it].compare("server") && _rawFile[it + 1].compare("{")) // check double server name
+		else if (!_rawFile[it].compare("server") && _rawFile[it + 1].compare("{"))
 			throw FileParserError("Wrong keyword configuration");
 		else if ((!_rawFile[it].compare("{") && location) || (!_rawFile[it].compare("}") && closed))
 			throw FileParserError("Wrong brackets configuration");
@@ -181,7 +187,6 @@ size_t FileParser::serverEnd(size_t pos) {
 	this->_rawServer.push_back(res);
 	return it;
 }
-
 
 ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 	
@@ -199,8 +204,6 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 				if (newServer.getServerName() != "" && newServer.getServerName() != "Unknown")
 					throw FileParserError("Server must have only one server_name directive");
 				newServer.setServerName(serverTab[it]);
-
-				// std::cout << "server_name : " << serverTab[it] << std::endl;///
 			}
 			else
 				throw FileParserError("server_name configuration error");
@@ -213,8 +216,6 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 				if (newServer.getHost())
 					throw FileParserError("Server must have only one host directive");
 				newServer.setHost(serverTab[it]);
-
-				// std::cout << "Host : " << serverTab[it] << std::endl;///
 			}
 			else
 				throw FileParserError("host configuration error");
@@ -227,8 +228,6 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 				if (newServer.getListen() != "")
 					throw FileParserError("Server must have only one listen directive");
 				newServer.setPort(serverTab[it]);
-
-				// std::cout << "Listen : " << serverTab[it] << std::endl;///
 			}
 			else
 				throw FileParserError("listen configuration error");
@@ -241,8 +240,6 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 				if (newServer.getRoot() != "")
 					throw FileParserError("Server must have only one root directive");
 				newServer.setRoot(serverTab[it]);
-
-				// std::cout << "Root : " << serverTab[it] << std::endl;///
 			}
 			else
 				throw FileParserError("root configuration error");
@@ -255,8 +252,6 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 				if (newServer.getIndex() != "")
 					throw FileParserError("Server must have only one index directive");
 				newServer.setIndex(serverTab[it]);
-
-				// std::cout << "Index : " << serverTab[it] << std::endl;///
 			}
 			else
 				throw FileParserError("index configuration error");
@@ -269,8 +264,6 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 				if (newServer.getMaxClientBody())
 					throw FileParserError("Server must have only one client_max_body_size directive");
 				newServer.setMaxClientBody(serverTab[it]);
-
-				// std::cout << "CBS : " << serverTab[it] << std::endl;///
 			}
 			else
 				throw FileParserError("client_max_size configuration error");
@@ -283,8 +276,6 @@ ServerInfo	FileParser::stockInfos(std::vector<std::string> serverTab) {
 				if (newServer.getTimeout())
 					throw FileParserError("Server must have only one timeout directive");
 				newServer.setTimeout(serverTab[it]);
-
-				// std::cout << "Timeout : " << serverTab[it] << std::endl;///
 			}
 			else
 				throw FileParserError("timeout configuration error");
@@ -333,7 +324,9 @@ void	FileParser::stockServerInfo() {
 	}
 }
 
-/*::: EXCEPTIONS :::*/
+// ************************************************************************** //
+//	EXCEPTIONS
+// ************************************************************************** //
 
 FileParser::FileParserError::FileParserError(std::string errorMsg) throw() : _errorMsg("Webserv Error : " + errorMsg) {}
 

@@ -60,7 +60,8 @@ char hexToChar(const std::string& hex) {
 	return (static_cast<char>(value));
 }
 
-void remplacerPercentEncoding(std::string& chaine) {
+void deEncodingHexa(std::string& chaine)
+{
 
 	std::string	resultat;
 	size_t		size = chaine.length();

@@ -32,6 +32,8 @@ public:
 	void setLAutoindex(bool status);
 	void setLAllowed(char methods);
 
+	void checkLocationInfo();
+
 private:
 	Location();
 

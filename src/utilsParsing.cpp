@@ -19,6 +19,42 @@ int strToInt(const std::string& str) {
 	return (result * sign);
 }
 
+char **mapToCharTab(std::map<std::string, std::string> mapToConvert) { // A TESTER
+
+	std::map<std::string, std::string>::iterator iter;
+	std::vector<char *> vectorTab;
+
+	for (iter = mapToConvert.begin(); iter != mapToConvert.end(); iter++) {
+
+		std::string content = iter->first + "=" + iter->second;
+
+		std::vector<char> vectorOfChars(content.begin(), content.end());
+		vectorOfChars.push_back('\0');
+
+		char *PtrVector = new char[vectorOfChars.size()];
+		// std::strcpy(PtrVector, vectorOfChars.data());
+		strcpy(PtrVector, vectorOfChars.data());
+
+		vectorTab.push_back(PtrVector);
+	}
+
+	char **result = new char *[vectorTab.size() + 1];
+
+	for (size_t it = 0; it != vectorTab.size(); it++)
+		result[it] = vectorTab[it];
+
+	result [vectorTab.size()] = NULL;
+
+	return result;
+}
+
+void freeCharTab(char **charTab) { // A TESTER
+
+	for (size_t it = 0; charTab[it] != NULL; it++) 
+		delete[] charTab[it];
+	delete[] charTab;
+}
+
 void eraseComments(std::string &content) {
 
 	size_t	pos_start;
@@ -90,4 +126,30 @@ std::pair<int, std::string> createPairErrorPage(std::string num, std::string wor
 		throw ServerInfo::ServerInfoError("Invalid return path in location");
 
 	return std::pair<int, std::string>(n, word);
+}
+
+bool checkPathExists(std::string pathToCheck) {
+
+	struct stat filestat;
+	
+	if (pathToCheck.empty() || !pathToCheck.length())
+		return false;
+	if (stat(pathToCheck.c_str(), &filestat) == -1)
+		return false;
+	if (!(filestat.st_mode & S_IFDIR))
+		return false;
+	return true;
+}
+
+bool checkFileExists(std::string fileToCheck) {
+
+	struct stat filestat;
+	
+	if (fileToCheck.empty() || !fileToCheck.length())
+		return false;
+	if (stat(fileToCheck.c_str(), &filestat) == -1)
+		return false;
+	if (!(filestat.st_mode & S_IFREG))
+		return false;
+	return true;
 }

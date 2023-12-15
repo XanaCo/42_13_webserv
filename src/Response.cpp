@@ -154,14 +154,10 @@ void    Response::postRessource(const std::string path)
 
 void Response::deleteRessource(const std::string path)
 {
-    (void)path;
-    // if (resources.find(path) != resources.end())
-    // {
-    //     resources.erase(path);
-    //     // std::cout << "ressource deleted : " << resource << std::endl;
-    // }
-    // else
-    //     std::cerr << "Delete error : resource not found : " << resource << std::endl;
+    if (unlink(path.c_str()) != 0)
+        std::cerr << "Erreur lors de la suppression du fichier " << path << std::endl;
+    else
+        std::cout << "Le fichier " << path << " a été supprimé avec succès." << std::endl;
 }
 
 

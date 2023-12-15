@@ -14,6 +14,7 @@ Client::Client(int socket, struct sockaddr_in *r_address){
     
     _new_socket = socket;
     _address = *r_address;
+    _client_status = READ_READY;
     return  ;
 }
 
@@ -37,12 +38,13 @@ Client &    Client::operator=(const Client & rhs){
     this->_new_socket = rhs._new_socket;
     this->_address = rhs._address;
     this->_received = rhs._received;
+    this->_client_status = rhs._client_status;
     return *this;
 }
 
 std::ostream &  operator<<(std::ostream & o, Client const & rhs){
 
-    o << "This client is on socket n " << rhs.get_socket() << " its received contains " << rhs.get_received() << std::endl;
+    o << "This client is on socket n " << rhs.get_socket() <<  " its status is actually " << rhs.display_status() << " its received contains " << rhs.get_received() << std::endl;
     return o;
 }
 
@@ -100,6 +102,34 @@ std::string Client::get_received(void) const{
     return this->_received;
 }
 
+int Client::get_status(void) const{
+    
+    return this->_client_status;
+}
+
+std::string    Client::display_status(void) const{
+
+    switch (this->_client_status)
+    {
+        case READ_READY :
+            return "READ_READY";
+        case HEADER_READING :
+            return "HEADER_READING";
+        case BODY_READING :
+            return "BODY_READING";
+        case REQUEST_RECEIVED :
+            return "REQUEST_RECEIVED";
+        case RESPONSE_BUILT :
+            return "RESPONSE BUILT";
+        case RESPONSE_SENDING :
+            return "RESPONSE_SENDING";
+        case RESPONSE_SENT :
+            return "RESPONSE_SENT";
+        default :
+            return "NO STATUS";
+    }
+}
+
 void    Client::set_socket(int sock){
 
     this->_new_socket = sock;
@@ -115,6 +145,12 @@ void    Client::set_addr_struct(struct sockaddr_in addr){
 void    Client::set_received(std::string buf){
 
     this->_received = buf;
+    return ;
+}
+
+void    Client::set_status(int status){
+
+    this->_client_status = status;
     return ;
 }
 

@@ -114,7 +114,6 @@ bool	Request::findHost(std::vector<ServerInfo> servers, ServerInfo &server)
     		return (true);
         }
     }
-
 	return (false);
 }
 
@@ -206,7 +205,7 @@ bool Request::fillContent(std::string request)
         if (size >= 3 && lines[i].substr(0, 3) == "GET")
         {
             this->setMethod(GET);
-            this->setPath(lines[i].substr(4, size));
+            this->setPath(lines[i].substr(4, size));    // attention a ne pas recuperer la version d'HTML
         }
         else if (size >= 4 && lines[i].substr(0, 4) == "POST")
         {
@@ -218,7 +217,8 @@ bool Request::fillContent(std::string request)
             this->setMethod(DELETE);
             this->setPath(lines[i].substr(7, size));
         }
-        else if (size >= 5 && lines[i].substr(0, 5) == "Host:")
+        deEncodingHexa(_path);
+        if (size >= 5 && lines[i].substr(0, 5) == "Host:")
             this->setHost(lines[i].substr(6, size));
         else if (size >= 11 && lines[i].substr(0, 11) == "User-Agent:")
             this->setUserAgent(lines[i].substr(12, size));
