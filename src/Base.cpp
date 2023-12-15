@@ -18,7 +18,7 @@ Base::Base(int argc, char **argv) : _clients(0), _sock_count(0){
     return ;
 }*/
 
-Base::Base(std::vector<ServerInfo> & Servers){
+Base::Base(std::vector<ServerInfo> & Servers) :  _clients(0), _pfds(0), _sock_count(0){
 
     this->_servers = Servers;
 }
@@ -358,6 +358,7 @@ void    Base::start_servers(void) {
     while (1)
     {
        int  poll_count = poll(this->_pfds.data(), this->_pfds.size(), -1); 
+       //std::cout << "poll is called" << std::endl;
        if (poll_count == -1)
        {
            std::cout << "Error in polling sockets" << std::endl;
