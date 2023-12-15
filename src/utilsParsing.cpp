@@ -32,7 +32,6 @@ char **mapToCharTab(std::map<std::string, std::string> mapToConvert) { // A TEST
 		vectorOfChars.push_back('\0');
 
 		char *PtrVector = new char[vectorOfChars.size()];
-		// std::strcpy(PtrVector, vectorOfChars.data());
 		strcpy(PtrVector, vectorOfChars.data());
 
 		vectorTab.push_back(PtrVector);

@@ -30,8 +30,9 @@ public:
 	std::string getListen() const;
 	int getTimeout() const;
 	char getAllowed() const;
+	Location *getOneLocation(std::string Locname);
 
-    bool setListenSocket(std::string l_port); // New
+    bool setListenSocket(std::string l_port);
     void setSameListen(int same);
 	void setServerName(std::string name);
 	void setSockAddress();
@@ -63,7 +64,7 @@ public:
 
 private:
 
-    int                         _listenSocket; // Socket/fd listening to new connections
+	int							_listenSocket; // Socket/fd listening to new connections
 	std::string					_serverName; // HOST name
 	struct sockaddr_in			_sockAddress;
 	in_port_t					_Port; // uint_16

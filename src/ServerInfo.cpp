@@ -156,6 +156,17 @@ std::vector<Location> ServerInfo::getLocations() const {
 	return this->_locations;
 }
 
+Location *ServerInfo::getOneLocation(std::string Locname) {
+
+	for (size_t it = 0; it != this->_locations.size(); it++)
+	{
+		std::cout << this->_locations[it].getLPathName() << std::endl;
+		if (this->_locations[it].getLPathName() == Locname)
+			return &this->_locations[it];
+	}
+	return NULL;
+}
+
 std::vector<std::string> ServerInfo::getErrorPages() const {
 
 	return this->_errorPages;
