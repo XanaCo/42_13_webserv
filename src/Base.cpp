@@ -387,7 +387,7 @@ void    Base::review_poll(void){
                     remove_from_clients(_pfds[i].fd);
                     remove_from_poll(_pfds[i].fd);
                 }
-                //change_poll_event(_pfds[i].fd, pollout);
+                change_poll_event(_pfds[i].fd, pollout);
             }
         }
         if(_pfds[i].revents & POLLOUT)
@@ -396,7 +396,7 @@ void    Base::review_poll(void){
 
             if (!send_all(_pfds[i].fd, test, &len))
                 std::cout << "Only " << len << " bytes have been sent because of error" << std::endl;
-            //change_poll_event(_pfds[i].fd, pollin);
+            change_poll_event(_pfds[i].fd, pollin);
         }
     }
 }

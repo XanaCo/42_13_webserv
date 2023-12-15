@@ -211,10 +211,15 @@ bool    Client::receive_data(void){
     }
     else
     {
+        _received += buffer;
+        std::cout << _received << std::endl;
+    }
+    /*else A remettre en place apres
+    {
         if (this->_client_status == READ_READY || this->_client_status == HEADER_READING)
             this->receive_header_data(buffer, nbytes);
         else if (this->_client_status == BODY_READING)
             this->receive_body_data(buffer, nbytes);
-    }
+    }*/
     return true;
 }
