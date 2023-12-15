@@ -8,6 +8,11 @@
 const std::string host = "en.wikipedia.org";
 // const std::string path = "/wiki/Main_Page";
 
+Response::Response(void)
+{
+    this->resetValues();
+}
+
 Response::Response(uint16_t port): _port(port)
 {
     if (PRINT)
@@ -132,16 +137,6 @@ void    Response::readRessource(std::string path)
         // std::cerr << path << " : cant be opened" << std::endl;
 		return ;
     }
-    // changer le READ RESSOURCE
-	// this->setContent(ifs.rdbuf());
-	// ifs.close();
-	// if (!(this->getContent().tellp()))
-    // {
-    //     this->setReturnStatus(S_NO_CONTENT); // pas certain du return false;
-    //     // std::cerr << path << " : is empty" << std::endl;
-    //     return ;
-    // }
-    // this->setReturnStatus(S_OK);
 	return ;
 }
 

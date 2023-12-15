@@ -5,11 +5,11 @@
 //	CONSTRUCTOR / DESTRUCTOR
 // ************************************************************************** //
 
-Request::Request(void)
+Request::Request(void) : _method(0), _path(""), _host(""), _userAgent("")
 {
     if (PRINT)
         std::cout << GREEN << "Request constructor called" << END_COLOR << std::endl;
-    this->resetValues();
+    // this->resetValues();
 }
 
 Request::Request(const std::string str)
@@ -22,7 +22,7 @@ Request::Request(const std::string str)
 Request::~Request()
 {
     if (PRINT)
-        std::cout << RED << "Response destructor called" << END_COLOR << std::endl;
+        std::cout << RED << "Request destructor called" << END_COLOR << std::endl;
 }
 
 // ************************************************************************** //
@@ -178,6 +178,7 @@ bool	Request::findHost(std::vector<ServerInfo> servers, ServerInfo &server)
 void    Request::resetValues(void)
 {
     this->setMethod(0);
+    _method = 0;
     this->setPath("");
     this->setHost("");
     this->setUserAgent("");
@@ -283,6 +284,7 @@ void    Request::setConnection(std::string connection) {_connection = connection
 void    Request::setBody(std::string body) {_body = body;}
 void    Request::setHeaderCompleted(bool headerCompleted) {_headerCompleted = headerCompleted;}
 void    Request::setBodyCompleted(bool bodyCompleted) {_bodyCompleted = bodyCompleted;}
+void    Request::setServer(ServerInfo* server) {_server = server;}
 
 int                         Request::getMethod(void) const {return (_method);}
 std::string                 Request::getPath(void) const {return (_path);}
@@ -295,3 +297,4 @@ std::string                 Request::getConnection(void) const {return (_connect
 std::string                 Request::getBody(void) const {return (_body);}
 bool                        Request::getHeaderCompleted(void) {return (_headerCompleted);}
 bool                        Request::getBodyCompleted(void) {return (_bodyCompleted);}
+ServerInfo*                 Request::getServer(void) {return (_server);}

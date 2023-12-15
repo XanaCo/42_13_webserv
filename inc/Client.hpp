@@ -60,7 +60,7 @@ class   Client{
 
         // Function to receive data from a client
         bool            receive_data(void);
-        void            run(std::string strRequest, std::vector<ServerInfo> serverList);
+        void            run(std::vector<ServerInfo> serverList);
         bool            found_header_end(size_t *found) const;
         std::string     curated_header(size_t end);
         void            receive_header_data(char *buffer, int nbytes);

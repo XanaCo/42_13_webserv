@@ -39,6 +39,7 @@ class Request
         void        setBody(std::string body);
         void        setHeaderCompleted(bool headerCompleted);
         void        setBodyCompleted(bool bodyCompleted);
+        void        setServer(ServerInfo* server);
     
         int                         getMethod(void) const;
         std::string                 getPath(void) const;
@@ -51,6 +52,7 @@ class Request
         std::string                 getBody(void) const;
         bool                        getHeaderCompleted(void);
         bool                        getBodyCompleted(void);
+        ServerInfo*                 getServer(void);
 
     private:
 

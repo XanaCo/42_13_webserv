@@ -7,6 +7,9 @@
 
 Client::Client(void){
 
+    std::cout << "Client : constructor called" << std::endl;
+    _request = new Request();
+    _response = new Response();
     return  ;
 }
 
@@ -18,6 +21,8 @@ Client::Client(int socket, struct sockaddr_in *r_address){
     _bytes_received = 0;
     _header_bytes = 0;
     _body_bytes = 0;
+    _request = new Request();
+    _response = new Response();
     return  ;
 }
 
@@ -28,6 +33,9 @@ Client::Client(const Client & rhs){
 }
 
 Client::~Client(void){
+
+    delete _request;
+    delete _response;
 
     return ;
 }
@@ -55,31 +63,33 @@ std::ostream &  operator<<(std::ostream & o, Client const & rhs){
 //  METHODS
 // ************************************************************************** //
 
-void    Client::run(std::string strRequest, std::vector<ServerInfo> serverList)
+void    Client::run(std::vector<ServerInfo> serverList)
 {
     ServerInfo  server;
 
     // si jamais on a fini de recevoir la requete mais qu'on a rien construit en reponse
-    _request->resetValues();
-    _response->resetValues();
+    // _request->resetValues();
+    // _response->resetValues();
 
-    if (!_request->fillContent(strRequest))
+    if (!_request->fillContent(_received))
     {
         std::cerr << "error, on a du mal a fill la structure Request" << std::endl;
         return ;
     }
+    // std::cout << "here is my request : " << (*_request) << std::endl;
     if (!_request->findHost(serverList, server))
     {
         std::cerr << "on ne trouve pas l'ost" << std::endl;
         return ;
     }
+    std::cout << "here is my host : " << (_request->getServer())->getServerName() << std::endl;
     std::string path;
     if (!server.findRessource(_request->getPath(), path))
     {
         std::cerr << "on ne trouve par la ressource" << std::endl;
         return ;
     }
-    
+    std::cout << "here is my path for : " << path << std::endl;
     int    method = _request->getMethod() / 2; // ici c'est pour avoir 0->GET / 1->POST / 2->DELETE
     static void (Response::*methods[3])(const std::string) = { &Response::readRessource, &Response::postRessource, &Response::deleteRessource };
 

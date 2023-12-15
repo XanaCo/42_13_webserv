@@ -387,6 +387,7 @@ void    Base::review_poll(void){
                     remove_from_clients(_pfds[i].fd);
                     remove_from_poll(_pfds[i].fd);
                 }
+                get_cli_from_sock(_pfds[i].fd).run(_servers);
                 change_poll_event(_pfds[i].fd, pollout);
             }
         }
