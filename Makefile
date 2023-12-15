@@ -23,6 +23,7 @@ RM			= rm -rf
 SRC			= main.cpp \
 			FileParser.cpp \
 			ServerInfo.cpp \
+			CGI.cpp \
 			Base.cpp \
 			Client.cpp \
 			Request.cpp \

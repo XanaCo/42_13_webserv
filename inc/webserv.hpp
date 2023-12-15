@@ -27,6 +27,9 @@
 # include <utility>
 # include <ctime>		// clock() -> a supprimer avant de push
 
+// # include <stdio.h>
+// # include <stdlib.h>
+
 # include <unistd.h>
 # include <fcntl.h>
 # include <string.h>
@@ -65,6 +68,7 @@
 # include "Client.hpp"
 # include "Request.hpp"
 # include "Response.hpp"
+# include "CGI.hpp"
 
 
 // ************************************************************************** //
