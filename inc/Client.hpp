@@ -61,6 +61,7 @@ class   Client{
         // Request     getReturnStatus(void) const;
 
         // Function to receive data from a client
+        bool            alloc_req_resp(void);
         bool            receive_data(void);
         void            run(std::vector<ServerInfo> serverList);
         bool            found_header_end(size_t *found) const;

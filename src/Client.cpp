@@ -23,9 +23,9 @@ Client::Client(int socket, struct sockaddr_in *r_address){
     _bytes_received = 0;
     _header_bytes = 0;
     _body_bytes = 0;
-    _request = new Request;
+    _request = new Request();
     std::cout << "adresse de ma Request :" << _request << std::endl;
-    _response = new Response;
+    _response = new Response();
     return  ;
 }
 
@@ -198,6 +198,13 @@ void    Client::set_bytes_received(int nbytes){
 // }
 
 // Work in progress
+
+bool    Client::alloc_req_resp(void){ // A proteger et a delete si on satisfait a la requete et la reponse, revoir au niveau de la creation du client, les destructeurs sont appeles en sortant du scope, peut etre allouer les clients... i don t know
+
+    this->_request = new Request;
+    this->_response = new Response;
+    return true;
+}
 
 bool    Client::found_header_end(size_t *found) const {
 
