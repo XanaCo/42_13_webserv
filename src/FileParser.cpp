@@ -10,7 +10,7 @@ FileParser::FileParser(std::string const &filePath) : _filePath(filePath) {
 	this->_nServers = 0;
 
 	if (PRINT)
-		std::cout << GREEN << "Constructor: FileParser created " << END_COLOR << std::endl;
+		std::cout << FILEPARSER << "🐥 constructor called" << std::endl;
 
 	return ;
 }
@@ -18,7 +18,7 @@ FileParser::FileParser(std::string const &filePath) : _filePath(filePath) {
 FileParser::~FileParser() {
 
 	if (PRINT)
-		std::cout << RED << "Destructor: FileParser destroyed " << END_COLOR << std::endl;
+		std::cout << FILEPARSER << "🗑️  destructor called" << std::endl;
 
 	return ;
 }

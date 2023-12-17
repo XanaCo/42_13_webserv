@@ -18,7 +18,10 @@ ServerInfo::ServerInfo() {
 	this->_timeout = 0;
 
 	if (PRINT)
+	{
+		std::cout << SERVER_INFO << "🐥 constructor called" << std::endl;
 		std::cout << GREEN << "Default Server was created | Port: " << this->_Port << " | Host: " << this->_Host << END_COLOR << std::endl;
+	}
 
 	return ;
 }
@@ -41,7 +44,11 @@ ServerInfo::ServerInfo(ServerInfo const &copy) {
 	}
 
 	if (PRINT)
+	{
+		std::cout << SERVER_INFO << "🐥 constructor called" << std::endl;
 		std::cout << GREEN << "Server by Copy was created | Port: " << this->_Port << " | Host: " << this->_Host << END_COLOR << std::endl;
+
+	}
 
 	return ;
 }
@@ -49,7 +56,7 @@ ServerInfo::ServerInfo(ServerInfo const &copy) {
 ServerInfo::~ServerInfo() {
 
 	if (PRINT)
-		std::cout << RED << this->_serverName << " was destroyed" << END_COLOR << std::endl;
+		std::cout << SERVER_INFO << "🗑️  destructor called" << std::endl;
 
 	return ;
 }

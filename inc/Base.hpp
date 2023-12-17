@@ -3,6 +3,8 @@
 
 # include "webserv.hpp"
 
+# define BASE "\033[1;34mBase\033[0m "
+
 enum pollevents {
     pollout = 1,
     pollin = 2

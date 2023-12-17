@@ -2,7 +2,9 @@
 
 // Constructors
 
-Base::Base() : _servers(0), _clients(0), _pfds(0), _sock_count(0){ 
+Base::Base() : _servers(0), _clients(0), _pfds(0), _sock_count(0){
+    if (PRINT)
+        std::cout << BASE << "🐥 constructor called" << std::endl;
     return ;
 }
 
@@ -19,7 +21,8 @@ Base::Base(int argc, char **argv) : _clients(0), _sock_count(0){
 }*/
 
 Base::Base(std::vector<ServerInfo> & Servers) :  _clients(0), _pfds(0), _sock_count(0){
-
+    if (PRINT)
+        std::cout << BASE << "🐥 constructor called" << std::endl;
     this->_servers = Servers;
 }
 
@@ -31,6 +34,8 @@ Base::Base(const Base & rhs) {
 // Destructors
 
 Base::~Base(){
+	if (PRINT)
+		std::cout << BASE << "🗑️  destructor called" << std::endl;
     return ;
 }
 

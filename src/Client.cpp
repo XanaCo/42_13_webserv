@@ -6,28 +6,32 @@
 // ************************************************************************** //
 
 Client::Client(void){
-
-    std::cout << "Client : constructor called" << std::endl;
-    _request = new Request();
-    _response = new Response();
+    if (PRINT)
+        std::cout << CLIENT << "🐥 constructor called" << std::endl;
+    _request = new Request;
+    std::cout << "adresse de ma Request :" << _request << std::endl;
+    _response = new Response;
     return  ;
 }
 
 Client::Client(int socket, struct sockaddr_in *r_address){
-    
+    if (PRINT)
+        std::cout << CLIENT << "🐥 constructor called" << std::endl;
     _new_socket = socket;
     _address = *r_address;
     _client_status = READ_READY;
     _bytes_received = 0;
     _header_bytes = 0;
     _body_bytes = 0;
-    _request = new Request();
-    _response = new Response();
+    _request = new Request;
+    std::cout << "adresse de ma Request :" << _request << std::endl;
+    _response = new Response;
     return  ;
 }
 
 Client::Client(const Client & rhs){
-
+    if (PRINT)
+        std::cout << CLIENT << "constructor called" << std::endl;
     *this = rhs;
     return  ;
 }
@@ -36,6 +40,8 @@ Client::~Client(void){
 
     delete _request;
     delete _response;
+	if (PRINT)
+		std::cout << CLIENT << "🗑️  destructor called" << std::endl;
 
     return ;
 }
@@ -45,11 +51,13 @@ Client::~Client(void){
 // ************************************************************************** //
 
 Client &    Client::operator=(const Client & rhs){
-
-    this->_new_socket = rhs._new_socket;
-    this->_address = rhs._address;
-    this->_received = rhs._received;
-    this->_client_status = rhs._client_status;
+    if (this != &rhs)
+    {
+        this->_new_socket = rhs._new_socket;
+        this->_address = rhs._address;
+        this->_received = rhs._received;
+        this->_client_status = rhs._client_status;
+    }
     return *this;
 }
 
@@ -70,6 +78,8 @@ void    Client::run(std::vector<ServerInfo> serverList)
     // si jamais on a fini de recevoir la requete mais qu'on a rien construit en reponse
     // _request->resetValues();
     // _response->resetValues();
+
+    std::cout << "adresse de ma Request :" << _request << std::endl;
 
     if (!_request->fillContent(_received))
     {

@@ -33,7 +33,7 @@ class Request
         void        setHost(std::string host);
         void        setUserAgent(std::string userAgent);
         void        setContentType(std::string contentType);
-        void        setContentLenght(int contentLenght);
+        void        setContentLength(int contentLenght);
         void        setCookies(std::vector<std::string> cookies);
         void        setConnection(std::string connection);
         void        setBody(std::string body);

@@ -6,6 +6,8 @@
 
 # include "webserv.hpp"
 
+# define LOCATION "\033[1;36mLocation\033[0m "
+
 class Location {
 
 public:

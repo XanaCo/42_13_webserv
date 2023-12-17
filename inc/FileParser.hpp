@@ -6,6 +6,8 @@
 
 # include "webserv.hpp"
 
+# define FILEPARSER "\033[1;33mFileParser\033[0m "
+
 class ServerInfo;
 
 class FileParser {

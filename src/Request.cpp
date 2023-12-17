@@ -7,22 +7,23 @@
 
 Request::Request(void) : _method(0), _path(""), _host(""), _userAgent("")
 {
-    if (PRINT)
-        std::cout << GREEN << "Request constructor called" << END_COLOR << std::endl;
+
+	if (PRINT)
+		std::cout << REQUEST << "🐥 constructor called" << std::endl;
     // this->resetValues();
 }
 
 Request::Request(const std::string str)
 {
-    if (PRINT)
-        std::cout << GREEN << "Request constructor called" << END_COLOR << std::endl;
+	if (PRINT)
+		std::cout << REQUEST << "🐥 constructor called" << std::endl;
     this->fillContent(str);
 }
 
 Request::~Request()
 {
-    if (PRINT)
-        std::cout << RED << "Request destructor called" << END_COLOR << std::endl;
+	if (PRINT)
+		std::cout << REQUEST << "🗑️  destructor called" << std::endl;
 }
 
 // ************************************************************************** //
@@ -38,7 +39,7 @@ Request	&Request::operator=(Request const &obj)
         this->setHost(obj.getHost());
         this->setUserAgent(obj.getUserAgent());
         this->setContentType(obj.getContentType());
-        this->setContentLenght(obj.getContentLenght());
+        this->setContentLength(obj.getContentLenght());
         this->setCookies(obj.getCookies());
         this->setConnection(obj.getConnection());
         this->setBody(obj.getBody());
@@ -183,7 +184,7 @@ void    Request::resetValues(void)
     this->setHost("");
     this->setUserAgent("");
     this->setContentType("");
-    this->setContentLenght(0);
+    this->setContentLength(0);
     // this->setCookies();
     this->setConnection("");
     this->setBody("");
@@ -226,7 +227,7 @@ bool Request::fillContent(std::string request)
         else if (size >= 13 && lines[i].substr(0, 13) == "Content-Type:")
             this->setContentType(lines[i].substr(14, size));
         else if (size >= 15 && lines[i].substr(0, 15) == "Content-Lenght:")
-            this->setContentLenght(atoi(lines[i].substr(16, size).c_str()));
+            this->setContentLength(atoi(lines[i].substr(16, size).c_str()));
         else if (size >= 6 && lines[i].substr(0, 6) == "Cookie:")
             this->setCookies(splitString(lines[i].substr(7, size), ' '));
         else if (size >= 11 && lines[i].substr(0, 11) == "Connection:")
@@ -278,7 +279,7 @@ void    Request::setPath(std::string path) {_path = path;}
 void    Request::setHost(std::string host) {_host = host;}
 void    Request::setUserAgent(std::string userAgent) {_userAgent = userAgent;}
 void    Request::setContentType(std::string contentType) {_contentType = contentType;}
-void    Request::setContentLenght(int contentLenght) {_contentLenght = contentLenght;}
+void    Request::setContentLength(int contentLenght) {_contentLenght = contentLenght;}
 void    Request::setCookies(std::vector<std::string> cookies) {_cookies = cookies;}
 void    Request::setConnection(std::string connection) {_connection = connection;}
 void    Request::setBody(std::string body) {_body = body;}

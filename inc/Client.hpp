@@ -3,6 +3,8 @@
 
 # include "webserv.hpp"
 
+# define CLIENT "\033[1;31mClient\033[0m "
+
 class ServerInfo;
 class Request;
 class Response;

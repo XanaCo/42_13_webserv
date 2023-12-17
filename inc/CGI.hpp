@@ -6,6 +6,8 @@
 
 # include "webserv.hpp"
 
+# define CGI	"\033[1;35mCGI\033[0m "
+
 class Request;
 class Response;
 class Serverinfo;

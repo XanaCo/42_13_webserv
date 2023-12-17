@@ -6,6 +6,8 @@
 
 # include "webserv.hpp"
 
+# define SERVER_INFO "\033[1;38mServerInfo\033[0m"
+
 class Location;
 
 class ServerInfo {

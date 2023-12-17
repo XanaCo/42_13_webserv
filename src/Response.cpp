@@ -10,20 +10,22 @@ const std::string host = "en.wikipedia.org";
 
 Response::Response(void)
 {
+	if (PRINT)
+		std::cout << RESPONSE << "🐥 constructor called" << std::endl;
     this->resetValues();
 }
 
 Response::Response(uint16_t port): _port(port)
 {
-    if (PRINT)
-        std::cout << GREEN << "Response constructor called" << END_COLOR << std::endl;
+	if (PRINT)
+		std::cout << RESPONSE << "🐥 constructor called" << std::endl;
     this->resetValues();
 }
 
 Response::~Response()
 {
-    if (PRINT)
-        std::cout << RED << "Response destructor called" << END_COLOR << std::endl;
+	if (PRINT)
+		std::cout << RESPONSE << "🗑️  destructor called" << std::endl;
 }
 
 // ************************************************************************** //

@@ -16,7 +16,7 @@ Location::Location(std::string const &path) {
 	this->_allowedMethods = 0;
 
 	if (PRINT)
-		std::cout << GREEN << "Constructor: Location created " << END_COLOR << std::endl;
+		std::cout << LOCATION << "🐥 constructor called" << std::endl;
 
 	return ;
 }
@@ -35,7 +35,7 @@ Location::Location(Location const &copy) {
 	}
 
 	if (PRINT)
-		std::cout << GREEN << "Constructor: Location copy created " << END_COLOR << std::endl;
+		std::cout << LOCATION << "🐥 constructor called" << std::endl;
 
 	return ;
 }
@@ -43,7 +43,7 @@ Location::Location(Location const &copy) {
 Location::~Location() {
 
 	if (PRINT)
-		std::cout << RED << "Destructor: Location destroyed " << END_COLOR << std::endl;
+		std::cout << LOCATION << "🗑️  destructor called" << std::endl;
 
 	return ;
 }

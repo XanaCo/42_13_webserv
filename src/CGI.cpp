@@ -13,7 +13,7 @@ Cgi::Cgi(ServerInfo &server, Request &req, Response &resp) {
 	this->_response = &resp;
 
 	if (PRINT)
-		std::cout << GREEN << "Constructor: Cgi created " << END_COLOR << std::endl;
+		std::cout << CGI << "🐥 constructor called" << std::endl;
 
 	return ;
 }
@@ -24,7 +24,7 @@ Cgi::Cgi(Cgi const &copy) {
 	(void)copy;
 	
 	if (PRINT)
-		std::cout << GREEN << "Constructor: Cgi copy created " << END_COLOR << std::endl;
+		std::cout << CGI << "🐥 constructor called" << std::endl;
 
 	return ;
 }
@@ -35,7 +35,7 @@ Cgi::~Cgi() {
 		freeCharTab(this->_envpToExec);
 
 	if (PRINT)
-		std::cout << RED << "Destructor: Cgi destroyed " << END_COLOR << std::endl;
+		std::cout << CGI << "🗑️  destructor called" << std::endl;
 
 	return ;
 }
