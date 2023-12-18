@@ -163,7 +163,7 @@ void    Response::resetValues(void)
     _port = 0;
     _content = "";
     _returnStatus = I_CONTIUE;
-    _cgiPid = 0;
+    _cgiPid = -1;
     _cgiFd = 0;
     _cgiOutput = "";
     _cgiBytesWritten = 0;
