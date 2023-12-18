@@ -257,6 +257,7 @@ bool    Client::receive_data(void){
 
     char   buffer[BUFFER_SIZE + 1];
 
+    this->alloc_req_resp();
     memset(buffer, 0, BUFFER_SIZE);
     int nbytes = recv(this->_new_socket, buffer, BUFFER_SIZE, 0);
     if (this->_client_status == READ_READY)
