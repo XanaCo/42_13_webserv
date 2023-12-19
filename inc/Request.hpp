@@ -26,6 +26,7 @@ class Request
 
         void        setMethod(int method);
         void        setPath(std::string path);
+        void        setVersion(std::string version);
         void        setHost(std::string host);
         void        setPort(std::string port);
         void        setUserAgent(std::string userAgent);
@@ -40,6 +41,7 @@ class Request
     
         int                         getMethod(void) const;
         std::string                 getPath(void) const;
+        std::string                 getVersion(void) const;
         std::string                 getHost(void) const;
         std::string                 getPort(void) const;
         std::string                 getUserAgent(void) const;
@@ -56,6 +58,7 @@ class Request
 
         int                         _method;
         std::string                 _path;
+        std::string                 _version;
         std::string                 _host;          // www.example.com
         std::string                 _port;
         std::string                 _userAgent;     // Mozilla/5.0 (...)... (navigateur du client)

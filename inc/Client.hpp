@@ -65,6 +65,7 @@ class   Client{
         // Function to receive data from a client
         bool            alloc_req_resp(void);
         bool            receive_data(void);
+        bool            checkHttpVersion(void);
         void            run(std::vector<ServerInfo> serverList);
         bool            found_header_end(size_t *found) const;
         std::string     curated_header(size_t end);

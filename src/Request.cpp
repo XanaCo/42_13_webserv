@@ -5,13 +5,13 @@
 //	CONSTRUCTOR / DESTRUCTOR
 // ************************************************************************** //
 
-Request::Request(void) : _method(0), _path(""), _host(""), _userAgent(""), _contentType(""), _contentLenght(0), _connection(""), _body("")
+Request::Request(void) : _method(0), _path(""), _version(""), _host(""), _userAgent(""), _contentType(""), _contentLenght(0), _connection(""), _body("")
 {
 	if (PRINT)
 		std::cout << REQUEST << "🐥 constructor called" << std::endl;
 }
 
-Request::Request(const Request& obj) : _method(obj._method), _path(obj._path), _host(obj._host), _userAgent(obj._userAgent), _contentType(obj._contentType), _contentLenght(obj._contentLenght), _connection(obj._connection), _body(obj._body)
+Request::Request(const Request& obj) : _method(obj._method), _path(obj._path), _version(obj._version), _host(obj._host), _userAgent(obj._userAgent), _contentType(obj._contentType), _contentLenght(obj._contentLenght), _connection(obj._connection), _body(obj._body)
 {
 	if (PRINT)
 		std::cout << REQUEST << "🐥 constructor called" << std::endl;
@@ -87,7 +87,6 @@ void	Request::findHost(std::vector<ServerInfo>& servers, ServerInfo &server)
 void    Request::resetValues(void)
 {
     this->setMethod(0);
-    _method = 0;
     this->setPath("");
     this->setHost("");
     this->setUserAgent("");
@@ -191,6 +190,7 @@ bool Request::fillContent(std::string request)
 
 void    Request::setMethod(int method) {_method = method;}
 void    Request::setPath(std::string path) {_path = path;}
+void    Request::setVersion(std::string version) {_version = version;}
 void    Request::setHost(std::string host) {_host = host;}
 void    Request::setPort(std::string port) {_port = port;}
 void    Request::setUserAgent(std::string userAgent) {_userAgent = userAgent;}
@@ -205,6 +205,7 @@ void    Request::setServer(ServerInfo* server) {_server = server;}
 
 int                         Request::getMethod(void) const {return (_method);}
 std::string                 Request::getPath(void) const {return (_path);}
+std::string                 Request::getVersion(void) const {return (_version);}
 std::string                 Request::getHost(void) const {return (_host);}
 std::string                 Request::getPort(void) const {return (_port);}
 std::string                 Request::getUserAgent(void) const {return (_userAgent);}
