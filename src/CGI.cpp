@@ -177,8 +177,7 @@ void Cgi::executeScript() {
 
 	if (pipe(this->_pipeOut) == -1)
 	{
-		std::cerr << "PipeOut could not be created" << std::endl; //EFFACER
-		//REVISER SI THROW ERROR OU RETURN (WAITPID?)
+		// std::cerr << "PipeOut could not be created" << std::endl; //EFFACER
 		_response->setReturnStatus(E_INTERNAL_SERVER);
 		return;
 	}
@@ -187,28 +186,26 @@ void Cgi::executeScript() {
 	{
 		close(_pipeOut[1]);
 		close(_pipeOut[0]);
-		std::cerr << "PipeIn could not be created" << std::endl; //EFFACER
-		//REVISER SI THROW ERROR OU RETURN (WAITPID?)
+		// std::cerr << "PipeIn could not be created" << std::endl; //EFFACER
 		_response->setReturnStatus(E_INTERNAL_SERVER);
 		return;
 	}
 
-	_response->setCgiFdRessource(_pipeOut[0]);
+	_response->setCgiFdRessource(_pipeOut[0]); //copies fd out in parent response?
+
 	_response->setCgiPid(fork());
-	
 	if (_response->getCgiPid() == -1)
 	{
 		close(_pipeOut[1]);
 		close(_pipeOut[0]);
 		close(_pipeIn[1]);
 		close(_pipeIn[0]);
-		std::cerr << "Pid == -1" << std::endl; //EFFACER
-		//REVISER SI THROW ERROR OU RETURN (WAITPID?)
+		// std::cerr << "Pid == -1" << std::endl; //EFFACER
 		_response->setReturnStatus(E_INTERNAL_SERVER);
 		return;
 	}
 
-	if (_response->getCgiPid() == 0) // we are in child process
+	if (_response->getCgiPid() == 0) // CHILD
 	{
 		close(_pipeIn[1]);
 		close(_pipeOut[0]);
@@ -216,28 +213,21 @@ void Cgi::executeScript() {
 		{
 			close(_pipeIn[0]);
 			close(_pipeOut[1]);
-			std::cerr << "Dup Failed" << std::endl; //EFFACER
-			//REVISER SI THROW ERROR OU RETURN (WAITPID?)
-			_response->setReturnStatus(E_INTERNAL_SERVER);
-			return;
+			exit(E_INTERNAL_SERVER);
 		}
 		close(_pipeIn[0]);
 		if (dup2(_pipeOut[1], 1) == -1)
 		{
 			close(_pipeOut[1]);
-			std::cerr << "Dup Failed" << std::endl; //EFFACER
-			//REVISER SI THROW ERROR OU RETURN (WAITPID?)
-			_response->setReturnStatus(E_INTERNAL_SERVER);
-			return;
+			//std::cerr << "Dup Failed" << std::endl; //EFFACER
+			exit(E_INTERNAL_SERVER);
 		}
 		close(_pipeOut[1]);
 		
 		if (setEnvironment(this->getCGIServer(), this->getCGIRequest()) == -1)
 		{
 			std::cerr << "Set ENV Failed" << std::endl; //EFFACER
-			//REVISER SI THROW ERROR OU RETURN (WAITPID?)
-			_response->setReturnStatus(E_INTERNAL_SERVER);
-			return;
+			exit(E_INTERNAL_SERVER);
 		}
 		
 		//setArgvToExec(_request->getScriptType()); // REQUEST tells me if I need to execute php or python?
@@ -246,13 +236,17 @@ void Cgi::executeScript() {
 		//closeallfds sockets
 		//clean logs?
 
-		if (execve(_argvToExec[0], _argvToExec, _envpToExec) == -1)
-		{
-			std::cerr << "Execve Failed" << std::endl; //EFFACER
-			//REVISER SI THROW ERROR OU RETURN (WAITPID?)
-			_response->setReturnStatus(E_INTERNAL_SERVER);
-			return;
-		}
+		// if (execve(_argvToExec[0], _argvToExec, _envpToExec) == -1)
+		// {
+		// 	std::cerr << "Execve Failed" << std::endl; //EFFACER
+		// 	//REVISER SI THROW ERROR OU RETURN (WAITPID?)
+		// 	/// _response->setReturnStatus(E_INTERNAL_SERVER);
+		// 	exit(1);
+		// }
+		execve(_argvToExec[0], _argvToExec, _envpToExec);
+		// std::cerr << "Execve Failed" << std::endl; //EFFACER
+		// std::cout << "Test" << std::endl;
+		exit(E_INTERNAL_SERVER);
 
 	}
 	
