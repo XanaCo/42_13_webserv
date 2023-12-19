@@ -26,30 +26,30 @@ public:
 	void setRequest(Request &req);
 	void setResponse(Request &resp);
 	void setMethod(int method);
-	int setEnvironment(ServerInfo &server, Request &req);
+	int setEnvironment(ServerInfo *server, Request *req);
 
-	int getPipeOut() const;
-	int getPipeIn() const;
+	int getPipeOut();
+	int getPipeIn();
 
-	ServerInfo &getCGIServer() const;
-	Location &getCGILoc() const;
-	Request &getCGIRequest() const;
-	Response &getCGIResponse() const;
+	ServerInfo *getCGIServer() const;
+	Location *getCGILoc() const;
+	Request *getCGIRequest();
+	Response *getCGIResponse();
 
-	std::map<std::string, std::string> &getenvpMap() const;
-	std::string &getCGIMethod() const;
+	std::map<std::string, std::string> &getenvpMap();
+	std::string &getCGIMethod();
 	char **getCGIenvpToExec() const;
 	char **getCGIargvToExec() const;
 
 	void executeScript();
 	void setArgvToExec(int type);
 
-	class CGIexception : public std::exception {
+	// class CGIexception : public std::exception {
 
-		public :
-			virtual const char *what() const throw();
+	// 	public :
+	// 		virtual const char *what() const throw();
 
-	};
+	// };
 
 
 private:

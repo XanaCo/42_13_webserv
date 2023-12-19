@@ -31,7 +31,7 @@ SRC			= main.cpp \
 			utilsParsing.cpp \
 			utilsPrint.cpp \
 			utilsGeneral.cpp \
-			#CGI.cpp \
+			CGI.cpp \
 			#multiplexer.cpp \
 
 OBJ			= ${addprefix ${BIN_PATH}, ${SRC:.cpp=.o}}
