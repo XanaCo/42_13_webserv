@@ -2,7 +2,7 @@
 <?php
 
 // Read the selected ingredients from the form
-$selectedIngredients = $_POST['ingredients'] ?? [];
+$selectedIngredients = array_map('strval', $_POST['ingredients'] ?? []);
 
 // Map of ingredients to their corresponding Harry Potter names
 $ingredientNames = [
@@ -23,8 +23,8 @@ $potionRecipes = [
     ["some_ingredient", "another_ingredient"] => "Another Potion",
 ];
 
-// List of predefined potion names as an associative array
-$predefinedPotionNames = array_fill_keys([
+// List of predefined potion names
+$predefinedPotionNames = [
     "Polyjuice Potion",
     "Felix Felicis",
     "Amortentia",
@@ -35,13 +35,21 @@ $predefinedPotionNames = array_fill_keys([
     "Skele-Gro",
     "Love Potion",
     "Fire Protection Potion",
-], true);
+];
+
+// Ensure that $selectedIngredients are strings
+$selectedIngredients = array_map('strval', $selectedIngredients);
 
 // Generate a potion name based on the selected ingredients
 function generatePotionName($ingredients, $ingredientNames, $potionRecipes, $predefinedPotionNames) {
     // Check if the selected combination matches any known potion recipe
     foreach ($potionRecipes as $recipeIngredients => $potionName) {
-        if (array_diff($ingredients, $recipeIngredients) === array_diff($recipeIngredients, $ingredients)) {
+        // Ensure that keys are strings for comparison
+        $recipeIngredients = array_map('strval', $recipeIngredients);
+        // Sort the arrays to ensure order doesn't matter
+        sort($recipeIngredients);
+        sort($ingredients);
+        if ($recipeIngredients === $ingredients) {
             return $potionName;
         }
     }

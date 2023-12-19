@@ -44,14 +44,6 @@ public:
 	void executeScript();
 	void setArgvToExec(int type);
 
-	// class CGIexception : public std::exception {
-
-	// 	public :
-	// 		virtual const char *what() const throw();
-
-	// };
-
-
 private:
 
 	int		_pipeIn[2];
@@ -66,7 +58,6 @@ private:
 	std::string _method;
 	char **_envpToExec;
 	char **_argvToExec;
-
 
 };
 

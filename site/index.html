@@ -37,21 +37,35 @@
 
     <main>
 
-            <div class="flex-container">
-            <h3>Tester le projet :</h3>
-            </div>
-            
-            <div class="flex-container">    
-                <form action="https://theuselessweb.com/" method="get" target="_blank">
-                    <button type="submit">Test 1 : Redirection</button>
-                </form>
-                <!-- <li>Test 3</li> -->
-            </div>
-            <div class="flex-container">
-            <button id="sendRequestButton">Envoyer la requête</button>
-            </div>
+			<div class="flex-container">
+			<h3>Tester le projet :</h3>
+			</div>
+	
+			<div class="flex-container">    
+				<form action="https://theuselessweb.com/" method="get" target="_blank">
+					<button type="submit">Test 1 : Redirection</button>
+				</form>
+			</div>
+			<div class="flex-container">
+				<form action="CGI/cgi.html" method="get" target="_blank">
+					<button type="submit">Cgi Home Page (NO SCRIPT)</button>
+				</form>
+			</div>
+			<div class="flex-container">
+				<form action="CGI/sortingHat.html" method="get" target="_blank">
+					<button type="submit">Sorting Hat Ceremony (PY)</button>
+				</form>
+			</div>
+			<div class="flex-container">
+				<form action="CGI/quidditchPos.html" method="get" target="_blank">
+					<button type="submit">Check your Quidditch Position (PY)</button>
+				</form>
+			</div>
+			<div class="flex-container">
+				<button id="sendRequestButton">Envoyer la requête</button>
+			</div>
 
-        <script>
+	<script>
         document.getElementById('sendRequestButton').addEventListener('click', function() {
             // Créer une instance de l'objet XMLHttpRequest
             var xhr = new XMLHttpRequest();

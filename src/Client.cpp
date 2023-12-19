@@ -24,7 +24,6 @@ Client::Client(int socket, struct sockaddr_in *r_address){
     _header_bytes = 0;
     _body_bytes = 0;
     _request = new Request();
-    std::cout << "adresse de ma Request :" << _request << std::endl;
     _response = new Response();
     return  ;
 }
