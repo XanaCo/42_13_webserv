@@ -489,6 +489,26 @@ void ServerInfo::checkAllInfos() {
 	this->setSockAddress();
 }
 
+bool	ServerInfo::findCgiRessource(std::string path, std::string& newPath) const
+{
+	std::string	nameDir = getNameDir(path);
+	for (long unsigned int i = 0; i < _locations.size(); i++)
+	{
+		if (nameDir == _locations[i].getLPathName())
+		{
+			size_t limit = path.find(".html");
+			newPath = _Root + "/CGI/" + getNameFile(path).substr(0, limit) + ".py";
+			if (access(newPath.c_str(), F_OK))
+				return (true);
+			newPath = _Root + "/CGI/" + getNameFile(path).substr(0, limit) + ".php";
+			if (access(newPath.c_str(), F_OK))
+				return (true);
+		}
+	}
+	newPath = _Root + "/index.html";
+	return (false); // voir pour afficher une page d'erreur html
+}
+
 bool	ServerInfo::findRessource(std::string path, std::string& newPath) const
 {
 	std::string	nameDir = getNameDir(path);

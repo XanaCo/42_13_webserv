@@ -71,6 +71,17 @@ std::ostream &  operator<<(std::ostream & o, Client const & rhs){
 //  METHODS
 // ************************************************************************** //
 
+bool    Client::checkHttpVersion(void)
+{
+    std::string version = _request->getVersion();
+    if (version != "HTTP/1.0" && version != "HTTP/1.1" && version != "HTTP/0.9")
+    {
+        _response->setReturnStatus(E_HTTP_VERSION);
+        return (false);
+    }
+    return (true);
+}
+
 void    Client::run(std::vector<ServerInfo> serverList)
 {
     ServerInfo  server;
@@ -85,14 +96,26 @@ void    Client::run(std::vector<ServerInfo> serverList)
     _request->findHost(serverList, server);
     std::cout << "Run : voici l'host : " << server.getServerName() << std::endl;
     std::string path;
+    if (_request->getPath().find("/CGI/") != std::string::npos)
+    {
+        if (!server.findCgiRessource(_request->getPath(), path))
+            std::cerr << "Run : on ne trouve pas la ressource CGI" << std::endl;
+        //exec cgi
+        Cgi cgi_le_2(server, *_request, *_response);
+        cgi_le_2.executeScript();
+        return ;
+    }
     if (!server.findRessource(_request->getPath(), path))
     {
         std::cerr << "Run : on ne trouve par la ressource" << std::endl;
         return ;
     }
     std::cout << "Run : je trouve ce chemin de ressource : " << path << std::endl;
+
+
     int    method = _request->getMethod() / 2; // ici c'est pour avoir 0->GET / 1->POST / 2->DELETE
     std::cout << "Run : method trouvee : " << method << " (0->GET/1->POST/2->DELETE)" <<std::endl;
+
     static void (Response::*methods[3])(const std::string) = { &Response::readRessource, NULL, &Response::deleteRessource };
     if (method == 1)
         _response->postRessource(path, _request->getBody());

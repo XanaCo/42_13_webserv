@@ -122,6 +122,7 @@
 # define E_BAD_GATEWAY			502 // renvoye par un serveur proxi pour indiquer qu'il a recu une reponse invalide d'un serveur en amont
 # define E_SERVICE_UNAVAILABLE	503 // le server n'est pas en mesure de traiter la demande du client pour le moment
 # define E_GATEWAY_TIMEOUT		504 // renvoye par un serveur proxi pour indiquer qu'il n'a pas recu de reponde de la part d'un serveur en amont
+# define E_HTTP_VERSION			505 // la version d'http precise en requette n'est pas traitee par le serveur
 
 typedef enum e_headerRequest {
 	RQ_METHOD,
