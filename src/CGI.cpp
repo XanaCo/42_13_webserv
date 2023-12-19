@@ -191,7 +191,6 @@ void Cgi::executeScript() {
 		return;
 	}
 
-	_response->setCgiFdRessource(_pipeOut[0]); //copies fd out in parent response?
 
 	_response->setCgiPid(fork());
 	if (_response->getCgiPid() == -1)
@@ -249,6 +248,7 @@ void Cgi::executeScript() {
 		exit(E_INTERNAL_SERVER);
 
 	}
+	_response->setCgiFdRessource(_pipeOut[0]); //copies fd out in parent response?
 	
 }
 
