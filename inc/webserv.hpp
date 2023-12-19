@@ -150,8 +150,13 @@ typedef enum e_headerRq {
 	RP_LOCATION,			// nouvelle URL de redirection
 	RP_COOKIES,
 	RP_SECURITY,
-	RP_COMPRESSIOM,
+	RP_COMPRESSIOM
 }	t_headerRq;
+
+typedef enum e_scriptType {
+	PY,
+	PHP
+}	t_scriptType;
 
 // ************************************************************************** //
 //  PROTOTYPES

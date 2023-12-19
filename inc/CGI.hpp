@@ -41,6 +41,9 @@ public:
 	char **getCGIenvpToExec() const;
 	char **getCGIargvToExec() const;
 
+	void executeScript();
+	void setArgvToExec(int type);
+
 	class CGIexception : public std::exception {
 
 		public :
@@ -63,6 +66,7 @@ private:
 	std::string _method;
 	char **_envpToExec;
 	char **_argvToExec;
+
 
 };
 

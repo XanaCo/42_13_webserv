@@ -129,30 +129,97 @@ int Cgi::setEnvironment(ServerInfo &server, Request &req) {
 		//REDIRECT_STATUS - "200"
 		//UPLOAD_DIR
 
-//copy envMap (std::map) into envChar (char**), to send to execve
 	this->_envpToExec = mapToCharTab(this->_envpMap);
 	if (!this->_envpToExec)
-		return 42;
+		return -1;
 	return 0;
 }
 
 
-void executeScript() {
-	return;
+void Cgi::executeScript() {
+
+	if (pipe(this->_pipeOut) == -1)
+	{
+		std::cerr << "PipeOut could not be created" << std::endl; //EFFACER
+		_response->setReturnStatus(E_INTERNAL_SERVER);
+		return;
+	}
+
+	if (pipe(this->_pipeIn) == -1)
+	{
+		close(_pipeOut[1]);
+		close(_pipeOut[0]);
+		std::cerr << "PipeIn could not be created" << std::endl; //EFFACER
+		_response->setReturnStatus(E_INTERNAL_SERVER);
+		return;
+	}
+
+	_response->setCgiFdRessource(_pipeOut[0]);
+	_response->setCgiPid(fork());
+	
+	if (_response->getCgiPid() == -1)
+	{
+		close(_pipeOut[1]);
+		close(_pipeOut[0]);
+		close(_pipeIn[1]);
+		close(_pipeIn[0]);
+		std::cerr << "Pid == -1" << std::endl; //EFFACER
+		_response->setReturnStatus(E_INTERNAL_SERVER);
+		return;
+	}
+
+	if (_response->getCgiPid() == 0) // we are in child process
+	{
+		close(_pipeIn[1]);
+		close(_pipeOut[0]);
+		if (dup2(_pipeIn[0], 0) == -1)
+		{
+			close(_pipeIn[0]);
+			close(_pipeOut[1]);
+			std::cerr << "Dup Failed" << std::endl; //EFFACER
+			_response->setReturnStatus(E_INTERNAL_SERVER);
+			return;
+		}
+		close(_pipeIn[0]);
+		if (dup2(_pipeOut[1], 1) == -1)
+		{
+			close(_pipeOut[1]);
+			std::cerr << "Dup Failed" << std::endl; //EFFACER
+			_response->setReturnStatus(E_INTERNAL_SERVER);
+			return;
+		}
+		close(_pipeOut[1]);
+		
+		if (setEnvironment(this->getCGIServer(), this->getCGIRequest()) == -1)
+		{
+			std::cerr << "Set ENV Failed" << std::endl; //EFFACER
+			_response->setReturnStatus(E_INTERNAL_SERVER);
+			return;
+		}
+		
+		//setArgvToExec(_request->getScriptType()); // REQUEST tells me if I need to execute php or python?
+		setArgvToExec(PY); //TESTER
+		
+		//closeallfds
+		//clean logs
+
+		if (execve(_argvToExec[0], _argvToExec, _envpToExec) == -1)
+			throw CGIexception();
+
+	}
+	close(_pipeIn[0]);
+	close(_pipeOut[1]);
+	
 }
-	//pipe(_pipe)
-	//response->setCGIpipe(_pipe[0])
-	//response->setCgiPid(fork())  ->// response->_pid = fork()
-	//if response->getCgiPid() == 0 we are in child process
-		//dup2 for input
-		//dup2 for output
-		//setEnvi
-		//setupCmdTab : cmd[3]; cmd[0] = python3 || php-cgi; cmd[1] = ./ + URIpath; cmd[2] = NULL;
-		//setUpPathtoExec (php or py)
-		//closeallsockets / fds
-		//////il faut faire execve(const char *filename, char *const argv[], char *const envp[])-->
-		//execve(pathToExec.c_str(), cmd, _envi)
-			//if execve == -1 
-			// free memory
-			// throw error (close fd input of dup2 if method is POST)
-	//else close pipe[1]
+
+void Cgi::setArgvToExec(int type) {
+
+	if (type == PY)
+		_argvToExec[0] = "/bin/python3.10";
+	else if (type == PHP)
+		_argvToExec[0] = "/usr/bin/php-cgi";
+	
+	_argvToExec[1] = const_cast<char *>("site/CGI/scriptCGI/");// + _request->getScriptPath()); //SCRIPT TO EXECUTE
+	_argvToExec[2] = NULL;
+
+}

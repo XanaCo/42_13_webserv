@@ -23,7 +23,6 @@ RM			= rm -rf
 SRC			= main.cpp \
 			FileParser.cpp \
 			ServerInfo.cpp \
-			CGI.cpp \
 			Base.cpp \
 			Client.cpp \
 			Request.cpp \
@@ -32,6 +31,7 @@ SRC			= main.cpp \
 			utilsParsing.cpp \
 			utilsPrint.cpp \
 			utilsGeneral.cpp \
+			#CGI.cpp \
 			#multiplexer.cpp \
 
 OBJ			= ${addprefix ${BIN_PATH}, ${SRC:.cpp=.o}}
