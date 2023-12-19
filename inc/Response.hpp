@@ -30,7 +30,7 @@ class Response
         // bool        readRessource(const std::string& path, std::string& content);
         void        readRessource(std::string path);
         void        deleteRessource(const std::string path);
-        void        postRessource(const std::string path);
+        void        postRessource(const std::string path, std::string content);
 
         bool    cgiRead();
         bool    cgiWrite();

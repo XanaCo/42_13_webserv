@@ -87,10 +87,10 @@ void    Response::readRessource(std::string path)
 	return ;
 }
 
-void    Response::postRessource(const std::string path)
+void    Response::postRessource(const std::string path, std::string content)
 {
     std::ofstream file(path.c_str());
-    // file << fileContent;
+    file << content;
     file.close();
 }
 

@@ -93,8 +93,11 @@ void    Client::run(std::vector<ServerInfo> serverList)
     std::cout << "Run : je trouve ce chemin de ressource : " << path << std::endl;
     int    method = _request->getMethod() / 2; // ici c'est pour avoir 0->GET / 1->POST / 2->DELETE
     std::cout << "Run : method trouvee : " << method << " (0->GET/1->POST/2->DELETE)" <<std::endl;
-    static void (Response::*methods[3])(const std::string) = { &Response::readRessource, &Response::postRessource, &Response::deleteRessource };
-    (_response->*methods[method])(path);
+    static void (Response::*methods[3])(const std::string) = { &Response::readRessource, NULL, &Response::deleteRessource };
+    if (method == 1)
+        _response->postRessource(path, _request->getBody());
+    else
+        (_response->*methods[method])(path);
     std::cout << std::endl << *_response << std::endl;
 }
 
