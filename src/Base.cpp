@@ -251,7 +251,7 @@ void    Base::receive_client_data(int client_sock){
 
 
 // This functions call send until the number of bytes to send is sent or error happened
-bool    Base::send_all(int s, char *buf, int *len){
+bool    Base::send_all(int s, const char *buf, int *len){
 
     int total = 0;
     int b_left = *len;
@@ -377,7 +377,7 @@ void    Base::start_servers(void) {
 
 void    Base::review_poll(void){
 
-    char test[] = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 45\n\nPablo va bientot m'envoyer de belles reponses";
+    // (void)char test[] = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 45\n\nPablo va bientot m'envoyer de belles reponses";
 
     for (int i = 0; i < this->_sock_count; i++)
     {
@@ -399,11 +399,13 @@ void    Base::review_poll(void){
         }
         if(_pfds[i].revents & POLLOUT)
         {
-            int len = strlen(test);
+            int len = strlen(("HTTP/1.1 200 OK\nContent-Type: text/html\n" + get_cli_from_sock(_pfds[i].fd).getResponse()->getContent()).c_str());
 
-            if (!send_all(_pfds[i].fd, test, &len))
+            if (!send_all(_pfds[i].fd, ("HTTP/1.1 200 OK\nContent-Type: text/html\n" + get_cli_from_sock(_pfds[i].fd).getResponse()->getContent()).c_str(), &len))
                 std::cout << "Only " << len << " bytes have been sent because of error" << std::endl;
             change_poll_event(_pfds[i].fd, pollin);
         }
     }
 }
+
+

@@ -500,7 +500,8 @@ bool	ServerInfo::findRessource(std::string path, std::string& newPath) const
 			return (true);
 		}
 	}
-	return (false);
+	newPath = _Root + "/index.html";
+	return (true);
 }
 
 // ************************************************************************** //

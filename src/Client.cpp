@@ -74,36 +74,28 @@ std::ostream &  operator<<(std::ostream & o, Client const & rhs){
 void    Client::run(std::vector<ServerInfo> serverList)
 {
     ServerInfo  server;
-
-    // si jamais on a fini de recevoir la requete mais qu'on a rien construit en reponse
     // _request->resetValues();
     // _response->resetValues();
-
-    std::cout << "adresse de ma Request :" << _request << std::endl;
-
     if (!_request->fillContent(_received))
     {
         std::cerr << "error, on a du mal a fill la structure Request" << std::endl;
         return ;
     }
-    // std::cout << "here is my request : " << (*_request) << std::endl;
-    if (!_request->findHost(serverList, server))
-    {
-        std::cerr << "on ne trouve pas l'ost" << std::endl;
-        return ;
-    }
-    std::cout << "here is my host : " << (_request->getServer())->getServerName() << std::endl;
+    std::cout << "Run : ma requete ressemble a ca : " << (*_request) << std::endl;
+    _request->findHost(serverList, server);
+    std::cout << "Run : voici l'host : " << server.getServerName() << std::endl;
     std::string path;
     if (!server.findRessource(_request->getPath(), path))
     {
-        std::cerr << "on ne trouve par la ressource" << std::endl;
+        std::cerr << "Run : on ne trouve par la ressource" << std::endl;
         return ;
     }
-    std::cout << "here is my path for : " << path << std::endl;
+    std::cout << "Run : je trouve ce chemin de ressource : " << path << std::endl;
     int    method = _request->getMethod() / 2; // ici c'est pour avoir 0->GET / 1->POST / 2->DELETE
+    std::cout << "Run : method trouvee : " << method << " (0->GET/1->POST/2->DELETE)" <<std::endl;
     static void (Response::*methods[3])(const std::string) = { &Response::readRessource, &Response::postRessource, &Response::deleteRessource };
-
     (_response->*methods[method])(path);
+    std::cout << std::endl << *_response << std::endl;
 }
 
 // ************************************************************************** //
@@ -286,3 +278,5 @@ bool    Client::receive_data(void){
     }*/
     return true;
 }
+
+Response*   Client::getResponse(void) {return _response;}

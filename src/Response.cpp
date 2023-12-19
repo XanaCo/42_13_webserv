@@ -5,21 +5,16 @@
 //	CONSTRUCTOR / DESTRUCTOR
 // ************************************************************************** //
 
-const std::string host = "en.wikipedia.org";
-// const std::string path = "/wiki/Main_Page";
-
-Response::Response(void)
+Response::Response(void) : _port(0), _content(""), _returnStatus(I_CONTIUE)
 {
 	if (PRINT)
 		std::cout << RESPONSE << "🐥 constructor called" << std::endl;
-    this->resetValues();
 }
 
-Response::Response(uint16_t port): _port(port)
+Response::Response(const Response& obj): _port(obj._port), _content(obj._content), _returnStatus(obj._returnStatus)
 {
 	if (PRINT)
 		std::cout << RESPONSE << "🐥 constructor called" << std::endl;
-    this->resetValues();
 }
 
 Response::~Response()
@@ -32,86 +27,33 @@ Response::~Response()
 //  OPERATORS
 // ************************************************************************** //
 
-Response	&Response::operator=(Response const &obj)
+Response	&Response::operator=(const Response& obj)
 {
-    // if (this != obj)
-    // {
-        _port = obj._port;
-        _content = obj._content;
-        _returnStatus = obj._returnStatus;
-        _cgiPid = obj._cgiPid;
-        _cgiFd = obj._cgiFd;
-        _cgiOutput = obj._cgiOutput;
-        _cgiBytesWritten = obj._cgiBytesWritten;
-        _cgiFdRessource = obj._cgiFdRessource;
-    // }
+    if (this != &obj)
+    {
+        this->setPort(obj.getPort());
+        this->setContent(obj.getContent());
+        this->setReturnStatus(obj.getReturnStatus());
+        this->setCgiPid(obj.getCgiPid());
+        this->setCgiFd(obj.getCgiFd());
+        this->setCgiOutput(obj.getCgiOutput());
+        this->setCgiBytesWritten(obj.getCgiBytesWritten());
+        this->setCgiFdRessource(obj.getCgiFdRessource());
+    }
     return (*this);
 }
 
-std::ostream	&operator<<(std::ostream &os, Response &obj)
+std::ostream&   operator<<(std::ostream& os, const Response& obj)
 {
-    os << RESPONSE << " Port : " << obj.getPort();
-    os << " return status : " << obj.getReturnStatus() << std::endl;
+    os << "--" << RESPONSE << "--" << std::endl;
+    // os << "port : " << obj.getPort() << std::endl;
+    os << "return status : " << obj.getReturnStatus() << std::endl;
     os << "content : " << obj.getContent() << std::endl;
     return (os);
 }
 
 // ************************************************************************** //
-//	METHODS
-// ************************************************************************** //
-
-// pour l'instant je traite le cas ou nous n'avons pas l'information demande
-// on va donc demander l'information a un autre serveur.
-// dans le sujet on appelle ca une redirection
-void    Response::redirection(void)
-{
-    // Résolution du nom de domaine
-    struct hostent* server = gethostbyname(host.c_str()); // /!\ la fonction n'est pas autorisee
-    if (!server)
-    {
-        this->setReturnStatus(E_BAD_GATEWAY);
-        // std::cerr << "Erreur de résolution du nom de domaine." << std::endl;
-        return ;
-    }
-
-    // Création de la socket server
-    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0)
-    {
-        std::cerr << "Erreur lors de la création de la socket." << std::endl;
-        return ;
-    }
-
-    // Configuration de l'adresse du serveur
-    struct sockaddr_in serverAddress;
-    serverAddress.sin_family = AF_INET; // on specifie qu'on traite des adresse IPV4
-    serverAddress.sin_port = htons(80); // configure le port qu'on va utiliser pour communiquer avec le serveur
-    bcopy((char*)server->h_addr, (char*)&serverAddress.sin_addr.s_addr, server->h_length);  // on copie l'adresse IP du server qu'on a vu precedement
-
-    // Connexion au serveur
-    if (connect(sockfd, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0)
-    {
-        this->setReturnStatus(E_SERVICE_UNAVAILABLE);
-        // std::cerr << "Erreur lors de la connexion au serveur." << std::endl;
-        return ;
-    }
-
-    char        buffer[BUFFER_SIZE];
-    ssize_t     bytesRead;
-    std::string response; // changer par un attribut de notre obj
-
-    // recv nous permet de recevoir la donnee a partir d'une socket
-    bytesRead = recv(sockfd, buffer, BUFFER_SIZE, 0);
-    while (bytesRead)
-    {
-        this->setContent(this->getContent().append(buffer, bytesRead));
-        bytesRead = recv(sockfd, buffer, BUFFER_SIZE, 0);
-    }
-    this->setReturnStatus(S_OK);
-}
-
-// ************************************************************************** //
-//	GET / POST / DELETE
+//	GET / POST / DELETE METHODS
 // ************************************************************************** //
 
 void    Response::readRessource(std::string path)
@@ -120,25 +62,28 @@ void    Response::readRessource(std::string path)
 	struct stat sb;
     // Response    response;
 
+    std::cout << "y a t-il un pilote dans l'avion" << std::endl;
 	if (stat(cPath, &sb) != 0)
     {
         this->setReturnStatus(E_NOT_FOUND);
-        // std::cerr << path << " : does not exist" << std::endl;
+        std::cerr << "read ressource : " << path << " : does not exist" << std::endl;
         return ;
     }
 	if (!S_ISREG(sb.st_mode))
     {
         this->setReturnStatus(E_CONFLICT); // je suis pas certain pour ce code d'erreur
-        // std::cerr << path << " : is not a regular file" << std::endl;
+        std::cerr << "read ressource : " << path << " : is not a regular file" << std::endl;
         return ;
     }
 	std::ifstream ifs(cPath);
 	if (!ifs.is_open())
     {
         this->setReturnStatus(E_FORBIDDEN); // je suis pas certain pour ce code d'erreur
-        // std::cerr << path << " : cant be opened" << std::endl;
+        std::cerr << "read ressource : " << path << " : cant be opened" << std::endl;
 		return ;
     }
+    _content.assign(std::istreambuf_iterator<char>(ifs), std::istreambuf_iterator<char>());
+    _returnStatus = S_OK;
 	return ;
 }
 
@@ -152,22 +97,9 @@ void    Response::postRessource(const std::string path)
 void Response::deleteRessource(const std::string path)
 {
     if (unlink(path.c_str()) != 0)
-        std::cerr << "Erreur lors de la suppression du fichier " << path << std::endl;
+        std::cerr << "delete ressource : " << path  << " : erreur lors de la suppression du fichier"<< std::endl;
     else
         std::cout << "Le fichier " << path << " a été supprimé avec succès." << std::endl;
-}
-
-
-void    Response::resetValues(void)
-{
-    _port = 0;
-    _content = "";
-    _returnStatus = I_CONTIUE;
-    _cgiPid = 0;
-    _cgiFd = 0;
-    _cgiOutput = "";
-    _cgiBytesWritten = 0;
-    _cgiFdRessource = 0;
 }
 
 // ************************************************************************** //
@@ -208,6 +140,22 @@ void    Response::resetValues(void)
 //     _cgiBytesWritten += bytesWritten;
 //     return (true);
 // }
+
+// ************************************************************************** //
+//	PARSING METHODS
+// ************************************************************************** //
+
+void    Response::resetValues(void)
+{
+    _port = 0;
+    _content = "";
+    _returnStatus = I_CONTIUE;
+    _cgiPid = 0;
+    _cgiFd = 0;
+    _cgiOutput = "";
+    _cgiBytesWritten = 0;
+    _cgiFdRessource = 0;
+}
 
 // ************************************************************************** //
 //	LA GET-SET

@@ -51,6 +51,8 @@ class   Client{
         std::string get_received(void) const;
         int get_status(void) const;
         int get_bytes_received(void) const;
+        Response*   getResponse(void);
+
         std::string display_status(void) const;
         void    set_socket(int sock);
         void    set_addr_struct(struct sockaddr_in addr);

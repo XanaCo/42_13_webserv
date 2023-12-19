@@ -19,12 +19,12 @@ class Response
     public:
 
         Response();
-        Response(uint16_t port);
+        Response(const Response& obj);
         ~Response();
 
-        Response    &operator=(Response const &obj);
+        Response    &operator=(const Response& obj);
 
-        void    redirection(void);
+        // void    redirection(void);
         void    resetValues(void);
 
         // bool        readRessource(const std::string& path, std::string& content);
@@ -66,6 +66,6 @@ class Response
         long        _cgiBytesWritten;
         int         _cgiFdRessource;
 };
-std::ostream& operator<<(std::ostream& os, Response const& obj);
+std::ostream& operator<<(std::ostream& os, const Response& obj);
 
 #endif
