@@ -10,16 +10,23 @@ class Request;
 class Response;
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 4096
+#  define BUFFER_SIZE 1024
 # endif
 
-# define READ_READY 0
-# define HEADER_READING 1
-# define BODY_READING 2
-# define REQUEST_RECEIVED 3
-# define RESPONSE_BUILT 4
-# define RESPONSE_SENDING 5
-# define RESPONSE_SENT 6
+# define WANT_TO_RECEIVE_REQ 0
+# define RECEIVING_REQ_HEADER 1
+# define RECEIVING_REQ_BODY 2
+# define REQ_RECEIVED 3
+# define WAITING_FOR_RES 4
+# define RES_READY_TO_BE_SENT 5
+# define SENDING_RES_HEADER 6
+# define SENDING_RES_BODY 7
+# define UPLOADING_FILE 8
+# define RES_SENT 9
+# define ERROR_WHILE_SENDING 10
+
+
+class   Base;
 
 class   Client{
 
@@ -36,11 +43,13 @@ class   Client{
         int                     _bytes_received;
         int                     _header_bytes;
         int                     _body_bytes;
+        std::vector<ServerInfo>     _servers;
+        Base *                  _base;
 
     public :
 
         Client(void);
-        Client(int socket, struct sockaddr_in *r_address);
+        Client(int socket, struct sockaddr_in *r_address, std::vector<ServerInfo> _servers, Base   *base);
         Client(const Client & rhs);
         ~Client(void);
         Client &   operator=(const Client & rhs);
@@ -51,6 +60,7 @@ class   Client{
         std::string get_received(void) const;
         int get_status(void) const;
         int get_bytes_received(void) const;
+        Request*   getRequest(void);
         Response*   getResponse(void);
 
         std::string display_status(void) const;

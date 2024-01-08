@@ -14,17 +14,19 @@ Client::Client(void){
     return  ;
 }
 
-Client::Client(int socket, struct sockaddr_in *r_address){
+Client::Client(int socket, struct sockaddr_in *r_address, std::vector<ServerInfo> servers, Base  *base){
     if (PRINT)
         std::cout << CLIENT << "🐥 constructor called" << std::endl;
     _new_socket = socket;
     _address = *r_address;
-    _client_status = READ_READY;
+    _client_status = WANT_TO_RECEIVE_REQ;
     _bytes_received = 0;
     _header_bytes = 0;
     _body_bytes = 0;
-    _request = new Request();
-    _response = new Response();
+    _request = NULL;
+    _response = NULL;
+    _servers = servers; 
+    _base = base; 
     return  ;
 }
 
@@ -156,20 +158,28 @@ std::string    Client::display_status(void) const{
 
     switch (this->_client_status)
     {
-        case READ_READY :
-            return "READ_READY";
-        case HEADER_READING :
-            return "HEADER_READING";
-        case BODY_READING :
-            return "BODY_READING";
-        case REQUEST_RECEIVED :
-            return "REQUEST_RECEIVED";
-        case RESPONSE_BUILT :
-            return "RESPONSE BUILT";
-        case RESPONSE_SENDING :
-            return "RESPONSE_SENDING";
-        case RESPONSE_SENT :
-            return "RESPONSE_SENT";
+        case WANT_TO_RECEIVE_REQ :
+            return "WANT_TO_RECEIVE_REQ";
+        case RECEIVING_REQ_HEADER :
+            return "RECEIVING_REQ_HEADER";
+        case RECEIVING_REQ_BODY :
+            return "RECEIVING_REQ_BODY";
+        case REQ_RECEIVED :
+            return "REQ_RECEIVED";
+        case WAITING_FOR_RES :
+            return "WAITING_FOR_RES";
+        case RES_READY_TO_BE_SENT :
+            return "RES_READY_TO_BE_SENT";
+        case SENDING_RES_HEADER :
+            return "SENDING_RES_HEADER";
+        case SENDING_RES_BODY :
+            return "SENDING_RES_BODY";
+        case UPLOADING_FILE :
+            return "UPLOADING_FILE";
+        case RES_SENT :
+            return "RES_SENT";
+        case ERROR_WHILE_SENDING :
+            return "ERROR_WHILE_SENDING";
         default :
             return "NO STATUS";
     }
@@ -223,6 +233,53 @@ bool    Client::alloc_req_resp(void){ // A proteger et a delete si on satisfait 
     return true;
 }
 
+bool    Client::receive_data(void){
+
+    char   buffer[BUFFER_SIZE + 1];
+
+    if (this->_client_status == WANT_TO_RECEIVE_REQ)
+        this->alloc_req_resp();
+    memset(buffer, 0, BUFFER_SIZE);
+    int nbytes = recv(this->_new_socket, buffer, BUFFER_SIZE, 0);
+    if (this->_client_status == WANT_TO_RECEIVE_REQ)
+        this->_bytes_received = 0;
+        //Mettre fonction de reset du client
+    if (nbytes == 0)
+    {
+        std::cout << "Client " << this->get_socket() << " closed connection" << std::endl; // Handle a client closing
+        return false;
+    }
+    else if (nbytes < 0)
+    {
+        std::cout << "Client " << *this << " encountered error while recv" << std::endl; // See for exception and handling of recv error
+        return false;
+    }
+    else
+    {
+        _received += buffer;
+        std::cout << _received << std::endl;
+    }
+    /*else A remettre en place apres
+    {
+        if (this->_client_status == WANT_TO_RECEIVE_REQ || this->_client_status == RECEIVING_REQ_HEADER)
+            this->receive_header_data(buffer, nbytes);
+        else if (this->_client_status == RECEIVING_REQ_BODY)
+            this->receive_body_data(buffer, nbytes);
+    }*/
+    return true;
+}
+
+Request*   Client::getRequest(void) {return _request;}
+Response*   Client::getResponse(void) {return _response;}
+
+//////////////////////////////////////////////////////////////////////
+//                                                                  //  
+//            W.I.P. fonctions d envoi/reception                    //  
+//            a mettre en place une fois qu on aura quelque         //     
+//            chose qui marche                                      //
+//                                                                  //  
+//////////////////////////////////////////////////////////////////////
+
 bool    Client::found_header_end(size_t *found) const {
 
     *found = _received.find("\r\n\r\n");
@@ -241,8 +298,8 @@ std::string Client::curated_header(size_t end){
 void    Client::receive_header_data(char *buffer, int nbytes){
 
     size_t found = 0;
-    if (this->_client_status == READ_READY && nbytes > 0)
-        this->_client_status = HEADER_READING;
+    if (this->_client_status == WANT_TO_RECEIVE_REQ && nbytes > 0)
+        this->_client_status = RECEIVING_REQ_HEADER;
     this->_received += buffer;
     this->_bytes_received += nbytes;
     if (found_header_end(&found))
@@ -253,7 +310,7 @@ void    Client::receive_header_data(char *buffer, int nbytes){
         _header_bytes = found + 4;
         std::cout << "Header : "<< _header << std::endl;
         std::cout << std::endl << "_received still got : " << std::endl << _received << std::endl;
-        this->_client_status = BODY_READING;
+        this->_client_status = RECEIVING_REQ_BODY;
         //_request->fillContent(_header + _body)
         return ;
     }
@@ -270,38 +327,4 @@ void    Client::receive_body_data(char *buffer, int nbytes){
 }
 
 
-bool    Client::receive_data(void){
 
-    char   buffer[BUFFER_SIZE + 1];
-
-    this->alloc_req_resp();
-    memset(buffer, 0, BUFFER_SIZE);
-    int nbytes = recv(this->_new_socket, buffer, BUFFER_SIZE, 0);
-    if (this->_client_status == READ_READY)
-        this->_bytes_received = 0;
-    if (nbytes == 0)
-    {
-        std::cout << "Client " << *this << " closed connection" << std::endl; // Handle a client closing
-        return false;
-    }
-    else if (nbytes < 0)
-    {
-        std::cout << "Client " << *this << " encountered error while recv" << std::endl; // See for exception and handling of recv error
-        return false;
-    }
-    else
-    {
-        _received += buffer;
-        std::cout << _received << std::endl;
-    }
-    /*else A remettre en place apres
-    {
-        if (this->_client_status == READ_READY || this->_client_status == HEADER_READING)
-            this->receive_header_data(buffer, nbytes);
-        else if (this->_client_status == BODY_READING)
-            this->receive_body_data(buffer, nbytes);
-    }*/
-    return true;
-}
-
-Response*   Client::getResponse(void) {return _response;}
