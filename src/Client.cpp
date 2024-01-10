@@ -228,6 +228,12 @@ void    Client::set_bytes_received(int nbytes){
 
 bool    Client::alloc_req_resp(void){ // A proteger et a delete si on satisfait a la requete et la reponse, revoir au niveau de la creation du client, les destructeurs sont appeles en sortant du scope, peut etre allouer les clients... i don t know
 
+    if (this->_request || this->_response)
+        return false;
+    /*if (this->_request || this->_response)
+        delete this->_request;
+    if (this->_response)
+        delete this->_response;*/
     this->_request = new Request;
     this->_response = new Response;
     return true;
@@ -320,11 +326,7 @@ void    Client::receive_header_data(char *buffer, int nbytes){
 
 void    Client::receive_body_data(char *buffer, int nbytes){
 
-
     this->_received += buffer;
     this->_bytes_received += nbytes;
     return ;
 }
-
-
-
