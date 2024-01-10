@@ -1,0 +1,4 @@
+- Voir l histoire des allocs qui ne baissent pas
+- Mettre la fonction d envoi dans le client
+- Mettre en place le header et le body reception
+- Durant la reception du body, verifier a chaque tout si la taille recu ne depasse la taille max definie ou si elle ne depasse pas le content length annonce

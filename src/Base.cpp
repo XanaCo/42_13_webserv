@@ -262,28 +262,6 @@ void    Base::receive_client_data(int client_sock){
     std::cout << client.get_received() << std::endl;
 }*/
 
-
-// This functions call send until the number of bytes to send is sent or error happened
-bool    Base::send_all(int s, const char *buf, int *len){
-
-    int total = 0;
-    int b_left = *len;
-    int n;
-
-    while(total < *len)
-    {
-        n = send(s, buf+total, b_left, 0);
-        if (n == -1)
-            break;
-        total += n;
-        b_left -= n;
-    }
-    *len = total;
-    if (n == -1)
-        return false;
-    return true;
-}
-
 // These functions are used to return sockaddr_in or sockaddr_in->sin_addr
 
 void*   Base::get_in_addr(struct sockaddr *sa)
@@ -410,21 +388,17 @@ void    Base::review_poll(void){
                     remove_from_clients(_pfds[i].fd);
                     remove_from_poll(_pfds[i].fd);
                 }
-                //get_cli_from_sock(_pfds[i].fd).alloc_req_resp();
             }
         }
         if(_pfds[i].revents & POLLOUT)
         {
-            int cont_len = get_cli_from_sock(_pfds[i].fd).getResponse()->getContent().size();
-            std::stringstream con;
-            con << cont_len;
-            int len = strlen(("HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " + con.str() + "\n\n" + get_cli_from_sock(_pfds[i].fd).getResponse()->getContent() + "\r\n\r\n").c_str());
-            if (!send_all(_pfds[i].fd, ("HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " + con.str() + "\n\n" + get_cli_from_sock(_pfds[i].fd).getResponse()->getContent() + "\r\n\r\n").c_str(), &len))
-                std::cout << "Only " << len << " bytes have been sent because of error" << std::endl;
-            //if (get_cli_from_sock(_pfds[i].fd).get_status() == RES_SENT)
-                //reset les values des requetes et reponses
-            //get_cli_from_sock(_pfds[i].fd).set_status(RES_SENT);
-            change_poll_event(_pfds[i].fd, pollin);
+            if (get_cli_from_sock(_pfds[i].fd).send_data())
+                change_poll_event(_pfds[i].fd, pollin);
+            else
+                {
+                    remove_from_clients(_pfds[i].fd);
+                    remove_from_poll(_pfds[i].fd);
+                }
         }
     }
 }

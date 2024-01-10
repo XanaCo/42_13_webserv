@@ -330,3 +330,39 @@ void    Client::receive_body_data(char *buffer, int nbytes){
     this->_bytes_received += nbytes;
     return ;
 }
+
+bool    Client::send_all(int s, const char *buf, int *len){
+
+    int total = 0;
+    int b_left = *len;
+    int n;
+
+    while(total < *len)
+    {
+        n = send(s, buf+total, b_left, 0);
+        if (n == -1)
+            break;
+        total += n;
+        b_left -= n;
+    }
+    *len = total;
+    if (n == -1)
+        return false;
+    return true;
+}
+
+bool    Client::send_data(void)
+{
+            int cont_len = this->getResponse()->getContent().size();
+            std::stringstream con;
+            con << cont_len;
+            int len = strlen(("HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " + con.str() + "\n\n" + this->getResponse()->getContent() + "\r\n\r\n").c_str());
+            if (!send_all(this->_new_socket, ("HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " + con.str() + "\n\n" + this->getResponse()->getContent() + "\r\n\r\n").c_str(), &len))
+            {
+                std::cout << "Only " << len << " bytes have been sent because of error" << std::endl;
+                return false;
+            }
+            return true;
+}
+
+

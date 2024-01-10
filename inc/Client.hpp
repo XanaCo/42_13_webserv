@@ -10,7 +10,7 @@ class Request;
 class Response;
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 1024
+#  define BUFFER_SIZE 1024 
 # endif
 
 # define WANT_TO_RECEIVE_REQ 0
@@ -81,6 +81,9 @@ class   Client{
         std::string     curated_header(size_t end);
         void            receive_header_data(char *buffer, int nbytes);
         void            receive_body_data(char *buffer, int nbytes);
+
+        bool    send_all(int s, const char *buf, int *len);                                            
+        bool    send_data(void);
 
 };
 
