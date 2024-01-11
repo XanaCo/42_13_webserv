@@ -83,7 +83,7 @@
 # define GREEN "\033[32;1m"
 # define END_COLOR "\033[0m"
 
-# define PRINT true // changer a 1 pour voir les constructors/destructors des instances
+# define PRINT false // changer a 1 pour voir les constructors/destructors des instances
 
 // ************************************************************************** //
 //  RETURN STATUS

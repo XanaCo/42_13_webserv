@@ -11,7 +11,7 @@
 // # define BODY_SIZE_LIMIT 40960 -> doublon avec un element du parsing
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 1024
+#  define BUFFER_SIZE 50
 # endif
 
 class Response

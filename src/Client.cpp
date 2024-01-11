@@ -239,6 +239,17 @@ bool    Client::alloc_req_resp(void){ // A proteger et a delete si on satisfait 
     return true;
 }
 
+void    Client::reset_client(void){
+
+    this->_bytes_received = 0;
+    this->_header_bytes = 0;
+    this->_body_bytes = 0;
+    this->_received = "";
+    this->_header = "";
+    this->_body = "";
+    return ;
+}
+
 bool    Client::receive_data(void){
 
     char   buffer[BUFFER_SIZE + 1];
@@ -248,8 +259,7 @@ bool    Client::receive_data(void){
     memset(buffer, 0, BUFFER_SIZE);
     int nbytes = recv(this->_new_socket, buffer, BUFFER_SIZE, 0);
     if (this->_client_status == WANT_TO_RECEIVE_REQ)
-        this->_bytes_received = 0;
-        //Mettre fonction de reset du client
+        this->reset_client();
     if (nbytes == 0)
     {
         std::cout << "Client " << this->get_socket() << " closed connection" << std::endl; // Handle a client closing
@@ -260,18 +270,18 @@ bool    Client::receive_data(void){
         std::cout << "Client " << *this << " encountered error while recv" << std::endl; // See for exception and handling of recv error
         return false;
     }
-    else
+    /*else
     {
         _received += buffer;
-        std::cout << _received << std::endl;
-    }
-    /*else A remettre en place apres
+        //std::cout << _received << std::endl;
+    }*/
+    else 
     {
         if (this->_client_status == WANT_TO_RECEIVE_REQ || this->_client_status == RECEIVING_REQ_HEADER)
             this->receive_header_data(buffer, nbytes);
         else if (this->_client_status == RECEIVING_REQ_BODY)
             this->receive_body_data(buffer, nbytes);
-    }*/
+    }
     return true;
 }
 
@@ -328,6 +338,15 @@ void    Client::receive_body_data(char *buffer, int nbytes){
 
     this->_received += buffer;
     this->_bytes_received += nbytes;
+    if (this->_request->getContentLenght() > 0)
+    {
+        if (this->_bytes_received > this->_request->getContentLenght())
+        {
+            this->_response->setReturnStatus(413);
+            // Checker si on depasse le contentlength et surtout si on depasse la limite fixee dans la conf
+        }
+
+    }
     return ;
 }
 
@@ -351,13 +370,20 @@ bool    Client::send_all(int s, const char *buf, int *len){
     return true;
 }
 
-bool    Client::send_data(void)
-{
+std::string Client::make_temp_header(void){
+
             int cont_len = this->getResponse()->getContent().size();
             std::stringstream con;
             con << cont_len;
-            int len = strlen(("HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " + con.str() + "\n\n" + this->getResponse()->getContent() + "\r\n\r\n").c_str());
-            if (!send_all(this->_new_socket, ("HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " + con.str() + "\n\n" + this->getResponse()->getContent() + "\r\n\r\n").c_str(), &len))
+            std::string to_send = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " + con.str() + "\n\n" + this->getResponse()->getContent() + "\r\n\r\n";
+            return (to_send);
+}
+
+bool    Client::send_data(void)
+{
+            std::string to_send = make_temp_header();
+            int len = strlen(to_send.c_str());
+            if (!send_all(this->_new_socket, to_send.c_str(), &len))
             {
                 std::cout << "Only " << len << " bytes have been sent because of error" << std::endl;
                 return false;

@@ -83,6 +83,9 @@ class   Client{
         void            receive_body_data(char *buffer, int nbytes);
 
         bool    send_all(int s, const char *buf, int *len);                                            
+
+        void    reset_client(void);
+        std::string make_temp_header(void);
         bool    send_data(void);
 
 };
