@@ -31,8 +31,8 @@ Cgi::Cgi(Cgi const &copy) {
 
 Cgi::~Cgi() {
 
-	if (this->_envpToExec)
-		freeCharTab(this->_envpToExec);
+	// if (this->_envpToExec)
+	// 	freeCharTab(this->_envpToExec);
 
 	if (PRINT)
 		std::cout << CGI << "🗑️  destructor called" << std::endl;

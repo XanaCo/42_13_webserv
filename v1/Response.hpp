@@ -28,7 +28,7 @@ class Response
         void    resetValues(void);
 
         // bool        readRessource(const std::string& path, std::string& content);
-        bool        readRessource(int fd);
+        void        readRessource(std::string path);
         void        deleteRessource(const std::string path);
         void        postRessource(const std::string path, std::string content);
 
@@ -36,24 +36,35 @@ class Response
         bool    cgiWrite();
 
         void    setReturnStatus(int returnStatus);
-        void    setContent(std::string& content);
+        void    setContent(std::string content);
         void    setPort(uint16_t port);
-        void    setContentType(std::string& contentType)
-        void    setContentLenght(int contentLenght)
+        void    setCgiPid(pid_t cgiPid);
+        void    setCgiFd(int cgiFd);
+        void    setCgiOutput(std::string cgiOutput);
+        void    setCgiBytesWritten(long cgiBytesWritten);
+        void    setCgiFdRessource(int cgiFdRessource);
 
-        int             getReturnStatus() const;
-        std::string     getContent() const;
-        uint16_t        getPort() const;
-        int             getContentLenght() const;
-        std::string     getContentType() const;
+        int             getReturnStatus(void) const;
+        std::string     getContent(void) const;
+        uint16_t        getPort(void) const;
+        pid_t           getCgiPid(void) const;
+        int             getCgiFd(void) const;
+        std::string     getCgiOutput(void) const;
+        long            getCgiBytesWritten(void) const;
+        int             getCgiFdRessource(void) const;
 
     private:
 
         uint16_t    _port;
         std::string _content;
-        int         _contentLenght;
-        std::string _contentType;
         int         _returnStatus;
+
+        pid_t       _cgiPid;
+        int         _cgiFd;
+        std::string _cgiOutput;
+
+        long        _cgiBytesWritten;
+        int         _cgiFdRessource;
 };
 std::ostream& operator<<(std::ostream& os, const Response& obj);
 

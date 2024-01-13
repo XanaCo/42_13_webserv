@@ -1,10 +1,18 @@
 
 #pragma once
 
-#include "webserv.hpp"
-
 #define REQUEST "\033[1;37mRequest\033[0m"
 
+#include "webserv.hpp"
+
+// typedef enum e_typeRequest
+// {
+// 	NORMAL,
+//     PHP,
+//     PYTHON
+// }	t_typeRequest;
+
+class   ServerInfo;
 
 class Request
 {
@@ -14,17 +22,12 @@ class Request
         ~Request();
 
         Request &operator=(Request const &obj);
-        
-        //          parsing
-        void        resetValues();
-        bool	    fillMethod(std::string& request);
-        bool        fillHeader(std::string& request);
-        bool        fillBody(std::string&  body);
 
-        //          checkup
-        int         checkHttpVersion();
+        bool        isCompleted(void) const;
+        void        findHost(std::vector<ServerInfo>& servers, ServerInfo &server);
+        void        resetValues(void);
+        bool        fillContent(std::string request);
 
-        //          set
         void        setMethod(int method);
         void        setPath(std::string path);
         void        setVersion(std::string version);
@@ -36,8 +39,10 @@ class Request
         void        setCookies(std::vector<std::string> cookies);
         void        setConnection(std::string connection);
         void        setBody(std::string body);
+        void        setHeaderCompleted(bool headerCompleted);
+        void        setBodyCompleted(bool bodyCompleted);
+        void        setServer(ServerInfo* server);
     
-        //                          get
         int                         getMethod(void) const;
         std::string                 getPath(void) const;
         std::string                 getVersion(void) const;
@@ -49,6 +54,9 @@ class Request
         std::vector<std::string>    getCookies(void) const;
         std::string                 getConnection(void) const;
         std::string                 getBody(void) const;
+        bool                        getHeaderCompleted(void);
+        bool                        getBodyCompleted(void);
+        ServerInfo*                 getServer(void);
 
     private:
 
@@ -64,16 +72,21 @@ class Request
         std::string                 _connection;
         std::string                 _body;
 
-        // ServerInfo*                 _server;
-        // bool                        _headerCompleted;
-        // bool                        _bodyCompleted;
+        ServerInfo*                 _server;
 
+        int                         _type;
+
+        bool                        _headerCompleted;
+        bool                        _bodyCompleted;
+
+        // pas obligatoire a traiter apparement :
+        // std::vector<std::string>    _accept;
+        // std::vector<std::string>    _acceptLanguage;
+        // std::vector<std::string>    _acceptEncoding;
+        // autres :
+        // std::string                 _autor;
+        // std::string                 _referer;
+        // std::string                 _cacheControl;
 
 };
 std::ostream& operator<<(std::ostream& os, Request& obj);
-
-//      request utils
-void	removeBackSlashR(std::string& str);
-void    closeFile(int* fd);
-
-

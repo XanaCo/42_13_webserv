@@ -25,6 +25,7 @@ Client::Client(int socket, struct sockaddr_in *r_address){
     _body_bytes = 0;
     _request = new Request();
     _response = new Response();
+    _fdRessource = 0;
     return  ;
 }
 
@@ -67,7 +68,7 @@ std::ostream &  operator<<(std::ostream & o, Client const & rhs){
 }
 
 // ************************************************************************** //
-//  METHODS
+//  ROUTINE METHODS
 // ************************************************************************** //
 
 bool    Client::checkHttpVersion(void)
@@ -81,76 +82,166 @@ bool    Client::checkHttpVersion(void)
     return (true);
 }
 
-void    Client::run(std::vector<ServerInfo> serverList)
+ServerInfo&    Client::findServer(std::vector<ServerInfo> serverList)
 {
-    ServerInfo  server;
-    // _request->resetValues();
-    // _response->resetValues();
-    if (!_request->fillContent(_received))
-    {
-        std::cerr << "error, on a du mal a fill la structure Request" << std::endl;
-        return ;
-    }
-    std::cout << "Run : ma requete ressemble a ca : " << (*_request) << std::endl;
-    _request->findHost(serverList, server);
-    std::cout << "Run : voici l'host : " << server.getServerName() << std::endl;
-    std::string path;
-    if (_request->getPath().find("/CGI/") != std::string::npos)
-    {
-        if (!server.findCgiRessource(_request->getPath(), path))
-            std::cerr << "Run : on ne trouve pas la ressource CGI" << std::endl;
-        //exec cgi
-        Cgi cgi_le_2(server, *_request, *_response);
-        cgi_le_2.executeScript();
-        return ;
-    }
-    if (!server.findRessource(_request->getPath(), path))
-    {
-        std::cerr << "Run : on ne trouve par la ressource" << std::endl;
-        return ;
-    }
-    std::cout << "Run : je trouve ce chemin de ressource : " << path << std::endl;
+    if (serverList.size() == 1)
+        return &(serverList[0]);
 
-
-    int    method = _request->getMethod() / 2; // ici c'est pour avoir 0->GET / 1->POST / 2->DELETE
-    std::cout << "Run : method trouvee : " << method << " (0->GET/1->POST/2->DELETE)" <<std::endl;
-
-    static void (Response::*methods[3])(const std::string) = { &Response::readRessource, NULL, &Response::deleteRessource };
-    if (method == 1)
-        _response->postRessource(path, _request->getBody());
-    else
-        (_response->*methods[method])(path);
-    std::cout << std::endl << *_response << std::endl;
+    for (std::vector<Server>::iterator i = serverList.begin(); i != serverList.end(); i++)
+    {
+        if (i->getServerName() == hostname)
+            return &i;
+    }
+    return &(serverList.begin());
+    // throw exception ?
 }
+
+void    Client::getRes(ServerInfo& server)
+{
+    if (_fdRessource < 3)
+    {
+        _response.resetValues();
+        if (_request->getReturnStatus() != 200)
+        {
+            // recup un fd de la loose
+
+
+        }
+        // else if CGI
+        if (_request->getPath().find("/CGI/") != std::string::npos)
+        {
+            if (!server.findCgiRessource(_request->getPath(), path))
+                std::cerr << "Run : on ne trouve pas la ressource CGI" << std::endl;
+            //exec cgi
+            Cgi cgi(server, *_request, *_response);
+            cgi.executeScript();    // pas oublier de renseigner le fd de la pipe
+        }
+        // else pas CGI
+        else
+        {
+            // resoudre le path
+            std::string path = ;
+            _fdRessource = 
+
+        }
+
+    }
+    _response->readRessource(_fdRessource);
+
+}
+
+void    Client::postRes(ServerInfo& server)
+{
+    if (_fdRessource < 3)
+    {
+        _response.resetValues();
+        if (_request->getReturnStatus() == 200)
+        {
+            std::string path;   // resoudre le path
+            _response.postRessource(path, _request.getContent());   // penser a mettre a jour le status du retour
+        }
+        else 
+        {
+            ; // recup le fd de la loose
+
+        }
+    }
+    // if pas de fd ouvert
+        // if 200 et 200
+            // recuperer le path
+            // check la validite
+        // else recup un fd de la loose
+    // else remplir le buffer
+    
+}
+
+void    Client::deleteRes(ServerInfo& server)
+{
+    if (_fdRessource < 3)
+    {
+        _response.resetValues();
+
+        if (_request.getReturnStatus() == 200)
+        {
+            std::string path;
+
+            _response.deleteRessource(path);
+
+        }
+        else // remplir un fd de la loose
+        {
+
+        }
+            // recuperer le path
+            // check la validite
+    }
+    
+    // else remplir le buffer
+}
+
+
+void    Client::executeMethod()
+{
+
+    _server = findServer(serverList); // trouver un moyen de pas passer plusieur fois ici
+    int method = _request.getMethod() >> 1;
+
+    (this->*(Client::methodFunctions()[method]))(_server);
+}
+
+void    Client::routine(std::vector<ServerInfo> serverList) // a changer acces rapide serverList
+{
+    switch (_client_status)
+    {
+        case RECIVED_REQ_HEADER:
+        {
+            _request->resetValues();
+            if (!_request->fillHeader(_header)); // + faire des verifs et en fonction mettre a jour la variable de routine
+                _client_status = WAITING_FOR_RES;
+            else
+                _client_status = RECIVING_REQ_BODY;
+            return ;
+        }
+        case REQ_RECIVED:
+        {
+            _request->fillBody(_body); // + faire des verifs et en fonction mettre a jour la variable de routine
+            _client_status = WAITING_FOR_RES;
+            return ;
+        }
+        case WAITING_FOR_RES:
+        {
+            if (this->executeMethod())   // trouver le server + check la method + recup un buffer
+                _client_status = RES_READY_TO_BE_SENT;
+        }
+    }
+}
+
+//     ServerInfo  server = findServer(serverList);
+//     if (_request->getPath().find("/CGI/") != std::string::npos)
+//     {
+//         if (!server.findCgiRessource(_request->getPath(), path))
+//             std::cerr << "Run : on ne trouve pas la ressource CGI" << std::endl;
+//         //exec cgi
+//         Cgi cgi_le_2(server, *_request, *_response);
+//         cgi_le_2.executeScript();
+//         return ;
+//     }
+//     if (!server.findRessource(_request->getPath(), path))
+//     {
+//         std::cerr << "Run : on ne trouve par la ressource" << std::endl;
+//         return ;
+//     }
+//     int    method = _request->getMethod() >> 1; // 0->GET / 1->POST / 2->DELETE
+//     static void (Response::*methods[3])(const std::string) = { &Response::readRessource, NULL, &Response::deleteRessource };
+//     if (method & 1)
+//         _response->postRessource(path, _request->getBody());
+//     else
+//         (_response->*methods[method])(path);
+// }
 
 // ************************************************************************** //
-//	LA GET-SET
+//  METHODS
 // ************************************************************************** //
-
-int Client::get_socket(void) const{
-    
-    return this->_new_socket;
-} 
-
-struct sockaddr_in Client::get_addr_struct(void) const{
-    
-    return this->_address;
-}
-
-std::string Client::get_received(void) const{
-    
-    return this->_received;
-}
-
-int Client::get_status(void) const{
-    
-    return this->_client_status;
-}
-
-int Client::get_bytes_received(void) const{
-
-    return this->_bytes_received;
-}
 
 std::string    Client::display_status(void) const{
 
@@ -174,45 +265,6 @@ std::string    Client::display_status(void) const{
             return "NO STATUS";
     }
 }
-
-void    Client::set_socket(int sock){
-
-    this->_new_socket = sock;
-    return ;
-}
-
-void    Client::set_addr_struct(struct sockaddr_in addr){
-
-    this->_address = addr;
-    return ;
-}
-
-void    Client::set_received(std::string buf){
-
-    this->_received = buf;
-    return ;
-}
-
-void    Client::set_status(int status){
-
-    this->_client_status = status;
-    return ;
-}
-
-void    Client::set_bytes_received(int nbytes){
-
-    this->_bytes_received = nbytes;
-}
-
-// void    Client::setReturnStatus(Request request)
-// {
-//     _request = request;
-// }
-
-// Request    Client::getReturnStatus(void) const
-// {
-//     return (_request);
-// }
 
 // Work in progress
 
@@ -269,7 +321,6 @@ void    Client::receive_body_data(char *buffer, int nbytes){
     return ;
 }
 
-
 bool    Client::receive_data(void){
 
     char   buffer[BUFFER_SIZE + 1];
@@ -304,4 +355,23 @@ bool    Client::receive_data(void){
     return true;
 }
 
-Response*   Client::getResponse(void) {return _response;}
+// ************************************************************************** //
+//	LA GET-SET
+// ************************************************************************** //
+
+int                 Client::get_socket(void) const {return this->_new_socket;}
+struct sockaddr_in  Client::get_addr_struct(void) const {return this->_address;}
+std::string         Client::get_received(void) const {return this->_received;}
+int                 Client::get_status(void) const {return this->_client_status;}
+int                 Client::get_bytes_received(void) const {return this->_bytes_received;}
+Response*           Client::getResponse(void) {return _response;}
+int                 Client::getFdRessource(void) const {return _fdRessource;}
+int                 Client::getServer(void) const {return _server;}
+
+void    Client::set_socket(int sock) {this->_new_socket = sock;}
+void    Client::set_addr_struct(struct sockaddr_in addr) {this->_address = addr;}
+void    Client::set_received(std::string buf) {this->_received = buf;}
+void    Client::set_status(int status) {this->_client_status = status;}
+void    Client::set_bytes_received(int nbytes) {this->_bytes_received = nbytes;}
+void    Client::setFdRessource(int fd) {_fdRessource = fd;}
+void    Client::setServer(ServerInfo server) {_server = server;}

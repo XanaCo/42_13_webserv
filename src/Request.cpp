@@ -5,23 +5,9 @@
 //	CONSTRUCTOR / DESTRUCTOR
 // ************************************************************************** //
 
-Request::Request(void) : _method(0), _path(""), _version(""), _host(""), _userAgent(""), _contentType(""), _contentLenght(0), _connection(""), _body("")
-{
-	if (PRINT)
-		std::cout << REQUEST << "🐥 constructor called" << std::endl;
-}
-
-Request::Request(const Request& obj) : _method(obj._method), _path(obj._path), _version(obj._version), _host(obj._host), _userAgent(obj._userAgent), _contentType(obj._contentType), _contentLenght(obj._contentLenght), _connection(obj._connection), _body(obj._body)
-{
-	if (PRINT)
-		std::cout << REQUEST << "🐥 constructor called" << std::endl;
-}
-
-Request::~Request()
-{
-	if (PRINT)
-		std::cout << REQUEST << "🗑️  destructor called" << std::endl;
-}
+Request::Request() {}
+Request::Request(const Request& obj) {*this = obj;}
+Request::~Request() {}
 
 // ************************************************************************** //
 //  OPERATORS
@@ -31,15 +17,7 @@ Request	&Request::operator=(Request const &obj)
 {
     if (this != &obj)
     {
-        this->setMethod(obj.getMethod());
-        this->setPath(obj.getPath());
-        this->setHost(obj.getHost());
-        this->setUserAgent(obj.getUserAgent());
-        this->setContentType(obj.getContentType());
-        this->setContentLength(obj.getContentLenght());
-        this->setCookies(obj.getCookies());
-        this->setConnection(obj.getConnection());
-        this->setBody(obj.getBody());
+        
     }
     return (*this);
 }
@@ -52,7 +30,7 @@ std::ostream	&operator<<(std::ostream &os, Request &obj)
     os << " cookies: ";
     printStringVector(obj.getCookies());
     os << std::endl << " connection: " << obj.getConnection() << std::endl;
-    os << " body: " <<obj.getBody() << std::endl;
+    os << " body: " << obj._body << std::endl;
     return (os);
 }
 
@@ -60,132 +38,115 @@ std::ostream	&operator<<(std::ostream &os, Request &obj)
 //	METHODS
 // ************************************************************************** //
 
-bool    Request::isCompleted(void) const
+void    Request::resetValues()
 {
-    return (_headerCompleted && _bodyCompleted);
+    _method = 0;
+    _path = "";
+    _host = "";
+    _userAgent = "";
+    _contentType = "";
+    _contentLenght = 0;
+    _connection = "";
+    _content = "";
 }
 
-void	Request::findHost(std::vector<ServerInfo>& servers, ServerInfo &server)
+bool	Request::fillMethod(std::string& request)
 {
-    for (std::vector<ServerInfo>::iterator i = servers.begin(); i < servers.end(); i++)
+	int	lenght = request.size();
+    if (lenght >= 3 && lines[i].substr(0, 3) == "GET")
     {
-        std::stringstream ss;
-        ss << i->getHost();
-		if (ss.str() == _host && i->getListen() == _port)
-        {
-            server = *i;
-    		return ;
-        }
+        this->setMethod(GET);
+        this->setPath(lines[i].substr(4, lenght));    // attention a ne pas recuperer la version d'HTML
+    }                                                 // si il faut recuperer la version et la mettre ailleur
+    else if (lenght >= 4 && lines[i].substr(0, 4) == "POST")
+    {
+        this->setMethod(POST);
+        this->setPath(lines[i].substr(5, lenght));
     }
-    server = servers[0];
+    else if (lenght >= 6 && lines[i].substr(0, 6) == "DELETE")
+    {
+        this->setMethod(DELETE);
+        this->setPath(lines[i].substr(7, lenght));
+    }
+	else
+		return (false);
+    deEncodingHexa(_path);
+	return (true);
 }
 
-// ************************************************************************** //
-//	PARSING METHODS
-// ************************************************************************** //
-
-void    Request::resetValues(void)
-{
-    this->setMethod(0);
-    this->setPath("");
-    this->setHost("");
-    this->setUserAgent("");
-    this->setContentType("");
-    this->setContentLength(0);
-    // this->setCookies();
-    this->setConnection("");
-    this->setBody("");
-
-    this->setBodyCompleted(false);
-    this->setHeaderCompleted(false);
-}
-
-bool Request::fillContent(std::string request)
+bool Request::fillHeader(std::string& header)	// attention c'est pontentielement juste le header
 {
     time_t  startTime;
     time_t  endTime;
     startTime = clock();
 
-    std::vector<std::string> lines = splitString(request, '\n');
+    // clean le header avant
+
+    removeBackSlashR(header);
+
+    std::vector<std::string> lines = splitString(header, '\n');	// voir si on doit pas creer notre propre split
     int size = lines.size();
-
-    for (int i = 0; i < size; i++)
+	int	lenght = lines[0].size();
+    if (lenght > 70)
     {
-        if (size >= 3 && lines[i].substr(0, 3) == "GET")
-        {
-            this->setMethod(GET);
-            this->setPath(lines[i].substr(4, size));    // attention a ne pas recuperer la version d'HTML
-        }
-        else if (size >= 4 && lines[i].substr(0, 4) == "POST")
-        {
-            this->setMethod(POST);
-            this->setPath(lines[i].substr(5, size));
-        }
-        else if (size >= 6 && lines[i].substr(0, 6) == "DELETE")
-        {
-            this->setMethod(DELETE);
-            this->setPath(lines[i].substr(7, size));
-        }
-        deEncodingHexa(_path);
-        if (size >= 5 && lines[i].substr(0, 5) == "Host:")
-        {
-            std::string rest = lines[i].substr(6, size);
-            size_t      limit = rest.find(':');
-
-            this->setHost(rest.substr(0, limit));
-            this->setPort(rest.substr(0, limit));
-
-        }
-        else if (size >= 11 && lines[i].substr(0, 11) == "User-Agent:")
-            this->setUserAgent(lines[i].substr(12, size));
-        else if (size >= 13 && lines[i].substr(0, 13) == "Content-Type:")
-            this->setContentType(lines[i].substr(14, size));
-        else if (size >= 15 && lines[i].substr(0, 15) == "Content-Lenght:")
-            this->setContentLength(atoi(lines[i].substr(16, size).c_str()));
-        else if (size >= 6 && lines[i].substr(0, 6) == "Cookie:")
-            this->setCookies(splitString(lines[i].substr(7, size), ' '));
-        else if (size >= 11 && lines[i].substr(0, 11) == "Connection:")
-            this->setConnection(lines[i].substr(12, size));
-        else if (size && lines[i].substr(0, 1) == "{")
-        {
-            bool    in = true;
-            for (int j = i + 1; j < size; j++)
-            {
-                if (in)
-                    this->setBody(_body.append(lines[i]));
-                if (!in && size && lines[i].substr(0, 1) == "{")
-                    in = true;
-                if (size && lines[i].substr(0, 1) == "}")
-                {
-                    in = false;
-                    break ;
-                }
-            }
-            return (!in);
-        }
+        _returnStatus = 431;
+        return (false);
     }
 
+	if (size)
+    	this->fillMethod(lines[0]);
+    for (int i = 1; i < size; i++)
+    {
+		lenght = lines[i].size();
+        if (lenght >= 5 && lines[i].substr(0, 5) == "Host:")
+        {
+            std::string rest = lines[i].substr(6, lenght);
+            size_t      limit = rest.find(':');
+            this->setHost(rest.substr(0, limit));
+            this->setPort(rest.substr(0, limit));
+        }
+        else if (lenght >= 11 && lines[i].substr(0, 11) == "User-Agent:")
+            this->setUserAgent(lines[i].substr(12, lenght));
+        else if (lenght >= 13 && lines[i].substr(0, 13) == "Content-Type:")
+            this->setContentType(lines[i].substr(14, lenght));
+        else if (lenght >= 15 && lines[i].substr(0, 15) == "Content-Lenght:")
+            this->setContentLength(atoi(lines[i].substr(16, lenght).c_str()));
+        else if (lenght >= 6 && lines[i].substr(0, 6) == "Cookie:")
+            this->setCookies(splitString(lines[i].substr(7, lenght), ' '));
+        else if (lenght >= 11 && lines[i].substr(0, 11) == "Connection:")
+            this->setConnection(lines[i].substr(12, lenght));
+        for (int j = i + 1; j < size; j++)
+        {
+            if (lines[i] == lines[j]) // si deux lignes sont identiques, c'est interdit
+            {
+                _returnStatus = 400;
+                return (false); // -> penser a modifier le status dans le client;
+            }
+        }
+    }
+    // changer la status pour receiving body ou alors si ca passe mal -> waiting for respond
     endTime = clock();
     std::cout << REQUEST << " fillContent method : exec time : " << endTime - startTime << std::endl;
-
     return (true);
 }
-// A voir si on decide de traiter ces elements :
-    // if (line.substr(0, 7) == "Accept:")
-    //     return (ACCEPT);
-    // if (line.substr(0, 17) == "Accept-Language:")
-    //     return (ACCEPT_LANGUAGE);
-    // if (line.substr(0, 16) == "Accept-Encoding:")
-    //     return (ACCEPT_ENCODING);
-    // if (line.substr(0, 14) == "Autorization:")
-    //     return (AUTOR);
-    // if (line.substr(0, 8) == "Referer:")
-    //     return (REFERER);
-    // if (line.substr(0, 14) == "Cache-Control:")
-    //     return (CACHECONTROL);
+
+bool    Request::fillBody(std::string&  body)   // a voir si on fait des modifs
+{
+    _content = body;
+    // mettre a jour le status en waiting for response quel que soit le status;
+    return (true);
+}
+
+int Request::checkHttpVersion()
+{
+    if (_version != "HTTP/1.0" && _version != "HTTP/1.1" && _version != "HTTP/0.9")
+        return (false); // 505
+    _httpVersion = "HTTP/1.1";
+    return (true);
+}
 
 // ************************************************************************** //
-//	LA GET-SET
+//	GET / SET
 // ************************************************************************** //
 
 void    Request::setMethod(int method) {_method = method;}
