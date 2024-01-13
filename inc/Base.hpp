@@ -17,7 +17,7 @@ class   Base{
     private :
 
         std::vector<ServerInfo> _servers;
-        std::vector<Client> _clients;
+        std::vector<Client *> _clients;
         std::vector<struct pollfd>  _pfds;
         int _sock_count;
 
@@ -33,7 +33,7 @@ class   Base{
 
         // Add to structures 
         void    add_to_servers(char *port);
-        void    add_to_clients(int socket, struct sockaddr_in* address);
+        void    add_to_clients(int socket, struct sockaddr_in* address, std::vector<ServerInfo> servers, int serv_sock);
         void    add_to_poll_in(int socket);
         void    add_to_poll_out(int socket);
 

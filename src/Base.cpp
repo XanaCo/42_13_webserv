@@ -34,6 +34,18 @@ Base::Base(const Base & rhs) {
 // Destructors
 
 Base::~Base(){
+   
+    for (unsigned int i = 0; i < _clients.size(); i++)
+    {
+        delete _clients[i]->getRequest();
+        delete _clients[i]->getResponse();
+        delete _clients[i];
+    }
+    _servers.clear();
+    _clients.clear();
+    for (unsigned int i = 0; i < _pfds.size(); i++)
+        close(_pfds[i].fd);
+    _pfds.clear();
 	if (PRINT)
 		std::cout << BASE << "🗑️  destructor called" << std::endl;
     return ;
@@ -60,11 +72,13 @@ void    Base::add_to_servers(char *port){
     this->_servers.push_back(server);
 }*/
 
-void    Base::add_to_clients(int socket, struct sockaddr_in* address){
+void    Base::add_to_clients(int socket, struct sockaddr_in* address, std::vector<ServerInfo> servers, int serv_sock){
 
-    Client  client(socket, address);
+    Client  *tmp = new  Client(socket, address, servers, this);
 
-    this->_clients.push_back(client);
+    (void)serv_sock;
+    // tmp->set_max_body_size(this->get_serv_from_sock(serv_sock).getMaxClientBody()); // a remetre plus tard
+    this->_clients.push_back(tmp);
 }
 
 void    Base::add_to_poll_in(int socket)
@@ -109,9 +123,10 @@ void    Base::remove_from_clients(int socket){
 
     for(unsigned int i = 0; i < this->_clients.size() ; i++)
     {
-        if (socket == _clients[i].get_socket())
+        if (socket == _clients[i]->get_socket())
         {
             //std::cout << "Client n " << socket << " trying to be erased" << std::endl;
+            delete _clients[i];
             _clients.erase(_clients.begin() + i);
             //std::cout << "Client n " << socket << " erased" << std::endl;
             break ;
@@ -202,7 +217,7 @@ void    Base::handle_new_connection(int serv_sock)
     {
         this->add_to_poll_in(new_fd);
         std::cout << "New connection from " << inet_ntop(remoteaddr.ss_family, get_in_addr((struct sockaddr*)&remoteaddr), remoteIP, INET6_ADDRSTRLEN) << " on socket n " << new_fd << std::endl; 
-        this->add_to_clients(new_fd, (struct sockaddr_in*)this->get_in_sockaddr((struct sockaddr*)&remoteaddr)); //Add the adress to clients and maybe see the same for server but i think ana did it
+        this->add_to_clients(new_fd, (struct sockaddr_in*)this->get_in_sockaddr((struct sockaddr*)&remoteaddr), this->_servers, serv_sock); //Add the adress to clients and maybe see the same for server but i think ana did it
         std::cout << get_cli_from_sock(new_fd) << std::endl;
     }
 }
@@ -249,28 +264,6 @@ void    Base::receive_client_data(int client_sock){
     std::cout << client.get_received() << std::endl;
 }*/
 
-
-// This functions call send until the number of bytes to send is sent or error happened
-bool    Base::send_all(int s, const char *buf, int *len){
-
-    int total = 0;
-    int b_left = *len;
-    int n;
-
-    while(total < *len)
-    {
-        n = send(s, buf+total, b_left, 0);
-        if (n == -1)
-            break;
-        total += n;
-        b_left -= n;
-    }
-    *len = total;
-    if (n == -1)
-        return false;
-    return true;
-}
-
 // These functions are used to return sockaddr_in or sockaddr_in->sin_addr
 
 void*   Base::get_in_addr(struct sockaddr *sa)
@@ -308,7 +301,7 @@ bool    Base::is_a_client(int socket)
 {
     for (unsigned int i = 0; i < this->_clients.size(); i++)
     {
-        if (_clients[i].get_socket() == socket)
+        if (_clients[i]->get_socket() == socket)
             return true;
     }
     return false;
@@ -321,11 +314,11 @@ Client &    Base::get_cli_from_sock(int client_sock){
     unsigned int i = 0;
     while (i < this->_clients.size())
     {
-        if (_clients[i].get_socket() == client_sock)
+        if (_clients[i]->get_socket() == client_sock)
             break ;
         i++;
     }
-    return _clients[i];
+    return *(_clients[i]);
 }
 
 ServerInfo &    Base::get_serv_from_sock(int sock){
@@ -387,25 +380,27 @@ void    Base::review_poll(void){
                 handle_new_connection(_pfds[i].fd);
             else
             {
-                if(!get_cli_from_sock(_pfds[i].fd).receive_data())
+                if(get_cli_from_sock(_pfds[i].fd).receive_data())
+                {
+                    get_cli_from_sock(_pfds[i].fd).run(_servers);
+                    //change_poll_event(_pfds[i].fd, pollout);
+                }
+                else
                 {
                     remove_from_clients(_pfds[i].fd);
                     remove_from_poll(_pfds[i].fd);
                 }
-                //get_cli_from_sock(_pfds[i].fd).alloc_req_resp();
-                get_cli_from_sock(_pfds[i].fd).run(_servers);
-                change_poll_event(_pfds[i].fd, pollout);
             }
         }
         if(_pfds[i].revents & POLLOUT)
         {
-            int len = strlen(("HTTP/1.1 200 OK\nContent-Type: text/html\n" + get_cli_from_sock(_pfds[i].fd).getResponse()->getContent()).c_str());
-
-            if (!send_all(_pfds[i].fd, ("HTTP/1.1 200 OK\nContent-Type: text/html\n" + get_cli_from_sock(_pfds[i].fd).getResponse()->getContent()).c_str(), &len))
-                std::cout << "Only " << len << " bytes have been sent because of error" << std::endl;
-            change_poll_event(_pfds[i].fd, pollin);
+            if (get_cli_from_sock(_pfds[i].fd).send_data())
+                change_poll_event(_pfds[i].fd, pollin);
+            else
+                {
+                    remove_from_clients(_pfds[i].fd);
+                    remove_from_poll(_pfds[i].fd);
+                }
         }
     }
 }
-
-

@@ -9,16 +9,16 @@ class Request;
 class Response;
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 4096
+#  define BUFFER_SIZE 1024 
 # endif
 
 typedef enum e_status_c
 {
-	WANT_TO_RECIVE_REQ,
-	RECIVING_REQ_HEADER,
-    RECIVED_REQ_HEADER,
-	RECIVING_REQ_BODY,
-	REQ_RECIVED,
+	WANT_TO_RECEIVE_REQ,
+	RECEIVING_REQ_HEADER,
+    RECEIVED_REQ_HEADER,
+	RECEIVING_REQ_BODY,
+	REQ_RECEIVED,
 	WAITING_FOR_RES,
 	RES_READY_TO_BE_SENT,
 	SENDING_RES_HEADER,
@@ -28,31 +28,36 @@ typedef enum e_status_c
 	ERROR_WHILE_SENDING
 }	t_status_c;
 
-typedef void (Client::*methodFunction)(ServerInfo&) const;
+// typedef void (Client::*methodFunction)(ServerInfo&) const;
+
+class   Base;
 
 class   Client{
 
     private :
 
-        int                     _new_socket;
-        struct sockaddr_in      _address;
-        std::string             _received;
-        Request                 *_request;
-        Response                *_response;
-        int                     _client_status;
-        std::string             _header;
-        std::string             _body;
-        int                     _bytes_received;
-        int                     _header_bytes;
-        int                     _body_bytes;
+        int                         _new_socket;
+        struct sockaddr_in          _address;
+        std::string                 _received;
+        Request                     *_request;
+        Response                    *_response;
+        int                         _client_status;
+        std::string                 _header;
+        std::string                 _body;
+        int                         _bytes_received;
+        int                         _header_bytes;
+        int                         _body_bytes;
+        int                         _max_body_size;
+        std::vector<ServerInfo>     _servers;
+        Base *                      _base;
 
-        ServerInfo*             _server;
-        int                     _fdRessource
+        ServerInfo*                 _server;
+        int                         _fdRessource;
 
     public :
 
         Client(void);
-        Client(int socket, struct sockaddr_in *r_address);
+        Client(int socket, struct sockaddr_in *r_address, std::vector<ServerInfo> _servers, Base   *base);
         Client(const Client & rhs);
         ~Client(void);
         Client &   operator=(const Client & rhs);
@@ -69,6 +74,13 @@ class   Client{
         void            receive_header_data(char *buffer, int nbytes);
         void            receive_body_data(char *buffer, int nbytes);
 
+        // void        setReturnStatus(Request request);
+        // Request     getReturnStatus(void) const;
+        bool    send_all(int s, const char *buf, int *len);                                            
+
+        void    reset_client(void);
+        std::string make_temp_header(void);
+        bool    send_data(void);
 
 
         //                  routine request / response
@@ -77,9 +89,9 @@ class   Client{
         void                deleteRes();
         ServerInfo&         findServer(std::vector<ServerInfo> serverList);
 
-        static const std::vector<void (Client::*)(ServerInfo&)>& methodFunctions()
+        static std::vector<void (Client::*)()>& methodFunctions()
         {
-            static std::vector<void (Client::*)(ServerInfo&)> methods;
+            static std::vector<void (Client::*)()> methods;
             if (methods.empty())
             {
                 methods.push_back(&Client::getRes);
@@ -89,16 +101,14 @@ class   Client{
             return methods;
         }
         
-
-
-
         //                  get
         int                 get_socket(void) const;
         struct sockaddr_in  get_addr_struct(void) const;
         std::string         get_received(void) const;
         int                 get_status(void) const;
         int                 get_bytes_received(void) const;
-        Response*           getResponse(void);
+        Request*            getRequest(void) const;
+        Response*           getResponse(void) const;
         int                 getFdRessource(void) const;
         ServerInfo*         getServer(void) const;  // utiliser un pointeur ?
 
@@ -110,8 +120,5 @@ class   Client{
         void                set_bytes_received(int nbytes);
         void                setFdRessource(int fd);
         void                setServer(ServerInfo* server);
-
-        // void        setReturnStatus(Request request);
-        // Request     getReturnStatus(void) const;
 };
 std::ostream &  operator<<(std::ostream & o, Client const & rhs); 

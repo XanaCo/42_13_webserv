@@ -11,7 +11,7 @@
 // # define BODY_SIZE_LIMIT 40960 -> doublon avec un element du parsing
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 4096
+#  define BUFFER_SIZE 50
 # endif
 
 class Response
@@ -38,8 +38,8 @@ class Response
         void    setReturnStatus(int returnStatus);
         void    setContent(std::string& content);
         void    setPort(uint16_t port);
-        void    setContentType(std::string& contentType)
-        void    setContentLenght(int contentLenght)
+        void    setContentType(std::string& contentType);
+        void    setContentLenght(int contentLenght);
 
         int             getReturnStatus() const;
         std::string     getContent() const;

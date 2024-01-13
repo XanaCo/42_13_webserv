@@ -1,0 +1,3 @@
+- Mettre la fonction d envoi dans le client
+- Mettre en place le header et le body reception
+- Durant la reception du body, verifier a chaque tour si la taille recue ne depasse la taille max definie ou si elle ne depasse pas le content length annonce
