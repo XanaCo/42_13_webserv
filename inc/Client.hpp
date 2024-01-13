@@ -43,6 +43,7 @@ class   Client{
         int                     _bytes_received;
         int                     _header_bytes;
         int                     _body_bytes;
+        int                     _max_body_size;
         std::vector<ServerInfo>     _servers;
         Base *                  _base;
 
@@ -60,6 +61,7 @@ class   Client{
         std::string get_received(void) const;
         int get_status(void) const;
         int get_bytes_received(void) const;
+        int get_max_body_size(void) const;
         Request*   getRequest(void);
         Response*   getResponse(void);
 
@@ -69,6 +71,7 @@ class   Client{
         void    set_received(std::string buf);
         void    set_status(int status);
         void    set_bytes_received(int nbytes);
+        void    set_max_body_size(int max_size);
         // void        setReturnStatus(Request request);
         // Request     getReturnStatus(void) const;
 

@@ -154,6 +154,11 @@ int Client::get_bytes_received(void) const{
     return this->_bytes_received;
 }
 
+int Client::get_max_body_size(void) const{
+
+    return this->_max_body_size;
+}
+
 std::string    Client::display_status(void) const{
 
     switch (this->_client_status)
@@ -212,6 +217,11 @@ void    Client::set_status(int status){
 void    Client::set_bytes_received(int nbytes){
 
     this->_bytes_received = nbytes;
+}
+
+void    Client::set_max_body_size(int max_size){
+
+    this->_max_body_size = max_size;
 }
 
 // void    Client::setReturnStatus(Request request)
@@ -338,6 +348,7 @@ void    Client::receive_body_data(char *buffer, int nbytes){
 
     this->_received += buffer;
     this->_bytes_received += nbytes;
+    this->_body_bytes += nbytes;
     if (this->_request->getContentLenght() > 0)
     {
         if (this->_bytes_received > this->_request->getContentLenght())
@@ -345,8 +356,8 @@ void    Client::receive_body_data(char *buffer, int nbytes){
             this->_response->setReturnStatus(413);
             // Checker si on depasse le contentlength et surtout si on depasse la limite fixee dans la conf
         }
-
     }
+    this->_client_status = REQ_RECEIVED;
     return ;
 }
 
@@ -391,4 +402,16 @@ bool    Client::send_data(void)
             return true;
 }
 
+/*
+bool    Client::send_data(void)
+{ 
+            std::string to_send = this->_response->getContent();
+            int len = strlen(to_send.c_str());
+            if (!send_all(this->_new_socket, to_send.c_str(), &len))
+            {
+                std::cout << "Only " << len << " bytes have been sent because of error" << std::endl;
+                return false;
+            }
+            return true;
+}*/
 

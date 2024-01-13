@@ -72,10 +72,11 @@ void    Base::add_to_servers(char *port){
     this->_servers.push_back(server);
 }*/
 
-void    Base::add_to_clients(int socket, struct sockaddr_in* address, std::vector<ServerInfo> servers){
+void    Base::add_to_clients(int socket, struct sockaddr_in* address, std::vector<ServerInfo> servers, int serv_sock){
 
     Client  *tmp = new  Client(socket, address, servers, this);
 
+    tmp->set_max_body_size(this->get_serv_from_sock(serv_sock).getMaxClientBody());
     this->_clients.push_back(tmp);
 }
 
@@ -215,7 +216,7 @@ void    Base::handle_new_connection(int serv_sock)
     {
         this->add_to_poll_in(new_fd);
         std::cout << "New connection from " << inet_ntop(remoteaddr.ss_family, get_in_addr((struct sockaddr*)&remoteaddr), remoteIP, INET6_ADDRSTRLEN) << " on socket n " << new_fd << std::endl; 
-        this->add_to_clients(new_fd, (struct sockaddr_in*)this->get_in_sockaddr((struct sockaddr*)&remoteaddr), this->_servers); //Add the adress to clients and maybe see the same for server but i think ana did it
+        this->add_to_clients(new_fd, (struct sockaddr_in*)this->get_in_sockaddr((struct sockaddr*)&remoteaddr), this->_servers, serv_sock); //Add the adress to clients and maybe see the same for server but i think ana did it
         std::cout << get_cli_from_sock(new_fd) << std::endl;
     }
 }

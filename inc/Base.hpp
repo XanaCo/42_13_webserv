@@ -33,7 +33,7 @@ class   Base{
 
         // Add to structures 
         void    add_to_servers(char *port);
-        void    add_to_clients(int socket, struct sockaddr_in* address, std::vector<ServerInfo> servers);
+        void    add_to_clients(int socket, struct sockaddr_in* address, std::vector<ServerInfo> servers, int serv_sock);
         void    add_to_poll_in(int socket);
         void    add_to_poll_out(int socket);
 
