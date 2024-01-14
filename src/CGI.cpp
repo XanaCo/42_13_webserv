@@ -191,7 +191,6 @@ void Cgi::executeScript() {
 		return;
 	}
 
-
 	_response->setCgiPid(fork());
 	if (_response->getCgiPid() == -1)
 	{

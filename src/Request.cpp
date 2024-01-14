@@ -30,7 +30,7 @@ std::ostream	&operator<<(std::ostream &os, Request &obj)
     os << " cookies: ";
     printStringVector(obj.getCookies());
     os << std::endl << " connection: " << obj.getConnection() << std::endl;
-    os << " body: " << obj._body << std::endl;
+    os << " body: " << obj.getBody() << std::endl;
     return (os);
 }
 
@@ -47,26 +47,26 @@ void    Request::resetValues()
     _contentType = "";
     _contentLenght = 0;
     _connection = "";
-    _content = "";
+    _body = "";
 }
 
-bool	Request::fillMethod(std::string& request)
+bool	Request::fillMethod(std::string& line)
 {
-	int	lenght = request.size();
-    if (lenght >= 3 && lines[i].substr(0, 3) == "GET")
+	int	lenght = line.size();
+    if (lenght >= 3 && line.substr(0, 3) == "GET")
     {
         this->setMethod(GET);
-        this->setPath(lines[i].substr(4, lenght));    // attention a ne pas recuperer la version d'HTML
+        this->setPath(line.substr(4, lenght));    // attention a ne pas recuperer la version d'HTML
     }                                                 // si il faut recuperer la version et la mettre ailleur
-    else if (lenght >= 4 && lines[i].substr(0, 4) == "POST")
+    else if (lenght >= 4 && line.substr(0, 4) == "POST")
     {
         this->setMethod(POST);
-        this->setPath(lines[i].substr(5, lenght));
+        this->setPath(line.substr(5, lenght));
     }
-    else if (lenght >= 6 && lines[i].substr(0, 6) == "DELETE")
+    else if (lenght >= 6 && line.substr(0, 6) == "DELETE")
     {
         this->setMethod(DELETE);
-        this->setPath(lines[i].substr(7, lenght));
+        this->setPath(line.substr(7, lenght));
     }
 	else
 		return (false);
@@ -132,7 +132,7 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
 
 bool    Request::fillBody(std::string&  body)   // a voir si on fait des modifs
 {
-    _content = body;
+    _body = body;
     // mettre a jour le status en waiting for response quel que soit le status;
     return (true);
 }
@@ -141,7 +141,7 @@ int Request::checkHttpVersion()
 {
     if (_version != "HTTP/1.0" && _version != "HTTP/1.1" && _version != "HTTP/0.9")
         return (false); // 505
-    _httpVersion = "HTTP/1.1";
+    // _httpVersion = "HTTP/1.1";
     return (true);
 }
 
@@ -160,9 +160,8 @@ void    Request::setContentLength(int contentLenght) {_contentLenght = contentLe
 void    Request::setCookies(std::vector<std::string> cookies) {_cookies = cookies;}
 void    Request::setConnection(std::string connection) {_connection = connection;}
 void    Request::setBody(std::string body) {_body = body;}
-void    Request::setHeaderCompleted(bool headerCompleted) {_headerCompleted = headerCompleted;}
-void    Request::setBodyCompleted(bool bodyCompleted) {_bodyCompleted = bodyCompleted;}
-void    Request::setServer(ServerInfo* server) {_server = server;}
+// void    Request::setServer(ServerInfo* server) {_server = server;}
+void    Request::setReturnStatus(int returnStatus) {_returnStatus = returnStatus;}
 
 int                         Request::getMethod(void) const {return (_method);}
 std::string                 Request::getPath(void) const {return (_path);}
@@ -175,6 +174,5 @@ int                         Request::getContentLenght(void) const {return (_cont
 std::vector<std::string>    Request::getCookies(void) const {return (_cookies);}
 std::string                 Request::getConnection(void) const {return (_connection);}
 std::string                 Request::getBody(void) const {return (_body);}
-bool                        Request::getHeaderCompleted(void) {return (_headerCompleted);}
-bool                        Request::getBodyCompleted(void) {return (_bodyCompleted);}
-ServerInfo*                 Request::getServer(void) {return (_server);}
+// ServerInfo*                 Request::getServer(void) {return (_server);}
+int                         Request::getReturnStatus(void) const {return (_returnStatus);}

@@ -31,6 +31,10 @@ class Response
         void        readRessource(std::string path);
         void        deleteRessource(const std::string path);
         void        postRessource(const std::string path, std::string content);
+        bool        addBuffer(int fd);
+
+        // void        openFileToSend(std::string& file);
+
 
         bool    cgiRead();
         bool    cgiWrite();
@@ -58,6 +62,7 @@ class Response
         uint16_t    _port;
         std::string _content;
         int         _returnStatus;
+        // int         _fdFileToSend;
 
         pid_t       _cgiPid;
         int         _cgiFd;

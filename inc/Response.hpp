@@ -31,6 +31,9 @@ class Response
         bool        readRessource(int fd);
         void        deleteRessource(const std::string path);
         void        postRessource(const std::string path, std::string content);
+        bool        addBuffer(int fd);
+        // void        openFileToSend(std::string& file);
+
 
         bool    cgiRead();
         bool    cgiWrite();
@@ -40,7 +43,17 @@ class Response
         void    setPort(uint16_t port);
         void    setContentType(std::string& contentType);
         void    setContentLenght(int contentLenght);
-
+        void    setCgiPid(pid_t cgiPid);
+        void    setCgiFd(int cgiFd);
+        void    setCgiOutput(std::string cgiOutput);
+        void    setCgiBytesWritten(long cgiBytesWritten);
+        void    setCgiFdRessource(int cgiFdRessource);
+        
+        pid_t           getCgiPid(void) const;
+        int             getCgiFd(void) const;
+        std::string     getCgiOutput(void) const;
+        long            getCgiBytesWritten(void) const;
+        int             getCgiFdRessource(void) const;
         int             getReturnStatus() const;
         std::string     getContent() const;
         uint16_t        getPort() const;
@@ -54,6 +67,11 @@ class Response
         int         _contentLenght;
         std::string _contentType;
         int         _returnStatus;
+        pid_t       _cgiPid;
+        int         _cgiFd;
+        std::string _cgiOutput;
+        long        _cgiBytesWritten;
+        int         _cgiFdRessource;
 };
 std::ostream& operator<<(std::ostream& os, const Response& obj);
 

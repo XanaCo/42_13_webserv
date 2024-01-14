@@ -6,7 +6,7 @@
 // ************************************************************************** //
 
 Response::Response(void) {}
-Response::Response(const Response& obj) {*this = obj}
+Response::Response(const Response& obj) {*this = obj;}
 Response::~Response() {}
 
 // ************************************************************************** //
@@ -28,10 +28,10 @@ Response	&Response::operator=(const Response& obj)
 std::ostream&   operator<<(std::ostream& os, const Response& obj)
 {
     os << "--" << RESPONSE << "--" << std::endl;
-    os << "return status  : " << _returnStatus << std::endl;
-    os << "content type   : " << _contentType << std::endl;
-    os << "content Lenght : " << _contentLenght << std::endl;
-    os << "content        : " << _content << std::endl;
+    os << "return status  : " << obj.getReturnStatus() << std::endl;
+    os << "content type   : " << obj.getContentType() << std::endl;
+    os << "content Lenght : " << obj.getContentLenght() << std::endl;
+    os << "content        : " << obj.getContent() << std::endl;
     return (os);
 }
 
@@ -46,7 +46,7 @@ bool    Response::readRessource(int fd)
 
     if (nbBytesReaded < 0)
     {
-        close(fd)
+        close(fd);
         return (true); // a changer
     }
     _content += buffer;
@@ -105,15 +105,15 @@ void Response::deleteRessource(const std::string path)
 //	
 // ************************************************************************** //
 
-void    Response::openFileToSend(std::string& file)
-{
-    // check si le fd est deja ouvert
-    _fdFileToSend = open(file.s_str(), O_RDONLY);
-    if (_fdFileToSend < 0)
-    {
-        _returnStatus = E_INTERNAL_SERVER;  // 500 ?
-    }
-}
+// void    Response::openFileToSend(std::string& file)
+// {
+//     // check si le fd est deja ouvert
+//     _fdFileToSend = open(file.s_str(), O_RDONLY);
+//     if (_fdFileToSend < 0)
+//     {
+//         _returnStatus = E_INTERNAL_SERVER;  // 500 ?
+//     }
+// }
 
 bool    Response::addBuffer(int fd)
 {
@@ -132,8 +132,8 @@ bool    Response::addBuffer(int fd)
     }
     else if (bytesReaded)
     {
-        bytesReaded[bytesReaded] = 0;
-        _fileToSent.insert(_fileToSent.end(), line, line + bytesReaded);
+        line[bytesReaded] = 0;
+        _content += line;
     }
     if (bytesReaded < BUFFER_SIZE)
     {
@@ -165,9 +165,20 @@ void    Response::setContent(std::string& content) {_content = content;}
 // void    Response::setPort(uint16_t port) {_port = port;}
 void    Response::setContentType(std::string& contentType) {_contentType = contentType;}
 void    Response::setContentLenght(int contentLenght) {_contentLenght = contentLenght;}
+void    Response::setCgiPid(pid_t cgiPid) {_cgiPid = cgiPid;}
+void    Response::setCgiFd(int cgiFd) {_cgiFd = cgiFd;}
+void    Response::setCgiOutput(std::string cgiOutput) {_cgiOutput = cgiOutput;}
+void    Response::setCgiBytesWritten(long cgiBytesWritten) {_cgiBytesWritten = cgiBytesWritten;}
+void    Response::setCgiFdRessource(int cgiFdRessource) {_cgiFdRessource = cgiFdRessource;}
 
+
+pid_t           Response::getCgiPid(void) const {return (_cgiPid);}
+int             Response::getCgiFd(void) const {return (_cgiFd);}
+std::string     Response::getCgiOutput(void) const {return (_cgiOutput);}
+long            Response::getCgiBytesWritten(void) const {return (_cgiBytesWritten);}
+int             Response::getCgiFdRessource(void) const {return (_cgiFdRessource);}
 int             Response::getReturnStatus() const {return (_returnStatus);}
 std::string     Response::getContent() const {return (_content);}
 // uint16_t        Response::getPort() const {return (_port);}
-int             Response::getContentLenght() const {return (_contentLenght;)}
-std::string     Response::getContentType() const {return (_contentType;)}
+int             Response::getContentLenght() const {return (_contentLenght);}
+std::string     Response::getContentType() const {return (_contentType);}

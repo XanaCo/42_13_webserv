@@ -87,7 +87,9 @@ class   Client{
         void                getRes();
         void                postRes();
         void                deleteRes();
-        ServerInfo&         findServer(std::vector<ServerInfo> serverList);
+        bool                executeMethod();
+        void                routine();
+        ServerInfo*         findServer();
 
         static std::vector<void (Client::*)()>& methodFunctions()
         {

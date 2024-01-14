@@ -86,46 +86,54 @@ bool    Client::checkHttpVersion(void)
     return (true);
 }
 
-ServerInfo*    Client::findServer(std::vector<ServerInfo> serverList)
+ServerInfo*    Client::findServer()
 {
-    if (serverList.size() == 1)
-        return (&(serverList[0]));
+    if (_servers.size() == 1)
+        return (&(_servers[0]));
 
-    for (std::vector<ServerInfo>::iterator i = serverList.begin(); i != serverList.end(); i++)
+    for (std::vector<ServerInfo>::iterator i = _servers.begin(); i != _servers.end(); i++)
     {
-        if (i->getServerName() == hostname)
-            return &i;
+        if (i->getServerName() == _request->getHost())
+            return &(*i);
     }
-    return &(serverList.begin());
+    return &(_servers[0]);
     // throw exception ?
 }
 
-void    Client::getRes(ServerInfo& server)
+void    Client::getRes()
 {
+    std::string path;
+
     if (_fdRessource < 3)
     {
-        _response.resetValues();
+        _response->resetValues();
         if (_request->getReturnStatus() != 200)
         {
             // recup un fd de la loose
 
 
         }
-        // else if CGI
         if (_request->getPath().find("/CGI/") != std::string::npos)
         {
-            if (!server.findCgiRessource(_request->getPath(), path))
+            if (!_server->findCgiRessource(_request->getPath(), path))
                 std::cerr << "Run : on ne trouve pas la ressource CGI" << std::endl;
             //exec cgi
-            Cgi cgi(server, *_request, *_response);
+            Cgi cgi(*_server, *_request, *_response);
             cgi.executeScript();    // pas oublier de renseigner le fd de la pipe
+            // _fdRessource = ;
         }
-        // else pas CGI
         else
         {
             // resoudre le path
-            std::string path = ;
-            _fdRessource = 
+            if (!_server->findRessource(_request->getPath(), path))
+            {
+                // la ressource n'a pas ete trouvee 404
+            }
+            _fdRessource = open(path.c_str(), O_RDONLY);
+            if (_fdRessource < 0)
+            {
+                // ouvrir un fichier de la loose
+            }
 
         }
 
@@ -134,73 +142,96 @@ void    Client::getRes(ServerInfo& server)
 
 }
 
-void    Client::postRes(ServerInfo& server)
+void    Client::postRes()
 {
+    std::string path;
+
     if (_fdRessource < 3)
     {
-        _response.resetValues();
-        if (_request->getReturnStatus() == 200)
+        _response->resetValues();
+        if (_request->getReturnStatus() != 200)
         {
-            std::string path;   // resoudre le path
-            _response.postRessource(path, _request.getContent());   // penser a mettre a jour le status du retour
+            // recup un fd de la loose
         }
-        else 
+        if (_request->getPath().find("/CGI/") != std::string::npos)
         {
-            ; // recup le fd de la loose
+            if (!_server->findCgiRessource(_request->getPath(), path))
+                std::cerr << "Run : on ne trouve pas la ressource CGI" << std::endl;
+            //exec cgi
+            Cgi cgi(*_server, *_request, *_response);
+            cgi.executeScript();    // pas oublier de renseigner le fd de la pipe
+            // _fdRessource = ;
+        }
+        else
+        {
+            // resoudre le path
+            if (!_server->findRessource(_request->getPath(), path))
+            {
+                // la ressource n'a pas ete trouvee 404
+            }
+            _fdRessource = open(path.c_str(), O_RDONLY);
+            if (_fdRessource < 0)
+            {
+                // ouvrir un fichier de la loose
+            }
+            _response->postRessource(path, _request->getBody());   // penser a mettre a jour le status du retour
 
         }
+
     }
-    // if pas de fd ouvert
-        // if 200 et 200
-            // recuperer le path
-            // check la validite
-        // else recup un fd de la loose
-    // else remplir le buffer
-    
+    _response->readRessource(_fdRessource);
 }
 
-void    Client::deleteRes(ServerInfo& server)
+void    Client::deleteRes()
 {
+    std::string path;
+
     if (_fdRessource < 3)
     {
-        _response.resetValues();
-
-        if (_request.getReturnStatus() == 200)
+        _response->resetValues();
+        if (_request->getReturnStatus() != 200)
         {
-            std::string path;
-
-            _response.deleteRessource(path);
-
+            // recup un fd de la loose
         }
-        else // remplir un fd de la loose
+        else
         {
-
+            // resoudre le path
+            if (!_server->findRessource(_request->getPath(), path))
+            {
+                // la ressource n'a pas ete trouvee 404
+            }
+            _fdRessource = open(path.c_str(), O_RDONLY);
+            if (_fdRessource < 0)
+            {
+                // ouvrir un fichier de la loose
+            }
+            _response->deleteRessource(path);
+            // open un fichier du success
         }
-            // recuperer le path
-            // check la validite
+
     }
-    
-    // else remplir le buffer
+    _response->readRessource(_fdRessource);
+
 }
 
 
-void    Client::executeMethod()
+bool    Client::executeMethod()
 {
+    _server = this->findServer(); // trouver un moyen de pas passer plusieur fois ici
+    int method = _request->getMethod() >> 1;
 
-    _server = findServer(serverList); // trouver un moyen de pas passer plusieur fois ici
-    int method = _request.getMethod() >> 1;
-
-    (this->*(Client::methodFunctions()[method]))(_server);
+    (this->*(Client::methodFunctions()[method]))();
+    return (false);
 }
 
-void    Client::routine(std::vector<ServerInfo> serverList) // a changer acces rapide serverList
+void    Client::routine() // a changer acces rapide serverList
 {
     switch (_client_status)
     {
         case RECEIVED_REQ_HEADER:
         {
             _request->resetValues();
-            if (!_request->fillHeader(_header)); // + faire des verifs et en fonction mettre a jour la variable de routine
+            if (!_request->fillHeader(_header)) // + faire des verifs et en fonction mettre a jour la variable de routine
                 _client_status = WAITING_FOR_RES;
             else
                 _client_status = RECEIVING_REQ_BODY;
@@ -469,7 +500,7 @@ int                 Client::get_bytes_received(void) const {return this->_bytes_
 Request*            Client::getRequest(void) const {return _request;}
 Response*           Client::getResponse(void) const {return _response;}
 int                 Client::getFdRessource(void) const {return _fdRessource;}
-int                 Client::getServer(void) const {return _server;}
+ServerInfo*         Client::getServer(void) const {return _server;}
 
 void    Client::set_socket(int sock) {this->_new_socket = sock;}
 void    Client::set_addr_struct(struct sockaddr_in addr) {this->_address = addr;}
@@ -477,4 +508,4 @@ void    Client::set_received(std::string buf) {this->_received = buf;}
 void    Client::set_status(int status) {this->_client_status = status;}
 void    Client::set_bytes_received(int nbytes) {this->_bytes_received = nbytes;}
 void    Client::setFdRessource(int fd) {_fdRessource = fd;}
-void    Client::setServer(ServerInfo server) {_server = server;}
+void    Client::setServer(ServerInfo* server) {_server = server;}

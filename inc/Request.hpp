@@ -17,7 +17,7 @@ class Request
         
         //          parsing
         void        resetValues();
-        bool	    fillMethod(std::string& request);
+        bool        fillMethod(std::string& line);
         bool        fillHeader(std::string& request);
         bool        fillBody(std::string&  body);
 
@@ -36,6 +36,7 @@ class Request
         void        setCookies(std::vector<std::string> cookies);
         void        setConnection(std::string connection);
         void        setBody(std::string body);
+        void        setReturnStatus(int returnStatus);
     
         //                          get
         int                         getMethod(void) const;
@@ -49,6 +50,7 @@ class Request
         std::vector<std::string>    getCookies(void) const;
         std::string                 getConnection(void) const;
         std::string                 getBody(void) const;
+        int                         getReturnStatus(void) const;
 
     private:
 
@@ -63,6 +65,7 @@ class Request
         std::vector<std::string>    _cookies;
         std::string                 _connection;
         std::string                 _body;
+        int                         _returnStatus;
 
         // ServerInfo*                 _server;
         // bool                        _headerCompleted;
