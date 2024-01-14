@@ -337,11 +337,12 @@ bool    Client::receive_data(void){
     char   buffer[BUFFER_SIZE + 1];
 
     if (this->_client_status == WANT_TO_RECEIVE_REQ)
+    {
         this->alloc_req_resp();
+        this->reset_client();
+    }
     memset(buffer, 0, BUFFER_SIZE);
     int nbytes = recv(this->_new_socket, buffer, BUFFER_SIZE, 0);
-    if (this->_client_status == WANT_TO_RECEIVE_REQ)
-        this->reset_client();
     if (nbytes == 0)
     {
         std::cout << "Client " << this->get_socket() << " closed connection" << std::endl; // Handle a client closing
@@ -406,8 +407,17 @@ void    Client::receive_header_data(char *buffer, int nbytes){
         _header_bytes = found + 4;
         std::cout << "Header : "<< _header << std::endl;
         std::cout << std::endl << "_received still got : " << std::endl << _received << std::endl;
-        this->_client_status = RECEIVING_REQ_BODY;
-        //_request->fillContent(_header + _body)
+        if (this->_received.size() > 0)
+        {
+            this->_client_status = RECEIVING_REQ_BODY;
+            this->routine();
+        }
+        else
+        {
+            this->_client_status = REQ_RECEIVED;
+            this->routine();
+            this->_base->change_poll_event(this->_new_socket, pollout);
+        }
         return ;
     }
 //    std::cout << this->_received << std::endl;
@@ -419,15 +429,23 @@ void    Client::receive_body_data(char *buffer, int nbytes){
     this->_received += buffer;
     this->_bytes_received += nbytes;
     this->_body_bytes += nbytes;
+    if (nbytes < BUFFER_SIZE)
+    {
+        this->_client_status = REQ_RECEIVED;
+        this->routine();
+        this->_base->change_poll_event(this->_new_socket, pollout);
+        return ;
+    }
     if (this->_request->getContentLenght() > 0)
     {
-        if (this->_bytes_received > this->_request->getContentLenght())
+        if (this->_body_bytes == this->_request->getContentLenght())
         {
-            this->_response->setReturnStatus(413);
-            // Checker si on depasse le contentlength et surtout si on depasse la limite fixee dans la conf
+            this->_client_status = REQ_RECEIVED;
+            this->routine();
+            this->_base->change_poll_event(this->_new_socket, pollout);
+            return ;
         }
     }
-    this->_client_status = REQ_RECEIVED;
     return ;
 }
 
