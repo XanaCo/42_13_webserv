@@ -341,11 +341,12 @@ bool    Client::receive_data(void){
     char   buffer[BUFFER_SIZE + 1];
 
     if (this->_client_status == WANT_TO_RECEIVE_REQ)
+    {
         this->alloc_req_resp();
+        this->reset_client();
+    }
     memset(buffer, 0, BUFFER_SIZE);
     int nbytes = recv(this->_new_socket, buffer, BUFFER_SIZE, 0);
-    if (this->_client_status == WANT_TO_RECEIVE_REQ)
-        this->reset_client();
     if (nbytes == 0)
     {
         std::cout << "Client " << this->get_socket() << " closed connection" << std::endl; // Handle a client closing
@@ -410,7 +411,10 @@ void    Client::receive_header_data(char *buffer, int nbytes){
         _header_bytes = found + 4;
         std::cout << "Header : "<< _header << std::endl;
         std::cout << std::endl << "_received still got : " << std::endl << _received << std::endl;
-        this->_client_status = RECEIVING_REQ_BODY;
+        if (this->_received.size() > 0)
+            this->_client_status = RECEIVING_REQ_BODY;
+        else
+            this->_client_status = REQ_RECEIVED;
         //_request->fillContent(_header + _body)
         return ;
     }
