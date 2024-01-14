@@ -74,26 +74,21 @@ class   Client{
         void            receive_header_data(char *buffer, int nbytes);
         void            receive_body_data(char *buffer, int nbytes);
 
-        // void        setReturnStatus(Request request);
-        // Request     getReturnStatus(void) const;
-        bool    send_all(int s, const char *buf, int *len);                                            
-
-        void    reset_client(void);
-        std::string make_temp_header(void);
-        bool    send_data(void);
-
+        bool            send_all(int s, const char *buf, int *len);                                            
+        void            reset_client(void);
+        std::string     make_temp_header(void);
+        bool            send_data(void);
 
         //                  routine request / response
-        void                getRes();
-        void                postRes();
-        void                deleteRes();
+        bool                getRes();
+        bool                postRes();
+        bool                deleteRes();
         bool                executeMethod();
         void                routine();
         ServerInfo*         findServer();
 
-        static std::vector<void (Client::*)()>& methodFunctions()
-        {
-            static std::vector<void (Client::*)()> methods;
+        static std::vector<bool (Client::*)()>& methodFunctions() {
+            static std::vector<bool (Client::*)()> methods;
             if (methods.empty())
             {
                 methods.push_back(&Client::getRes);
@@ -112,7 +107,7 @@ class   Client{
         Request*            getRequest(void) const;
         Response*           getResponse(void) const;
         int                 getFdRessource(void) const;
-        ServerInfo*         getServer(void) const;  // utiliser un pointeur ?
+        ServerInfo*         getServer(void) const;
 
         //                  set
         void                set_socket(int sock);

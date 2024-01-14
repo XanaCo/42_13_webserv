@@ -137,6 +137,7 @@ bool    Response::addBuffer(int fd)
     }
     if (bytesReaded < BUFFER_SIZE)
     {
+        return (false);
         // close le fichier
         // mettre a jour le status en mode "on a tout recu"
     }

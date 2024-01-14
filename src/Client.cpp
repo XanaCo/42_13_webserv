@@ -100,7 +100,7 @@ ServerInfo*    Client::findServer()
     // throw exception ?
 }
 
-void    Client::getRes()
+bool    Client::getRes()
 {
     std::string path;
 
@@ -138,11 +138,10 @@ void    Client::getRes()
         }
 
     }
-    _response->readRessource(_fdRessource);
-
+    return (_response->readRessource(_fdRessource));
 }
 
-void    Client::postRes()
+bool    Client::postRes()
 {
     std::string path;
 
@@ -179,10 +178,10 @@ void    Client::postRes()
         }
 
     }
-    _response->readRessource(_fdRessource);
+    return (_response->readRessource(_fdRessource));
 }
 
-void    Client::deleteRes()
+bool    Client::deleteRes()
 {
     std::string path;
 
@@ -210,18 +209,15 @@ void    Client::deleteRes()
         }
 
     }
-    _response->readRessource(_fdRessource);
-
+    return (_response->readRessource(_fdRessource));
 }
-
 
 bool    Client::executeMethod()
 {
     _server = this->findServer(); // trouver un moyen de pas passer plusieur fois ici
     int method = _request->getMethod() >> 1;
 
-    (this->*(Client::methodFunctions()[method]))();
-    return (false);
+    return ((this->*(Client::methodFunctions()[method]))());
 }
 
 void    Client::routine() // a changer acces rapide serverList
