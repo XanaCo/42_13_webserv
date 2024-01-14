@@ -241,8 +241,11 @@ void    Client::routine() // a changer acces rapide serverList
         }
         case WAITING_FOR_RES:
         {
-            if (this->executeMethod())   // trouver le server + check la method + recup un buffer
+            if (this->executeMethod())
+            {  // trouver le server + check la method + recup un buffer
                 _client_status = RES_READY_TO_BE_SENT;
+                this->_base->change_poll_event(this->_new_socket, pollout);
+            }
         }
     }
 }
@@ -433,7 +436,7 @@ void    Client::receive_body_data(char *buffer, int nbytes){
     {
         this->_client_status = REQ_RECEIVED;
         this->routine();
-        this->_base->change_poll_event(this->_new_socket, pollout);
+        //this->_base->change_poll_event(this->_new_socket, pollout);
         return ;
     }
     if (this->_request->getContentLenght() > 0)
@@ -442,7 +445,7 @@ void    Client::receive_body_data(char *buffer, int nbytes){
         {
             this->_client_status = REQ_RECEIVED;
             this->routine();
-            this->_base->change_poll_event(this->_new_socket, pollout);
+            //this->_base->change_poll_event(this->_new_socket, pollout);
             return ;
         }
     }

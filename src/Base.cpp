@@ -380,6 +380,8 @@ void    Base::review_poll(void){
                 handle_new_connection(_pfds[i].fd);
             else
             {
+                if (get_cli_from_sock(_pfds[i].fd).get_status() == WAITING_FOR_RES)
+                    get_cli_from_sock(_pfds[i].fd).routine();
                 if(!get_cli_from_sock(_pfds[i].fd).receive_data())
                 {
                     remove_from_clients(_pfds[i].fd);
