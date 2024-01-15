@@ -382,7 +382,7 @@ void    Base::review_poll(void){
             {
                 if (get_cli_from_sock(_pfds[i].fd).get_status() == WAITING_FOR_RES)
                     get_cli_from_sock(_pfds[i].fd).routine();
-                if(!get_cli_from_sock(_pfds[i].fd).receive_data())
+                else if(!get_cli_from_sock(_pfds[i].fd).receive_data())
                 {
                     remove_from_clients(_pfds[i].fd);
                     remove_from_poll(_pfds[i].fd);
