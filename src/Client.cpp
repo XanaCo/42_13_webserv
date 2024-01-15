@@ -392,14 +392,14 @@ void    Client::receive_header_data(char *buffer, int nbytes){
         std::cout << std::endl << "_received still got : " << std::endl << _received << std::endl;
         if (this->_received.size() > 0)
         {
-            this->_client_status = RECEIVING_REQ_BODY;
+            this->_client_status = RECEIVED_REQ_HEADER;
             this->routine();
         }
         else
         {
-            this->_client_status = REQ_RECEIVED;
+            this->_client_status = RECEIVED_REQ_HEADER;
             this->routine();
-            this->_base->change_poll_event(this->_new_socket, pollout);
+            //this->_base->change_poll_event(this->_new_socket, pollout);
         }
         return ;
     }
