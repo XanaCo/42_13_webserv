@@ -19,7 +19,7 @@ Response	&Response::operator=(const Response& obj)
     {
         _content = obj._content;
         _contentType = obj._contentType;
-        _contentLenght = obj._contentLenght;
+        _contentLength = obj._contentLength;
         _returnStatus = obj._returnStatus;
     }
     return (*this);
@@ -30,7 +30,7 @@ std::ostream&   operator<<(std::ostream& os, const Response& obj)
     os << "--" << RESPONSE << "--" << std::endl;
     os << "return status  : " << obj.getReturnStatus() << std::endl;
     os << "content type   : " << obj.getContentType() << std::endl;
-    os << "content Lenght : " << obj.getContentLenght() << std::endl;
+    os << "content Length : " << obj.getContentLength() << std::endl;
     os << "content        : " << obj.getContent() << std::endl;
     return (os);
 }
@@ -154,7 +154,7 @@ void    Response::resetValues(void)
     _content = "";
     _returnStatus = I_CONTIUE;
     _contentType = "";
-    _contentLenght = 0;
+    _contentLength = 0;
 }
 
 // ************************************************************************** //
@@ -165,7 +165,7 @@ void    Response::setReturnStatus(int returnStatus) {returnStatus = returnStatus
 void    Response::setContent(std::string& content) {_content = content;}
 // void    Response::setPort(uint16_t port) {_port = port;}
 void    Response::setContentType(std::string& contentType) {_contentType = contentType;}
-void    Response::setContentLenght(int contentLenght) {_contentLenght = contentLenght;}
+void    Response::setContentLength(int contentLength) {_contentLength = contentLength;}
 void    Response::setCgiPid(pid_t cgiPid) {_cgiPid = cgiPid;}
 void    Response::setCgiFd(int cgiFd) {_cgiFd = cgiFd;}
 void    Response::setCgiOutput(std::string cgiOutput) {_cgiOutput = cgiOutput;}
@@ -181,5 +181,5 @@ int             Response::getCgiFdRessource(void) const {return (_cgiFdRessource
 int             Response::getReturnStatus() const {return (_returnStatus);}
 std::string     Response::getContent() const {return (_content);}
 // uint16_t        Response::getPort() const {return (_port);}
-int             Response::getContentLenght() const {return (_contentLenght);}
+int             Response::getContentLength() const {return (_contentLength);}
 std::string     Response::getContentType() const {return (_contentType);}

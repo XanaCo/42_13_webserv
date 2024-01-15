@@ -419,9 +419,9 @@ void    Client::receive_body_data(char *buffer, int nbytes){
         //this->_base->change_poll_event(this->_new_socket, pollout);
         return ;
     }
-    if (this->_request->getContentLenght() > 0)
+    if (this->_request->getContentLength() > 0)
     {
-        if (this->_body_bytes == this->_request->getContentLenght())
+        if (this->_body_bytes == this->_request->getContentLength())
         {
             this->_client_status = REQ_RECEIVED;
             this->routine();
