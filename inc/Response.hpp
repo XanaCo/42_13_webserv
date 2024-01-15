@@ -42,7 +42,7 @@ class Response
         void    setContent(std::string& content);
         void    setPort(uint16_t port);
         void    setContentType(std::string& contentType);
-        void    setContentLenght(int contentLenght);
+        void    setContentLength(int contentLength);
         void    setCgiPid(pid_t cgiPid);
         void    setCgiFd(int cgiFd);
         void    setCgiOutput(std::string cgiOutput);
@@ -57,14 +57,14 @@ class Response
         int             getReturnStatus() const;
         std::string     getContent() const;
         uint16_t        getPort() const;
-        int             getContentLenght() const;
+        int             getContentLength() const;
         std::string     getContentType() const;
 
     private:
 
         uint16_t    _port;
         std::string _content;
-        int         _contentLenght;
+        int         _contentLength;
         std::string _contentType;
         int         _returnStatus;
         pid_t       _cgiPid;

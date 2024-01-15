@@ -17,6 +17,7 @@ class Request
         
         //          parsing
         void        resetValues();
+        void        fillArgs(std::string str);
         bool        fillMethod(std::string& line);
         bool        fillHeader(std::string& request);
         bool        fillBody(std::string&  body);
@@ -32,11 +33,12 @@ class Request
         void        setPort(std::string port);
         void        setUserAgent(std::string userAgent);
         void        setContentType(std::string contentType);
-        void        setContentLength(int contentLenght);
+        void        setContentLength(int contentLength);
         void        setCookies(std::vector<std::string> cookies);
         void        setConnection(std::string connection);
         void        setBody(std::string body);
         void        setReturnStatus(int returnStatus);
+        void        setArgs(std::string args);
     
         //                          get
         int                         getMethod(void) const;
@@ -46,11 +48,12 @@ class Request
         std::string                 getPort(void) const;
         std::string                 getUserAgent(void) const;
         std::string                 getContentType(void) const;
-        int                         getContentLenght(void) const;
+        int                         getContentLength(void) const;
         std::vector<std::string>    getCookies(void) const;
         std::string                 getConnection(void) const;
         std::string                 getBody(void) const;
         int                         getReturnStatus(void) const;
+        std::string                 getArgs(void) const;
 
     private:
 
@@ -61,11 +64,12 @@ class Request
         std::string                 _port;
         std::string                 _userAgent;     // Mozilla/5.0 (...)... (navigateur du client)
         std::string                 _contentType;
-        int                         _contentLenght;
+        int                         _contentLength;
         std::vector<std::string>    _cookies;
         std::string                 _connection;
         std::string                 _body;
         int                         _returnStatus;
+        std::string                 _args;
 
         // ServerInfo*                 _server;
         // bool                        _headerCompleted;

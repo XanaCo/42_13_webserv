@@ -509,19 +509,23 @@ bool	ServerInfo::findCgiRessource(std::string path, std::string& newPath) const
 	return (false); // voir pour afficher une page d'erreur html
 }
 
-bool	ServerInfo::findRessource(std::string path, std::string& newPath) const
+bool ServerInfo::findRessource(std::string path, std::string& newPath) const
 {
-	std::string	nameDir = getNameDir(path);
-	for (long unsigned int i = 0; i < _locations.size(); i++)
-	{
-		if (nameDir == _locations[i].getLPathName())
-		{
-			newPath = _Root + getNameFile(path);
-			return (true);
-		}
-	}
-	newPath = _Root + "/index.html";
-	return (true);
+    std::string nameDir = getNameDir(path);
+
+    std::vector<Location>::const_iterator end = _locations.end();
+
+    for (std::vector<Location>::const_iterator it = _locations.begin(); it != end; ++it)
+    {
+        if (nameDir == it->getLPathName())
+        {
+            newPath = _Root + getNameFile(path);
+            return true;
+        }
+    }
+
+    newPath = _Root + "/index.html";
+    return true;
 }
 
 // ************************************************************************** //

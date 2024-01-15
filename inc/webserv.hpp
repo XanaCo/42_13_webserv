@@ -133,7 +133,7 @@ typedef enum e_headerRequest {
 	RQ_ACCEPT_ENCODING,
 	RQ_AUTOR,
 	RQ_CONTENT_TYPE,
-	RQ_CONTENT_LENGHT,
+	RQ_CONTENT_LENGTH,
 	RQ_REFERER,
 	RQ_COOKIES,
 	RQ_CONNECTION,
@@ -147,7 +147,7 @@ typedef enum e_headerRq {
 	RP_CACHECONTROL,
 	RP_DATE,
 	RP_CONTENT_TYPE,
-	RP_CONTENT_LENGHT,
+	RP_CONTENT_LENGTH,
 	RP_LOCATION,			// nouvelle URL de redirection
 	RP_COOKIES,
 	RP_SECURITY,
@@ -195,5 +195,6 @@ bool 						checkFileExists(std::string fileToCheck);
 char 						**mapToCharTab(std::map<std::string, std::string> mapToConvert);
 void 						freeCharTab(char **charTab);
 void						deEncodingHexa(std::string& chaine);
+bool						isHtmlComplete(const std::string& html);
 
 #endif

@@ -23,6 +23,8 @@ Client::Client(int socket, struct sockaddr_in *r_address, std::vector<ServerInfo
     _bytes_received = 0;
     _header_bytes = 0;
     _body_bytes = 0;
+    _max_body_size = 0;
+    _req_end = false;
     _request = NULL;
     _response = NULL;
     _servers = servers; 
@@ -120,7 +122,7 @@ bool    Client::getRes()
             //exec cgi
             Cgi cgi(*_server, *_request, *_response);
             cgi.executeScript();    // pas oublier de renseigner le fd de la pipe
-            // _fdRessource = ;
+            // _fdRessource = cgi.getCgiFd();
         }
         else
         {
@@ -128,6 +130,7 @@ bool    Client::getRes()
             if (!_server->findRessource(_request->getPath(), path))
             {
                 // la ressource n'a pas ete trouvee 404
+                // ouvrir un fd de la loose
             }
             _fdRessource = open(path.c_str(), O_RDONLY);
             if (_fdRessource < 0)
@@ -214,13 +217,16 @@ bool    Client::deleteRes()
 
 bool    Client::executeMethod()
 {
-    _server = this->findServer(); // trouver un moyen de pas passer plusieur fois ici
+    // if (_client_status == REQ_RECEIVED)
+    // {
+        // _server = this->findServer();
+    // }
     int method = _request->getMethod() >> 1;
 
     return ((this->*(Client::methodFunctions()[method]))());
 }
 
-void    Client::routine() // a changer acces rapide serverList
+void    Client::routine()
 {
     switch (_client_status)
     {
@@ -228,50 +234,38 @@ void    Client::routine() // a changer acces rapide serverList
         {
             _request->resetValues();
             if (!_request->fillHeader(_header)) // + faire des verifs et en fonction mettre a jour la variable de routine
+            {
                 _client_status = WAITING_FOR_RES;
+                this->_base->change_poll_event(this->_new_socket, pollout);
+            }
             else
-                _client_status = RECEIVING_REQ_BODY;
+            {
+                if (this->_req_end == true)
+                {
+                    _client_status = WAITING_FOR_RES;
+                    this->_base->change_poll_event(this->_new_socket, pollout);
+                }
+                else
+                    _client_status = RECEIVING_REQ_BODY;
+            }
+            _server = this->findServer();
             return ;
         }
         case REQ_RECEIVED:
         {
             _request->fillBody(_body); // + faire des verifs et en fonction mettre a jour la variable de routine
             _client_status = WAITING_FOR_RES;
+            this->_base->change_poll_event(this->_new_socket, pollout);
             return ;
         }
         case WAITING_FOR_RES:
         {
+            //std::cout << "Je suis en train de construire la reponse" << std::endl;
             if (this->executeMethod())
-            {  // trouver le server + check la method + recup un buffer
                 _client_status = RES_READY_TO_BE_SENT;
-                this->_base->change_poll_event(this->_new_socket, pollout);
-            }
         }
     }
 }
-
-//     ServerInfo  server = findServer(serverList);
-//     if (_request->getPath().find("/CGI/") != std::string::npos)
-//     {
-//         if (!server.findCgiRessource(_request->getPath(), path))
-//             std::cerr << "Run : on ne trouve pas la ressource CGI" << std::endl;
-//         //exec cgi
-//         Cgi cgi_le_2(server, *_request, *_response);
-//         cgi_le_2.executeScript();
-//         return ;
-//     }
-//     if (!server.findRessource(_request->getPath(), path))
-//     {
-//         std::cerr << "Run : on ne trouve par la ressource" << std::endl;
-//         return ;
-//     }
-//     int    method = _request->getMethod() >> 1; // 0->GET / 1->POST / 2->DELETE
-//     static void (Response::*methods[3])(const std::string) = { &Response::readRessource, NULL, &Response::deleteRessource };
-//     if (method & 1)
-//         _response->postRessource(path, _request->getBody());
-//     else
-//         (_response->*methods[method])(path);
-// }
 
 // ************************************************************************** //
 //  ^               ^
@@ -332,6 +326,7 @@ void    Client::reset_client(void){
     this->_received = "";
     this->_header = "";
     this->_body = "";
+    this->_req_end = false;
     return ;
 }
 
@@ -412,14 +407,15 @@ void    Client::receive_header_data(char *buffer, int nbytes){
         std::cout << std::endl << "_received still got : " << std::endl << _received << std::endl;
         if (this->_received.size() > 0)
         {
-            this->_client_status = RECEIVING_REQ_BODY;
+            this->_client_status = RECEIVED_REQ_HEADER;
             this->routine();
         }
         else
         {
-            this->_client_status = REQ_RECEIVED;
+            this->_client_status = RECEIVED_REQ_HEADER;
+            this->_req_end = true;
             this->routine();
-            this->_base->change_poll_event(this->_new_socket, pollout);
+            //this->_base->change_poll_event(this->_new_socket, pollout);
         }
         return ;
     }
@@ -439,9 +435,9 @@ void    Client::receive_body_data(char *buffer, int nbytes){
         //this->_base->change_poll_event(this->_new_socket, pollout);
         return ;
     }
-    if (this->_request->getContentLenght() > 0)
+    if (this->_request->getContentLength() > 0)
     {
-        if (this->_body_bytes == this->_request->getContentLenght())
+        if (this->_body_bytes == this->_request->getContentLength())
         {
             this->_client_status = REQ_RECEIVED;
             this->routine();
@@ -454,23 +450,30 @@ void    Client::receive_body_data(char *buffer, int nbytes){
 
 std::string Client::make_temp_header(void){
 
-            int cont_len = this->getResponse()->getContent().size();
-            std::stringstream con;
-            con << cont_len;
-            std::string to_send = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " + con.str() + "\n\n" + this->getResponse()->getContent() + "\r\n\r\n";
-            return (to_send);
+        int cont_len = this->getResponse()->getContent().size();
+        std::stringstream con;
+        con << cont_len;
+        std::string to_send = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " + con.str() + "\n\n" + this->getResponse()->getContent() + "\r\n\r\n";
+        return (to_send);
 }
 
 bool    Client::send_data(void)
 {
-            std::string to_send = make_temp_header();
-            int len = strlen(to_send.c_str());
-            if (!send_all(this->_new_socket, to_send.c_str(), &len))
-            {
-                std::cout << "Only " << len << " bytes have been sent because of error" << std::endl;
-                return false;
-            }
-            return true;
+    //this->_client_status = RES_READY_TO_BE_SENT;
+    if (this->_client_status == WAITING_FOR_RES)
+        this->routine();
+    else
+    {
+        std::string to_send = make_temp_header();
+        int len = strlen(to_send.c_str());
+        if (!send_all(this->_new_socket, to_send.c_str(), &len))
+        {
+            std::cout << "Only " << len << " bytes have been sent because of error" << std::endl;
+            return false;
+        }
+        this->_base->change_poll_event(this->_new_socket, pollin);
+    }
+    return true;
 }
 /*
 bool    Client::send_data(void)
@@ -514,6 +517,7 @@ struct sockaddr_in  Client::get_addr_struct(void) const {return this->_address;}
 std::string         Client::get_received(void) const {return this->_received;}
 int                 Client::get_status(void) const {return this->_client_status;}
 int                 Client::get_bytes_received(void) const {return this->_bytes_received;}
+bool                Client::get_req_end(void) const {return this->_req_end;}
 Request*            Client::getRequest(void) const {return _request;}
 Response*           Client::getResponse(void) const {return _response;}
 int                 Client::getFdRessource(void) const {return _fdRessource;}
@@ -524,5 +528,6 @@ void    Client::set_addr_struct(struct sockaddr_in addr) {this->_address = addr;
 void    Client::set_received(std::string buf) {this->_received = buf;}
 void    Client::set_status(int status) {this->_client_status = status;}
 void    Client::set_bytes_received(int nbytes) {this->_bytes_received = nbytes;}
+void    Client::set_req_end(bool end){this->_req_end = end;}
 void    Client::setFdRessource(int fd) {_fdRessource = fd;}
 void    Client::setServer(ServerInfo* server) {_server = server;}

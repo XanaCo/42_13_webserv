@@ -153,7 +153,7 @@ int Cgi::setEnvironment(ServerInfo *server, Request *req) {
 		//CONTENT_TYPE - request->getContentType (MIME type of the data sent to the CGI script)
 		this->_envpMap["CONTENT_TYPE"] = req->getContentType();
 		//CONTENT_LENGTH -request->getContentLength (length in bytes of the request body)
-		this->_envpMap["CONTENT_LENGTH"] = req->getContentLenght();
+		this->_envpMap["CONTENT_LENGTH"] = req->getBody();
 
 	//client specific
 		//needed?- HTTP_ACCEPT - The MIME types which the client will accept, as given by HTTP headers. Other protocols may need to get this information from elsewhere. Each item in this list should be separated by commas as per the HTTP spec. Format: type/subtype, type/subtype
