@@ -24,15 +24,15 @@ Cgi::Cgi(Cgi const &copy) {
 	(void)copy;
 	
 	if (PRINT)
-		std::cout << CGI << "🐥 constructor called" << std::endl;
+		std::cout << CGI << "🐥 copy constructor called" << std::endl;
 
 	return ;
 }
 
 Cgi::~Cgi() {
 
-	// if (this->_envpToExec)
-	// 	freeCharTab(this->_envpToExec);
+	if (this->_envpToExec)
+		freeCharTab(this->_envpToExec);
 
 	if (PRINT)
 		std::cout << CGI << "🗑️  destructor called" << std::endl;
@@ -50,7 +50,7 @@ Cgi &Cgi::operator=(Cgi const &other) {
 	(void)other;
 
 	if (PRINT)
-		std::cout << GREEN << "Constructor: Cgi = created " << END_COLOR << std::endl;
+		std::cout << CGI << "🐥 = constructor called" << std::endl;
 
 	return *this;
 }
@@ -61,11 +61,11 @@ Cgi &Cgi::operator=(Cgi const &other) {
 
 void Cgi::setMethod(int method) {
 
-	if (!method)
-		return;
-	// HELP HERE!!! :
-	// Transformer int method de la requete dans le bon method en string?
-	this->_method = "BON METHOD";
+	if (method == GET)
+		this->_method = "GET";
+	else if (method == POST)
+		this->_method = "POST";
+
 	return ;
 }
 

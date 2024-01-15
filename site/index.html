@@ -26,7 +26,9 @@
 
         main {
             margin-top: 20px;
+			margin-bottom: 20px;
         }
+
     </style>
 </head>
 <body>
@@ -36,33 +38,33 @@
     </header>
 
     <main>
-
-			<div class="flex-container">
-			<h3>Tester le projet :</h3>
-			</div>
 	
 			<div class="flex-container">    
 				<form action="https://theuselessweb.com/" method="get" target="_blank">
-					<button type="submit">Test 1 : Redirection</button>
+					<button type="submit">Redirection</button>
 				</form>
 			</div>
+
+			<div class="flex-container">
+				<form action="testPages/" method="get" target="_blank">
+					<button type="submit">Method Tests</button>
+				</form>
+			</div>
+
+			<div class="flex-container">
+				<form action="testFiles/" method="get" target="_blank">
+					<button type="submit">File Tests</button>
+				</form>
+			</div>
+
 			<div class="flex-container">
 				<form action="CGI/cgi.html" method="get" target="_blank">
-					<button type="submit">Cgi Home Page (NO SCRIPT)</button>
+					<button type="submit">CGI Home</button>
 				</form>
 			</div>
+
 			<div class="flex-container">
-				<form action="CGI/sortingHat.html" method="get" target="_blank">
-					<button type="submit">Sorting Hat Ceremony (PY)</button>
-				</form>
-			</div>
-			<div class="flex-container">
-				<form action="CGI/quidditchPos.html" method="get" target="_blank">
-					<button type="submit">Check your Quidditch Position (PY)</button>
-				</form>
-			</div>
-			<div class="flex-container">
-				<button id="sendRequestButton">Envoyer la requête</button>
+				<button id="sendRequestButton">Send Request</button>
 			</div>
 
 	<script>
