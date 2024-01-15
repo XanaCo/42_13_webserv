@@ -48,6 +48,7 @@ class   Client{
         int                         _header_bytes;
         int                         _body_bytes;
         int                         _max_body_size;
+        bool                        _req_end;
         std::vector<ServerInfo>     _servers;
         Base *                      _base;
 
@@ -104,6 +105,7 @@ class   Client{
         std::string         get_received(void) const;
         int                 get_status(void) const;
         int                 get_bytes_received(void) const;
+        bool                get_req_end(void) const;
         Request*            getRequest(void) const;
         Response*           getResponse(void) const;
         int                 getFdRessource(void) const;
@@ -115,6 +117,7 @@ class   Client{
         void                set_received(std::string buf);
         void                set_status(int status);
         void                set_bytes_received(int nbytes);
+        void                set_req_end(bool end);
         void                setFdRessource(int fd);
         void                setServer(ServerInfo* server);
 };
