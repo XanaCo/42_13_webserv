@@ -122,7 +122,7 @@ bool    Client::getRes()
             //exec cgi
             Cgi cgi(*_server, *_request, *_response);
             cgi.executeScript();    // pas oublier de renseigner le fd de la pipe
-            // _fdRessource = cgi.getCgiFd();
+            _fdRessource = _response->getCgiFdRessource();
         }
         else
         {

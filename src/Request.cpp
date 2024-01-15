@@ -66,19 +66,16 @@ bool	Request::fillMethod(std::string& line)
     {
         this->setMethod(GET);
         fillArgs(line.substr(4, length));
-        // this->setPath(line.substr(4, length));    // attention a ne pas recuperer la version d'HTML
-    }                                                 // si il faut recuperer la version et la mettre ailleur
+    }
     else if (length >= 4 && line.substr(0, 4) == "POST")
     {
         this->setMethod(POST);
         fillArgs(line.substr(5, length));
-        // this->setPath(line.substr(5, length));
     }
     else if (length >= 6 && line.substr(0, 6) == "DELETE")
     {
         this->setMethod(DELETE);
         fillArgs(line.substr(7, length));
-        // this->setPath(line.substr(7, length));
     }
 	else
 		return (false);

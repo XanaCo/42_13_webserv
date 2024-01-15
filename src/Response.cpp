@@ -105,16 +105,6 @@ void Response::deleteRessource(const std::string path)
 //	
 // ************************************************************************** //
 
-// void    Response::openFileToSend(std::string& file)
-// {
-//     // check si le fd est deja ouvert
-//     _fdFileToSend = open(file.s_str(), O_RDONLY);
-//     if (_fdFileToSend < 0)
-//     {
-//         _returnStatus = E_INTERNAL_SERVER;  // 500 ?
-//     }
-// }
-
 bool    Response::addBuffer(int fd)
 {
     // if (_fdFileToSend < 3)
