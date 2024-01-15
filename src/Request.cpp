@@ -117,7 +117,7 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
             this->setConnection(lines[i].substr(12, length));
         for (int j = i + 1; j < size; j++)
         {
-            if (lines[i] == lines[j]) // si deux lignes sont identiques, c'est interdit
+            if (lines[i].size() && lines[i] == lines[j]) // si deux lignes sont identiques, c'est interdit
             {
                 _returnStatus = 400;
                 return (false); // -> penser a modifier le status dans le client;
