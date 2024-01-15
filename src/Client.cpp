@@ -217,10 +217,10 @@ bool    Client::deleteRes()
 
 bool    Client::executeMethod()
 {
-    if (_client_status == REQ_RECEIVED)
-    {
-        _server = this->findServer();
-    }
+    // if (_client_status == REQ_RECEIVED)
+    // {
+        // _server = this->findServer();
+    // }
     int method = _request->getMethod() >> 1;
 
     return ((this->*(Client::methodFunctions()[method]))());
@@ -248,6 +248,7 @@ void    Client::routine()
                 else
                     _client_status = RECEIVING_REQ_BODY;
             }
+            _server = this->findServer();
             return ;
         }
         case REQ_RECEIVED:

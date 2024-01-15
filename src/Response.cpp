@@ -49,7 +49,7 @@ bool    Response::readRessource(int fd)
         close(fd);
         return (true); // a changer
     }
-    _content += buffer;
+    _content.append(buffer, nbBytesReaded);
     if (nbBytesReaded < BUFFER_SIZE)
         return (true);
     return (false);
