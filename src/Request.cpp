@@ -50,23 +50,35 @@ void    Request::resetValues()
     _body = "";
 }
 
+void    Request::fillArgs(std::string str)
+{
+    std::istringstream    ss(str);
+
+    std::getline(ss, _path, '?');
+    std::getline(ss, _args, ' ');
+    std::getline(ss, _version, '\0');
+}
+
 bool	Request::fillMethod(std::string& line)
 {
 	int	length = line.size();
     if (length >= 3 && line.substr(0, 3) == "GET")
     {
         this->setMethod(GET);
-        this->setPath(line.substr(4, length));    // attention a ne pas recuperer la version d'HTML
+        fillArgs(line.substr(4, length));
+        // this->setPath(line.substr(4, length));    // attention a ne pas recuperer la version d'HTML
     }                                                 // si il faut recuperer la version et la mettre ailleur
     else if (length >= 4 && line.substr(0, 4) == "POST")
     {
         this->setMethod(POST);
-        this->setPath(line.substr(5, length));
+        fillArgs(line.substr(5, length));
+        // this->setPath(line.substr(5, length));
     }
     else if (length >= 6 && line.substr(0, 6) == "DELETE")
     {
         this->setMethod(DELETE);
-        this->setPath(line.substr(7, length));
+        fillArgs(line.substr(7, length));
+        // this->setPath(line.substr(7, length));
     }
 	else
 		return (false);
@@ -117,7 +129,7 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
             this->setConnection(lines[i].substr(12, length));
         for (int j = i + 1; j < size; j++)
         {
-            if (lines[i] == lines[j]) // si deux lignes sont identiques, c'est interdit
+            if (lines[i] != "\r" && lines[i] == lines[j]) // si deux lignes sont identiques, c'est interdit
             {
                 _returnStatus = 400;
                 return (false); // -> penser a modifier le status dans le client;
@@ -162,6 +174,7 @@ void    Request::setConnection(std::string connection) {_connection = connection
 void    Request::setBody(std::string body) {_body = body;}
 // void    Request::setServer(ServerInfo* server) {_server = server;}
 void    Request::setReturnStatus(int returnStatus) {_returnStatus = returnStatus;}
+void    Request::setArgs(std::string args) {_args = args;}
 
 int                         Request::getMethod(void) const {return (_method);}
 std::string                 Request::getPath(void) const {return (_path);}
@@ -176,3 +189,5 @@ std::string                 Request::getConnection(void) const {return (_connect
 std::string                 Request::getBody(void) const {return (_body);}
 // ServerInfo*                 Request::getServer(void) {return (_server);}
 int                         Request::getReturnStatus(void) const {return (_returnStatus);}
+std::string                 Request::getArgs(void) const {return (_args);};
+

@@ -17,6 +17,7 @@ class Request
         
         //          parsing
         void        resetValues();
+        void        fillArgs(std::string str);
         bool        fillMethod(std::string& line);
         bool        fillHeader(std::string& request);
         bool        fillBody(std::string&  body);
@@ -37,6 +38,7 @@ class Request
         void        setConnection(std::string connection);
         void        setBody(std::string body);
         void        setReturnStatus(int returnStatus);
+        void        setArgs(std::string args);
     
         //                          get
         int                         getMethod(void) const;
@@ -51,6 +53,7 @@ class Request
         std::string                 getConnection(void) const;
         std::string                 getBody(void) const;
         int                         getReturnStatus(void) const;
+        std::string                 getArgs(void) const;
 
     private:
 
@@ -66,6 +69,7 @@ class Request
         std::string                 _connection;
         std::string                 _body;
         int                         _returnStatus;
+        std::string                 _args;
 
         // ServerInfo*                 _server;
         // bool                        _headerCompleted;

@@ -120,7 +120,7 @@ bool    Client::getRes()
             //exec cgi
             Cgi cgi(*_server, *_request, *_response);
             cgi.executeScript();    // pas oublier de renseigner le fd de la pipe
-            // _fdRessource = ;
+            // _fdRessource = cgi.getCgiFd();
         }
         else
         {
@@ -128,6 +128,7 @@ bool    Client::getRes()
             if (!_server->findRessource(_request->getPath(), path))
             {
                 // la ressource n'a pas ete trouvee 404
+                // ouvrir un fd de la loose
             }
             _fdRessource = open(path.c_str(), O_RDONLY);
             if (_fdRessource < 0)
