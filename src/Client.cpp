@@ -214,13 +214,16 @@ bool    Client::deleteRes()
 
 bool    Client::executeMethod()
 {
-    _server = this->findServer(); // trouver un moyen de pas passer plusieur fois ici
+    if (_client_status == REQ_RECEIVED)
+    {
+        _server = this->findServer();
+    }
     int method = _request->getMethod() >> 1;
 
     return ((this->*(Client::methodFunctions()[method]))());
 }
 
-void    Client::routine() // a changer acces rapide serverList
+void    Client::routine()
 {
     switch (_client_status)
     {
@@ -249,29 +252,6 @@ void    Client::routine() // a changer acces rapide serverList
         }
     }
 }
-
-//     ServerInfo  server = findServer(serverList);
-//     if (_request->getPath().find("/CGI/") != std::string::npos)
-//     {
-//         if (!server.findCgiRessource(_request->getPath(), path))
-//             std::cerr << "Run : on ne trouve pas la ressource CGI" << std::endl;
-//         //exec cgi
-//         Cgi cgi_le_2(server, *_request, *_response);
-//         cgi_le_2.executeScript();
-//         return ;
-//     }
-//     if (!server.findRessource(_request->getPath(), path))
-//     {
-//         std::cerr << "Run : on ne trouve par la ressource" << std::endl;
-//         return ;
-//     }
-//     int    method = _request->getMethod() >> 1; // 0->GET / 1->POST / 2->DELETE
-//     static void (Response::*methods[3])(const std::string) = { &Response::readRessource, NULL, &Response::deleteRessource };
-//     if (method & 1)
-//         _response->postRessource(path, _request->getBody());
-//     else
-//         (_response->*methods[method])(path);
-// }
 
 // ************************************************************************** //
 //  ^               ^

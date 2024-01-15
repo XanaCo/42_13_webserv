@@ -195,5 +195,6 @@ bool 						checkFileExists(std::string fileToCheck);
 char 						**mapToCharTab(std::map<std::string, std::string> mapToConvert);
 void 						freeCharTab(char **charTab);
 void						deEncodingHexa(std::string& chaine);
+bool						isHtmlComplete(const std::string& html);
 
 #endif

@@ -79,7 +79,7 @@ class   Client{
         std::string     make_temp_header(void);
         bool            send_data(void);
 
-        //                  routine request / response
+        //                  routine
         bool                getRes();
         bool                postRes();
         bool                deleteRes();

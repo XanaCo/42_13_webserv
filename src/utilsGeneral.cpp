@@ -103,3 +103,40 @@ std::string getNameFile(const std::string& path)
         return path;
     return (path.substr(lastSep + 1));
 }
+
+void	removeBackSlashR(std::string& str)
+{
+    std::string::size_type r_pos = str.find('\r');
+    while (r_pos != std::string::npos)
+    {
+        str.erase(r_pos, 1);
+        r_pos = str.find('\r', r_pos);
+    }
+}
+
+void    closeFile(int* fd)
+{
+    if (*fd > 2)
+    {
+        close(*fd);
+        *fd = 0;
+    }
+}
+
+bool isHtmlComplete(const std::string& html)
+{
+    int c = 0;
+
+    for (std::size_t i = 0; i < html.size(); ++i)
+    {
+        if (html[i] == '<')
+            ++c;
+        else if (html[i] == '>')
+        {
+            --c;
+            if (c < 0)
+                return false;
+        }
+    }
+    return c == 0;
+}
