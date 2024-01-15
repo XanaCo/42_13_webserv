@@ -458,6 +458,7 @@ std::string Client::make_temp_header(void){
 
 bool    Client::send_data(void)
 {
+    //this->_client_status = RES_READY_TO_BE_SENT;
     if (this->_client_status == WAITING_FOR_RES)
         this->routine();
     else
