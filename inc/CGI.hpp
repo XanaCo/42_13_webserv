@@ -39,10 +39,8 @@ public:
 	std::map<std::string, std::string> &getenvpMap();
 	std::string &getCGIMethod();
 	char **getCGIenvpToExec() const;
-	char **getCGIargvToExec() const;
 
 	void executeScript();
-	void setArgvToExec(int type);
 
 private:
 
@@ -57,7 +55,6 @@ private:
 	std::map<std::string, std::string> _envpMap;
 	std::string _method;
 	char **_envpToExec;
-	char **_argvToExec;
 
 };
 

@@ -22,11 +22,26 @@
             display: flex;
             /* flex-direction: column; */
             justify-content: center;
+			margin: 10px
         }
 
         main {
             margin-top: 20px;
 			margin-bottom: 20px;
+        }
+
+		button {
+            padding: 20px 20px;
+            font-size: 16px;
+            background-color: #e2065b;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #e984ab;
         }
 
     </style>
@@ -58,8 +73,20 @@
 			</div>
 
 			<div class="flex-container">
-				<form action="CGI/cgi.html" method="get" target="_blank">
-					<button type="submit">CGI Home</button>
+				<form action="CGI/potionMaking.html" method="get" target="_blank">
+					<button type="submit">Test CGI 01</button>
+				</form>
+			</div>
+
+			<div class="flex-container">
+				<form action="CGI/sortingHat.html" method="get" target="_blank">
+					<button type="submit">Test CGI 02</button>
+				</form>
+			</div>
+
+			<div class="flex-container">
+				<form action="CGI/quidditchPos.html" method="get" target="_blank">
+					<button type="submit">Test CGI 03</button>
 				</form>
 			</div>
 

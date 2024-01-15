@@ -31,8 +31,8 @@ Cgi::Cgi(Cgi const &copy) {
 
 Cgi::~Cgi() {
 
-	if (this->_envpToExec)
-		freeCharTab(this->_envpToExec);
+	// if (this->_envpToExec)
+	// 	freeCharTab(this->_envpToExec);
 
 	if (PRINT)
 		std::cout << CGI << "🗑️  destructor called" << std::endl;
@@ -68,7 +68,6 @@ void Cgi::setMethod(int method) {
 
 	return ;
 }
-
 
 int Cgi::getPipeOut() {
 
@@ -113,11 +112,6 @@ std::string &Cgi::getCGIMethod() {
 char **Cgi::getCGIenvpToExec() const {
 
 	return this->_envpToExec;
-}
-
-char **Cgi::getCGIargvToExec() const {
-
-	return this->_argvToExec;
 }
 
 
@@ -228,8 +222,19 @@ void Cgi::executeScript() {
 			exit(E_INTERNAL_SERVER);
 		}
 		
+	
+		char *argvToExec[3];
+		
 		//setArgvToExec(_request->getScriptType()); // REQUEST tells me if I need to execute php or python?
-		setArgvToExec(PY); //TESTER
+		// if (_request->getScriptType() == PY)
+		// 	argvToExec[0] = const_cast<char *>("/bin/python3.10");
+		// else if (_request->getScriptType() == PHP)
+		// 	argvToExec[0] = const_cast<char *>("/usr/bin/php-cgi");
+
+		argvToExec[0] = const_cast<char *>("/bin/python3.10"); // TEST a effacer
+		
+		argvToExec[1] = const_cast<char *>("site/CGI/scriptCGI/");// + _request->getScriptPath()); //SCRIPT TO EXECUTE
+		argvToExec[2] = NULL;
 		
 		//closeallfds sockets
 		//clean logs?
@@ -241,7 +246,7 @@ void Cgi::executeScript() {
 		// 	/// _response->setReturnStatus(E_INTERNAL_SERVER);
 		// 	exit(1);
 		// }
-		execve(_argvToExec[0], _argvToExec, _envpToExec);
+		execve(argvToExec[0], argvToExec, _envpToExec);
 		// std::cerr << "Execve Failed" << std::endl; //EFFACER
 		// std::cout << "Test" << std::endl;
 		exit(E_INTERNAL_SERVER);
@@ -251,14 +256,3 @@ void Cgi::executeScript() {
 	
 }
 
-void Cgi::setArgvToExec(int type) {
-
-	if (type == PY)
-		_argvToExec[0] = const_cast<char *>("/bin/python3.10");
-	else if (type == PHP)
-		_argvToExec[0] = const_cast<char *>("/usr/bin/php-cgi");
-	
-	_argvToExec[1] = const_cast<char *>("site/CGI/scriptCGI/");// + _request->getScriptPath()); //SCRIPT TO EXECUTE
-	_argvToExec[2] = NULL;
-
-}
