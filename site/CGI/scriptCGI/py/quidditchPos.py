@@ -24,7 +24,7 @@ def main():
 
 	if preferred_quality in qualities:
 		position = qualities[preferred_quality]
-	else
+	else :
 		position = random.choice(list(qualities.values()))
 
 # html response

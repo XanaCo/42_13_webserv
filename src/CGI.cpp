@@ -233,7 +233,7 @@ void Cgi::executeScript() {
 
 		argvToExec[0] = const_cast<char *>("/bin/python3.10"); // TEST a effacer
 		
-		argvToExec[1] = const_cast<char *>("site/CGI/scriptCGI/");// + _request->getScriptPath()); //SCRIPT TO EXECUTE
+		argvToExec[1] = const_cast<char *>("site/CGI/scriptCGI/py/quidditchPos.py"); //+ _request->getScriptPath(); //SCRIPT TO EXECUTE//
 		argvToExec[2] = NULL;
 		
 		//closeallfds sockets
