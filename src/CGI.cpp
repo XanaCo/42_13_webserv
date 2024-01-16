@@ -11,6 +11,7 @@ Cgi::Cgi(ServerInfo &server, Request &req, Response &resp) {
 	this->_cgiLoc = server.getOneLocation("/CGI");
 	this->_request = &req;
 	this->_response = &resp;
+	this->_typeScript = identifyFile(_request->getPath());
 
 	if (PRINT)
 		std::cout << CGI << "🐥 constructor called" << std::endl;
@@ -69,7 +70,6 @@ void Cgi::setMethod(int method) {
 	return ;
 }
 
-
 int Cgi::getPipeOut() {
 
 	return this->_pipeOut[2];
@@ -115,15 +115,14 @@ char **Cgi::getCGIenvpToExec() const {
 	return this->_envpToExec;
 }
 
-char **Cgi::getCGIargvToExec() const {
-
-	return this->_argvToExec;
-}
-
+int		Cgi::getTypeScript() const {return _typeScript;}
+void	Cgi::setTypeScript(int typeScript) {_typeScript = typeScript;}
 
 // ************************************************************************** //
 //	METHODS
 // ************************************************************************** //
+
+
 
 int Cgi::setEnvironment(ServerInfo *server, Request *req) {
 
@@ -228,8 +227,18 @@ void Cgi::executeScript() {
 			exit(E_INTERNAL_SERVER);
 		}
 		
-		//setArgvToExec(_request->getScriptType()); // REQUEST tells me if I need to execute php or python?
-		setArgvToExec(PY); //TESTER
+	
+		char *argvToExec[3];
+		
+		if (_typeScript == PY)
+			argvToExec[0] = const_cast<char *>("/bin/python3.10");
+		else if (_typeScript == PHP)
+			argvToExec[0] = const_cast<char *>("/usr/bin/php-cgi");
+
+		argvToExec[0] = const_cast<char *>("/bin/python3.10"); // TEST a effacer
+		
+		argvToExec[1] = const_cast<char *>("site/CGI/scriptCGI/py/quidditchPos.py"); //+ _request->getScriptPath(); //SCRIPT TO EXECUTE//
+		argvToExec[2] = NULL;
 		
 		//closeallfds sockets
 		//clean logs?
@@ -241,7 +250,7 @@ void Cgi::executeScript() {
 		// 	/// _response->setReturnStatus(E_INTERNAL_SERVER);
 		// 	exit(1);
 		// }
-		execve(_argvToExec[0], _argvToExec, _envpToExec);
+		execve(argvToExec[0], argvToExec, _envpToExec);
 		// std::cerr << "Execve Failed" << std::endl; //EFFACER
 		// std::cout << "Test" << std::endl;
 		exit(E_INTERNAL_SERVER);
@@ -251,7 +260,8 @@ void Cgi::executeScript() {
 	
 }
 
-void Cgi::setArgvToExec(int type) {
+void Cgi::setArgvToExec(int type)
+{
 
 	if (type == PY)
 		_argvToExec[0] = const_cast<char *>("/bin/python3.10");

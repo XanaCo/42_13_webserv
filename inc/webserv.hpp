@@ -196,5 +196,7 @@ char 						**mapToCharTab(std::map<std::string, std::string> mapToConvert);
 void 						freeCharTab(char **charTab);
 void						deEncodingHexa(std::string& chaine);
 bool						isHtmlComplete(const std::string& html);
+int 						identifyFile(const std::string& str);
+
 
 #endif

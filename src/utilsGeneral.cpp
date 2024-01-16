@@ -140,3 +140,15 @@ bool isHtmlComplete(const std::string& html)
     }
     return c == 0;
 }
+
+int identifyFile(const std::string& str) // voir si on retourne une erreur en cas de ni .php ni py
+{
+    if (str.length() >= 3)
+	{
+        if (str.compare(str.length() - 3, 3, ".py") == 0)
+		{
+            return PY;
+        }
+    }
+    return PHP;
+}
