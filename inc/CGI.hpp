@@ -56,6 +56,7 @@ private:
 
 	std::map<std::string, std::string> _envpMap;
 	std::string _method;
+	
 	char **_envpToExec;
 	char **_argvToExec;
 

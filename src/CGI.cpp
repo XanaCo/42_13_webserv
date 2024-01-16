@@ -31,8 +31,8 @@ Cgi::Cgi(Cgi const &copy) {
 
 Cgi::~Cgi() {
 
-	if (this->_envpToExec)
-		freeCharTab(this->_envpToExec);
+	// if (this->_envpToExec)
+	// 	freeCharTab(this->_envpToExec);
 
 	if (PRINT)
 		std::cout << CGI << "🗑️  destructor called" << std::endl;
@@ -260,5 +260,4 @@ void Cgi::setArgvToExec(int type) {
 	
 	_argvToExec[1] = const_cast<char *>("site/CGI/scriptCGI/");// + _request->getScriptPath()); //SCRIPT TO EXECUTE
 	_argvToExec[2] = NULL;
-
 }
