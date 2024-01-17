@@ -323,9 +323,12 @@ void    Client::reset_client(void){
     this->_bytes_received = 0;
     this->_header_bytes = 0;
     this->_body_bytes = 0;
+    this->_bytes_to_send = 0;
+    this->_bytes_sent = 0;
     this->_received = "";
     this->_header = "";
     this->_body = "";
+    this->_to_send = "";
     this->_req_end = false;
     return ;
 }
@@ -395,7 +398,7 @@ void    Client::receive_header_data(char *buffer, int nbytes){
     size_t found = 0;
     if (this->_client_status == WANT_TO_RECEIVE_REQ && nbytes > 0)
         this->_client_status = RECEIVING_REQ_HEADER;
-    this->_received += buffer;
+    this->_received.append(buffer, nbytes);
     this->_bytes_received += nbytes;
     if (found_header_end(&found))
     {
@@ -425,7 +428,7 @@ void    Client::receive_header_data(char *buffer, int nbytes){
 
 void    Client::receive_body_data(char *buffer, int nbytes){
 
-    this->_received += buffer;
+    this->_received.append(buffer, nbytes);
     this->_bytes_received += nbytes;
     this->_body_bytes += nbytes;
     if (nbytes < BUFFER_SIZE)
@@ -457,9 +460,8 @@ std::string Client::make_temp_header(void){
         return (to_send);
 }
 
-bool    Client::send_data(void)
+/*bool    Client::send_data(void)
 {
-    //this->_client_status = RES_READY_TO_BE_SENT;
     if (this->_client_status == WAITING_FOR_RES)
         this->routine();
     else
@@ -474,19 +476,53 @@ bool    Client::send_data(void)
         this->_base->change_poll_event(this->_new_socket, pollin);
     }
     return true;
-}
-/*
-bool    Client::send_data(void)
-{ 
-            std::string to_send = this->_response->getContent();
-            int len = strlen(to_send.c_str());
-            if (!send_all(this->_new_socket, to_send.c_str(), &len))
-            {
-                std::cout << "Only " << len << " bytes have been sent because of error" << std::endl;
-                return false;
-            }
-            return true;
 }*/
+
+
+bool    Client::send_data(void)
+{
+    if (this->_client_status == WAITING_FOR_RES)
+        this->routine();
+    else
+    {
+        if (!send_partial(this->_new_socket))
+        {
+            std::cout << "Only " << _bytes_sent << " bytes have been sent because of error" << std::endl;
+            return false;
+        }
+    }
+    return true;
+}
+
+bool    Client::send_partial(int socket){
+
+    int sent = 0;
+    static bool craft_header = false;
+    if (!craft_header)
+    {
+        _to_send = make_temp_header();
+        _bytes_to_send = _to_send.size();
+        craft_header = true;
+    }
+    if (_bytes_to_send - _bytes_sent > BUFFER_SIZE)
+        sent = send(socket, _to_send.c_str() + _bytes_sent, BUFFER_SIZE, 0);
+    else
+        sent = send(socket, _to_send.c_str() + _bytes_sent, _bytes_to_send - _bytes_sent, 0);
+    if (sent == -1)
+    {
+        this->_client_status = ERROR_WHILE_SENDING;
+        return false;
+    }
+    _bytes_sent += sent;
+    if (_bytes_sent == _bytes_to_send)
+    {
+        craft_header = false;
+        this->_client_status = WANT_TO_RECEIVE_REQ;
+        this->_base->change_poll_event(this->_new_socket, pollin);
+    }
+    return true;
+}
+
 
 bool    Client::send_all(int s, const char *buf, int *len){
 
