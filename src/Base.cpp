@@ -37,8 +37,8 @@ Base::~Base(){
    
     for (unsigned int i = 0; i < _clients.size(); i++)
     {
-        delete _clients[i]->getRequest();
-        delete _clients[i]->getResponse();
+        //delete _clients[i]->getRequest();
+        //delete _clients[i]->getResponse();
         delete _clients[i];
     }
     _servers.clear();
