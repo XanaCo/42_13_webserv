@@ -1,10 +1,9 @@
 
 h1 {
+	font-family: 'Courier New', Courier, monospace;
 	text-align: center;
 	color: #fdfdfd;
-	font-family: 'Courier New', Courier, monospace;
 }
-
 
 html, body {
 	font-family: 'Avenir';
@@ -12,19 +11,7 @@ html, body {
 	margin: 20px;
 	padding: 20px;
 	text-align: center;
-}
-
-h2 {
-	color: #200dcc;
-}
-
-ul {
-	list-style-type: none;
-	padding: 0;
-}
-
-li {
-	margin-bottom: 10px;
+	cursor: url('../img/cursor.png'), auto;
 }
 
 a {
@@ -33,10 +20,17 @@ a {
 	background-color: #fdfdfd;
 	color: #000000;
 	text-decoration: none;
-	border-radius: 4px;
+	border-radius: 7px;
 	transition: background-color 0.3s;
 }
 
 a:hover {
-	background-color: #ebebeb;
+	background-color: #8b8686;
+}
+
+footer {
+	font-family: 'Courier New', Courier, monospace;
+	margin: 20px;
+	padding: 20px;
+	color: #fdfdfd;
 }

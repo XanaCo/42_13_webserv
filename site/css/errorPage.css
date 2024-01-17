@@ -1,0 +1,21 @@
+
+body {
+	font-family: 'Avenir';
+	background-color: #e65959;
+	color: #1a1a1a;
+	text-align: center;
+	padding: 50px;
+}
+.container {
+	max-width: 600px;
+	margin: 0 auto;
+}
+h1 {
+	color: #ffffff;
+}
+
+img {
+	width: 600px;
+	height: auto;
+	margin-top: 20px;
+}

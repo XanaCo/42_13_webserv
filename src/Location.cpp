@@ -198,7 +198,7 @@ void Location::checkLocationInfo() {
 	if (this->_pathRoot == "")
 		this->setLRoot("site/");
 	if (this->_uploadDir == "")
-		this->setLUploadDir("site/user/uploads");
+		this->setLUploadDir("site/testFiles/fileFolder");
 	if (this->_pathName == "/CGI")
 	{
 		for (size_t it = 0; it < this->getLCgi().size(); it++)

@@ -156,9 +156,6 @@ int Cgi::setEnvironment(ServerInfo *server, Request *req) {
 
 	//client specific
 		//HTTP_COOKIE
-	
-	//extras
-		//UPLOAD_DIR
 
 	this->_envpToExec = mapToCharTab(this->_envpMap);
 	if (!this->_envpToExec)
