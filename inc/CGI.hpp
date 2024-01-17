@@ -26,7 +26,8 @@ public:
 	void setRequest(Request &req);
 	void setResponse(Request &resp);
 	void setMethod(int method);
-	int setEnvironment(ServerInfo *server, Request *req);
+	int  setEnvironment(ServerInfo *server, Request *req);
+	void setTypeScript(int typeScript);
 
 	int getPipeOut();
 	int getPipeIn();
@@ -35,12 +36,15 @@ public:
 	Location *getCGILoc() const;
 	Request *getCGIRequest();
 	Response *getCGIResponse();
+	int		 getTypeScript() const;
 
 	std::map<std::string, std::string> &getenvpMap();
 	std::string &getCGIMethod();
 	char **getCGIenvpToExec() const;
 
 	void executeScript();
+	void setArgvToExec(int type);
+
 
 private:
 
@@ -52,9 +56,12 @@ private:
 	Request *_request;
 	Response *_response;
 
-	std::map<std::string, std::string> _envpMap;
-	std::string _method;
-	char **_envpToExec;
+	std::map<std::string, std::string>	_envpMap;
+	std::string 						_method;
+	
+	char			**_argvToExec;
+	char			**_envpToExec;
+	int				_typeScript;
 
 };
 

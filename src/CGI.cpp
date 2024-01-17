@@ -11,6 +11,7 @@ Cgi::Cgi(ServerInfo &server, Request &req, Response &resp) {
 	this->_cgiLoc = server.getOneLocation("/CGI");
 	this->_request = &req;
 	this->_response = &resp;
+	this->_typeScript = identifyFile(_request->getPath());
 
 	if (PRINT)
 		std::cout << CGI << "🐥 constructor called" << std::endl;
@@ -114,10 +115,14 @@ char **Cgi::getCGIenvpToExec() const {
 	return this->_envpToExec;
 }
 
+int		Cgi::getTypeScript() const {return _typeScript;}
+void	Cgi::setTypeScript(int typeScript) {_typeScript = typeScript;}
 
 // ************************************************************************** //
 //	METHODS
 // ************************************************************************** //
+
+
 
 int Cgi::setEnvironment(ServerInfo *server, Request *req) {
 
@@ -248,3 +253,14 @@ void Cgi::executeScript() {
 	
 }
 
+void Cgi::setArgvToExec(int type)
+{
+
+	if (type == PY)
+		_argvToExec[0] = const_cast<char *>("/bin/python3.10");
+	else if (type == PHP)
+		_argvToExec[0] = const_cast<char *>("/usr/bin/php-cgi");
+	
+	_argvToExec[1] = const_cast<char *>("site/CGI/scriptCGI/");// + _request->getScriptPath()); //SCRIPT TO EXECUTE
+	_argvToExec[2] = NULL;
+}
