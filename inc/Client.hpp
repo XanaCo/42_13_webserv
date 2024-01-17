@@ -44,11 +44,14 @@ class   Client{
         int                         _client_status;
         std::string                 _header;
         std::string                 _body;
+        std::string                 _to_send;
         int                         _bytes_received;
         int                         _header_bytes;
         int                         _body_bytes;
         int                         _max_body_size;
         bool                        _req_end;
+        int                         _bytes_to_send;
+        int                         _bytes_sent;
         std::vector<ServerInfo>     _servers;
         Base *                      _base;
 
@@ -76,6 +79,7 @@ class   Client{
         void            receive_body_data(char *buffer, int nbytes);
 
         bool            send_all(int s, const char *buf, int *len);                                            
+        bool            send_partial(int socket);                                            
         void            reset_client(void);
         std::string     make_temp_header(void);
         bool            send_data(void);
