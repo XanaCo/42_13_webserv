@@ -1,94 +1,77 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WEBSERV</title>
-    <style>
-        
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
+	<meta charset="utf-8">
+	<title>WEBSERV</title>
+	<!-- <link rel="stylesheet" href="css/index.css"/>  POURQUOI NE MARCHE PAS EN LINK!!?-->
+	<style>
+	
+	h1 {
+		text-align: center;
+		color: #fdfdfd;
+		font-family: 'Courier New', Courier, monospace;
+	}
+	
+	html, body {
+		font-family: 'Avenir';
+		background-color: #b6b6b6;
+		margin: 20px;
+		padding: 20px;
+		text-align: center;
+	}
+	
+	button {
+		padding: 5px 10px;
+		background-color: #fdfdfd;
+		color: #000000;
+		text-decoration: none;
+		border-radius: 4px;
+		transition: background-color 0.3s;
+	}
 
-        header, footer {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 10px;
-        }
-
-        .flex-container {
-            display: flex;
-            /* flex-direction: column; */
-            justify-content: center;
-			margin: 10px
-        }
-
-        main {
-            margin-top: 20px;
-			margin-bottom: 20px;
-        }
-
-		button {
-            padding: 20px 20px;
-            font-size: 16px;
-            background-color: #e2065b;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #e984ab;
-        }
-
-    </style>
+	a {
+		display: inline-block;
+		padding: 7px 30px;
+		background-color: #fdfdfd;
+		color: #000000;
+		text-decoration: none;
+		border-radius: 4px;
+		transition: background-color 0.3s;
+	}
+	
+	a:hover {
+		background-color: #a0a0a0;
+	}
+	</style>
 </head>
+
 <body>
 
-    <header>
-        <h1>Webserv</h1>
-    </header>
+	<header>
+		<h1>Webserv</h1>
+	</header>
 
-    <main>
-	
-			<div class="flex-container">    
-				<form action="https://theuselessweb.com/" method="get" target="_blank">
-					<button type="submit">Redirection</button>
-				</form>
-			</div>
+	<div>
+	<div id ="Index">
+		<h2>
+			<a href="https://theuselessweb.com/" title="Redirection"><span class="h2">The Useless Web</span></a>
+		</h2>
 
-			<div class="flex-container">
-				<form action="testPages/" method="get" target="_blank">
-					<button type="submit">Method Tests</button>
-				</form>
-			</div>
+		<h2>
+			<a href="testFiles" title="upload and download"><span class="h2">File testing</span></a>
+		</h2>
 
-			<div class="flex-container">
-				<form action="testFiles/" method="get" target="_blank">
-					<button type="submit">File Tests</button>
-				</form>
-			</div>
+		<h2>
+			<a href="testPages" title="method testing"><span class="h2">Method testing</span></a>
+		</h2>
 
-			<div class="flex-container">
-				<form action="CGI/quidditchPos.html" method="get" target="_blank">
-					<button type="submit">Test CGI 01</button>
-				</form>
-			</div>
+		<h2>
+			<a href="CGI/cgi.html" title="CGI testing"><span class="h2">CGI testing</span></a>
+		</h2>
 
-			<div class="flex-container">
-				<form action="CGI/sortingHat.html" method="get" target="_blank">
-					<button type="submit">Test CGI 02</button>
-				</form>
-			</div>
-
-			<!-- PLUS DE SCRIPTS ?-->
-
-			<div class="flex-container">
-				<button id="sendRequestButton">Send Request</button>
-			</div>
+	<div class="flex-container">
+		<button id="sendRequestButton">Send Request</button>
+	</div>
 
 	<script>
         document.getElementById('sendRequestButton').addEventListener('click', function() {
@@ -122,7 +105,7 @@
             xhr.send(dataToSend);
         });
         </script>
-    </main>
+
 
     <footer>
         <p>© 2023 Le crabe, la pieuvre, le guepard. Tous droits réservés.</p>

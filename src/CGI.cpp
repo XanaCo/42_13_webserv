@@ -218,14 +218,13 @@ void Cgi::executeScript() {
 		
 		if (setEnvironment(this->getCGIServer(), this->getCGIRequest()) == -1)
 		{
-			std::cerr << "Set ENV Failed" << std::endl; //EFFACER
+			//std::cerr << "Set ENV Failed" << std::endl; //EFFACER
 			exit(E_INTERNAL_SERVER);
 		}
 		
-	
 		char *argvToExec[3];
 		
-		//setArgvToExec(_request->getScriptType()); // REQUEST tells me if I need to execute php or python?
+			// REQUEST tells me if I need to execute php or python?
 		// if (_request->getScriptType() == PY)
 		// 	argvToExec[0] = const_cast<char *>("/bin/python3.10");
 		// else if (_request->getScriptType() == PHP)
@@ -233,22 +232,15 @@ void Cgi::executeScript() {
 
 		argvToExec[0] = const_cast<char *>("/bin/python3.10"); // TEST a effacer
 		
+			// REQUEST gives me the script path?
 		argvToExec[1] = const_cast<char *>("site/CGI/scriptCGI/py/quidditchPos.py"); //+ _request->getScriptPath(); //SCRIPT TO EXECUTE//
 		argvToExec[2] = NULL;
 		
-		//closeallfds sockets
-		//clean logs?
+		//closeallfds sockets?
 
-		// if (execve(_argvToExec[0], _argvToExec, _envpToExec) == -1)
-		// {
-		// 	std::cerr << "Execve Failed" << std::endl; //EFFACER
-		// 	//REVISER SI THROW ERROR OU RETURN (WAITPID?)
-		// 	/// _response->setReturnStatus(E_INTERNAL_SERVER);
-		// 	exit(1);
-		// }
 		execve(argvToExec[0], argvToExec, _envpToExec);
 		// std::cerr << "Execve Failed" << std::endl; //EFFACER
-		// std::cout << "Test" << std::endl;
+		// free envpExec
 		exit(E_INTERNAL_SERVER);
 
 	}
