@@ -28,6 +28,11 @@ def main():
 		position = random.choice(list(qualities.values()))
 
 # html response
+print("status-code: 200\n")
+print("content-type: text/html\n")
+print("protocol: HTTP/1.1\n")
+print("\n")
+
 print("<html><body>")
 print(f"<h1>Position Assignment</h1>")
 print(f"<p>{name}, you are a <strong>{position}</strong>.</p>")

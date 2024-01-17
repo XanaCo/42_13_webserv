@@ -25,7 +25,7 @@ public:
 
 	void setRequest(Request &req);
 	void setResponse(Request &resp);
-	void setMethod(int method);
+	int setMethod(int method);
 	int  setEnvironment(ServerInfo *server, Request *req);
 	void setTypeScript(int typeScript);
 
@@ -62,6 +62,7 @@ private:
 	char			**_argvToExec;
 	char			**_envpToExec;
 	int				_typeScript;
+	//int				_timestart;
 
 };
 

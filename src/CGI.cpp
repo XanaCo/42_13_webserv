@@ -12,6 +12,7 @@ Cgi::Cgi(ServerInfo &server, Request &req, Response &resp) {
 	this->_request = &req;
 	this->_response = &resp;
 	this->_typeScript = identifyFile(_request->getPath());
+	this->_method = "";
 
 	if (PRINT)
 		std::cout << CGI << "🐥 constructor called" << std::endl;
@@ -60,14 +61,16 @@ Cgi &Cgi::operator=(Cgi const &other) {
 //	LA GET-SET
 // ************************************************************************** //
 
-void Cgi::setMethod(int method) {
+int Cgi::setMethod(int method) {
 
 	if (method == GET)
 		this->_method = "GET";
 	else if (method == POST)
 		this->_method = "POST";
+	else
+		return 1;
 
-	return ;
+	return 0;
 }
 
 int Cgi::getPipeOut() {
@@ -122,47 +125,39 @@ void	Cgi::setTypeScript(int typeScript) {_typeScript = typeScript;}
 //	METHODS
 // ************************************************************************** //
 
-
-
 int Cgi::setEnvironment(ServerInfo *server, Request *req) {
 
 	//general:
 		this->_envpMap["SERVER_SOFTWARE"] = "Webserv/1.0";
 		this->_envpMap["SERVER_NAME"] = server->getServerName();
-		this->_envpMap["GATEWAY_INTERFACE"] = "CGI/1.1";
+		this->_envpMap["GATEWAY_INTERFACE"] = "CGI/1.0";
 
 	//request specific:
 		this->_envpMap["SERVER_PROTOCOL"] = "HTTP/1.1";
 		this->_envpMap["SERVER_PORT"] = server->getListen();
-		setMethod(req->getMethod());
+		if (setMethod(req->getMethod()))
+			return -1;		
 		this->_envpMap["REQUEST_METHOD"] = this->_method;
 		//PATH_INFO - request->URIPathInfo (extra info about the script directory location, others directories inside)
 		this->_envpMap["PATH_INFO"] = "req.getPathInfo()";
-		//PATH_TRANSLATED - request->getPath() (path to the script to use)
-		this->_envpMap["PATH_TRANSLATED"] = req->getPath();
-		//SCRIPT_NAME - virtual path of the script
-		this->_envpMap["SCRIPT_NAME"] = this->_cgiLoc->getLPathName();
-		//QUERY_STRING - request->URIQuery (string apres character ? in URL)
-		this->_envpMap["QUERY_STRING"] = "";
-		//REMOTE_HOST - request->_ClientHostName (hostname of the client. Can be "")
+		//PATH_TRANSLATED - request->getPath() (path to the script to use) //reviser
+		this->_envpMap["PATH_TRANSLATED"] = this->_cgiLoc->getLPathName();
+		//SCRIPT_NAME - virtual path of the script //reviser
+		this->_envpMap["SCRIPT_NAME"] = req->getPath();
+		this->_envpMap["QUERY_STRING"] = req->getArgs();
 		this->_envpMap["REMOTE_HOST"] = req->getHost();
 		//REMOTE_ADDR - request->_ClientAddress (IP address of the client)
 		this->_envpMap["REMOTE_ADDR"] = "";
-		this->_envpMap["AUTH_TYPE"] = "Basic";
-		//CONTENT_TYPE - request->getContentType (MIME type of the data sent to the CGI script)
+		// debat pour garder cette variable juste en dessous
+		// this->_envpMap["AUTH_TYPE"] = "Basic";
 		this->_envpMap["CONTENT_TYPE"] = req->getContentType();
-		//CONTENT_LENGTH -request->getContentLength (length in bytes of the request body)
-		this->_envpMap["CONTENT_LENGTH"] = req->getBody();
+		this->_envpMap["CONTENT_LENGTH"] = req->getContentLength(); // att!! INTTOSTR
+		this->_envpMap["CONTENT_BODY"] = req->getBody();
 
 	//client specific
-		//needed?- HTTP_ACCEPT - The MIME types which the client will accept, as given by HTTP headers. Other protocols may need to get this information from elsewhere. Each item in this list should be separated by commas as per the HTTP spec. Format: type/subtype, type/subtype
-		//needed? - HTTP_ACCEPT_LANGUAGE - Accepted Response Languages Exemple : fr_CA, fr
-		//needed?- HTTP_USER_AGENT - The browser the client is using to send the request. General format: software/version library/version. EX: Mozilla/5.0 (compatible; Konqueror/3; Linux)
 		//HTTP_COOKIE
-		//needed? HTTP_REFERER
 	
 	//extras
-		//REDIRECT_STATUS - "200"
 		//UPLOAD_DIR
 
 	this->_envpToExec = mapToCharTab(this->_envpMap);
@@ -190,6 +185,7 @@ void Cgi::executeScript() {
 		return;
 	}
 
+	// start timer _timestart
 	_response->setCgiPid(fork());
 	if (_response->getCgiPid() == -1)
 	{
@@ -244,8 +240,7 @@ void Cgi::executeScript() {
 		//closeallfds sockets?
 
 		execve(argvToExec[0], argvToExec, _envpToExec);
-		// std::cerr << "Execve Failed" << std::endl; //EFFACER
-		// free envpExec
+		freeCharTab(this->_envpToExec);
 		exit(E_INTERNAL_SERVER);
 
 	}
