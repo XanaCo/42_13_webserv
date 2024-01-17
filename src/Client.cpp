@@ -460,7 +460,7 @@ std::string Client::make_temp_header(void){
         return (to_send);
 }
 
-bool    Client::send_data(void)
+/*bool    Client::send_data(void)
 {
     if (this->_client_status == WAITING_FOR_RES)
         this->routine();
@@ -476,9 +476,9 @@ bool    Client::send_data(void)
         this->_base->change_poll_event(this->_new_socket, pollin);
     }
     return true;
-}
+}*/
 
-/*
+
 bool    Client::send_data(void)
 {
     if (this->_client_status == WAITING_FOR_RES)
@@ -492,7 +492,7 @@ bool    Client::send_data(void)
         }
     }
     return true;
-}*/
+}
 
 bool    Client::send_partial(int socket){
 
