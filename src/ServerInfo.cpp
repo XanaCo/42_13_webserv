@@ -519,7 +519,8 @@ bool ServerInfo::findRessource(std::string path, std::string& newPath) const
     {
         if (nameDir == it->getLPathName())
         {
-            newPath = _Root + getNameFile(path);
+            //newPath = _Root + getNameFile(path);
+            newPath = _Root + nameDir + "/" + getNameFile(path); // Modifie par Alban, a remettre
             return true;
         }
     }

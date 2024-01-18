@@ -141,6 +141,23 @@ bool    Client::getRes()
         }
 
     }
+    //Gros pansement, a mettre au propre
+    std::string type;
+    if (_request->getPath().find("css") != std::string::npos)
+    {
+        type.append("text/css");
+        this->_response->setContentType(type);
+    }
+    else if (_request->getPath().find("img") != std::string::npos)
+    {
+        type.append("image/png");
+        this->_response->setContentType(type);
+    }
+    else
+    {
+        type.append("text/html");
+        this->_response->setContentType(type);
+    }
     return (_response->readRessource(_fdRessource));
 }
 
@@ -456,7 +473,7 @@ std::string Client::make_temp_header(void){
         int cont_len = this->getResponse()->getContent().size();
         std::stringstream con;
         con << cont_len;
-        std::string to_send = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " + con.str() + "\n\n" + this->getResponse()->getContent() + "\r\n\r\n";
+        std::string to_send = "HTTP/1.1 200 OK\nContent-Type: " + this->getResponse()->getContentType() + "\nContent-Length: " + con.str() + "\n\n" + this->getResponse()->getContent() + "\r\n\r\n";
         return (to_send);
 }
 

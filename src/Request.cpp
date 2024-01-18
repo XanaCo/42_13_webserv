@@ -54,8 +54,8 @@ void    Request::fillArgs(std::string str)
 {
     std::istringstream    ss(str);
 
-    std::getline(ss, _path, '?');
-    std::getline(ss, _args, ' ');
+    std::getline(ss, _path, ' '); //Modifie par Alban, a remettre en etat
+    std::getline(ss, _args, ' ');//Modifie par Alban, a remettre en etat
     std::getline(ss, _version, '\0');
 }
 
