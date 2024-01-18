@@ -1,14 +1,21 @@
 <!DOCTYPE html>
-<html lang="fr">
-	<head>
-    	<title>Ma Page Other</title>
-    		<style>
-       		/* Ajoutez votre CSS ici si nécessaire */
-    		</style>
-	</head>
-	<body>
-        <p>This is the UPLOAD PAGE TODO</p>
-	</body>
-</html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Upload</title>
+	<link rel="stylesheet" href="../css/filesStyle.css" />
+	<link rel="icon" type="image/png" href="../img/w.png" /> 
+</head>
+
+<body>
+	<h1>Upload Your File</h1>
+    <form action="scriptFiles/FileUpload.php" method="post" enctype="multipart/form-data">
+        <label for="file">Select a file:</label>
+        <input type="file" name="file" id="file" required>
+        <br>
+        <input type="submit" value="Upload">
+    </form>
+</body>
 </html>
 

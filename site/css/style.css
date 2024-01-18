@@ -10,7 +10,7 @@ h2 {
 	font-family: 'Courier New', Courier;
 	font-size: 1em;
 	text-align: center;
-	color: #fdfdfd;
+	color: #797878;
 }
 
 html, body {
@@ -19,7 +19,7 @@ html, body {
 	margin: 20px;
 	padding: 20px;
 	text-align: center;
-	cursor: url('../img/cursor.png'), auto;
+	cursor: url('../img/cursor.png');
 }
 
 a {
@@ -33,7 +33,22 @@ a {
 }
 
 a:hover {
-	background-color: #8b8686;
+	background-color: #8b8b86;
+}
+
+button {
+	display: inline-block;
+	padding: 7px 7px;
+	background-color: #fdfdfd;
+	color: #000000;
+	text-decoration: none;
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+button:hover {
+	background-color: #8b8b86;
+	color: #ffffff;
 }
 
 footer {

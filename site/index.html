@@ -18,19 +18,19 @@
 	<div id ="Index">
 
 		<h2>
-			<a href="index.html" title="method testing"><span class="h2">Home</span></a>
+			<a href="index.html" title="go to index"><span class="h2">Home</span></a>
 		</h2>
 
 		<h2>
-			<a href="testPages" title="method testing"><span class="h2">Method testing</span></a>
-		</h2>
-		
-		<h2>
-			<a href="testFiles" title="upload and download"><span class="h2">File testing</span></a>
+			<a href="testPages/methodTesting.html" title="method testing"><span class="h2">Method testing</span></a>
 		</h2>
 		
 		<h2>
 			<a href="CGI/cgi.html" title="CGI testing"><span class="h2">CGI testing</span></a>
+		</h2>
+		
+		<h2>
+			<a href="testFiles" title="upload and download"><span class="h2">Files</span></a>
 		</h2>
 		
 		<h2>
@@ -42,42 +42,41 @@
 	</div>
 
 	<script>
-        document.getElementById('sendRequestButton').addEventListener('click', function() {
-            // Créer une instance de l'objet XMLHttpRequest
-            var xhr = new XMLHttpRequest();
-        
-            // Configurer la requête avec la méthode, l'URL et le type de requête
-            xhr.open('POST', 'http://localhost:8282/index.html', true);
-        
-            // Configurer les en-têtes de la requête
-            xhr.setRequestHeader('Content-Type', 'text/plain');
-        
-            // Fonction de rappel appelée lorsque la requête est terminée
-            xhr.onload = function()
-            {
-                if (xhr.status >= 200 && xhr.status < 300)
-                    console.log(xhr.responseText);
-                else
-                    console.error('La requête a échoué avec le statut : ' + xhr.status);
-            };
-        
-            // Gérer les erreurs réseau
-            xhr.onerror = function() {
-                console.error('Erreur réseau lors de la requête');
-            };
-        
-            // Récupérer les données du formulaire (dans cet exemple, vous pouvez définir le texte à envoyer)
-            var dataToSend = 'oui';
-        
-            // Envoyer la requête avec les données
-            xhr.send(dataToSend);
-        });
-        </script>
+		document.getElementById('sendRequestButton').addEventListener('click', function() {
+			// Créer une instance de l'objet XMLHttpRequest
+			var xhr = new XMLHttpRequest();
+		
+			// Configurer la requête avec la méthode, l'URL et le type de requête
+			xhr.open('POST', 'http://localhost:8282/index.html', true);
+			
+			// Configurer les en-têtes de la requête
+			xhr.setRequestHeader('Content-Type', 'text/plain');
+			
+			// Fonction de rappel appelée lorsque la requête est terminée
+			xhr.onload = function()
+			{
+				if (xhr.status >= 200 && xhr.status < 300)
+					console.log(xhr.responseText);
+				else
+					console.error('La requête a échoué avec le statut : ' + xhr.status);
+			};
 
+			// Gérer les erreurs réseau
+			xhr.onerror = function() {
+				console.error('Erreur réseau lors de la requête');
+			};
 
-    <footer>
-        <p>© 2024 Le crabe, la pieuvre, le guepard. Tous droits réservés.</p>
-    </footer>
+			// Récupérer les données du formulaire (dans cet exemple, vous pouvez définir le texte à envoyer)
+			var dataToSend = 'oui';
+
+			// Envoyer la requête avec les données
+			xhr.send(dataToSend);
+		});
+	</script>
+
+	<footer>
+		<p>© 2024 Le crabe, la pieuvre, le guepard. Tous droits réservés.</p>
+	</footer>
 
 </body>
 </html>

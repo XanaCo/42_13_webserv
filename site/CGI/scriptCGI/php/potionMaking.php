@@ -2,7 +2,7 @@
 <?php
 
 // Read the selected ingredients from the form
-$selectedIngredients = array_map('strval', $_POST['ingredients'] ?? []);
+$selectedIngredients = $_POST['ingredients'] ?? [];
 
 // Map of ingredients to their corresponding Harry Potter names
 $ingredientNames = [
@@ -16,11 +16,11 @@ $ingredientNames = [
 
 // Map of ingredient combinations to potion names
 $potionRecipes = [
-    ["lacewing_flies", "leeches"] => "Polyjuice Potion",
-    ["knotgrass", "fluxweed"] => "Felix Felicis",
+    "lacewing_flies,leeches" => "Polyjuice Potion",
+    "knotgrass,fluxweed" => "Felix Felicis",
     // Add more potion recipes as needed
     // Example:
-    ["some_ingredient", "another_ingredient"] => "Another Potion",
+    "some_ingredient,another_ingredient" => "Another Potion",
 ];
 
 // List of predefined potion names
@@ -46,10 +46,7 @@ function generatePotionName($ingredients, $ingredientNames, $potionRecipes, $pre
     foreach ($potionRecipes as $recipeIngredients => $potionName) {
         // Ensure that keys are strings for comparison
         $recipeIngredients = array_map('strval', $recipeIngredients);
-        // Sort the arrays to ensure order doesn't matter
-        sort($recipeIngredients);
-        sort($ingredients);
-        if ($recipeIngredients === $ingredients) {
+        if (array_diff($ingredients, $recipeIngredients) === array_diff($recipeIngredients, $ingredients)) {
             return $potionName;
         }
     }
@@ -73,13 +70,16 @@ function generatePotionName($ingredients, $ingredientNames, $potionRecipes, $pre
 $potionName = generatePotionName($selectedIngredients, $ingredientNames, $potionRecipes, $predefinedPotionNames);
 
 // Print the CGI header
-header("Content-type: text/html");
+header("content-type: text/html");
+header("status-code: 200");
+header("protocol: HTTP/1.1");
+header("");
 
 // Output HTML content
 echo "<html>";
-echo "<head><title>Harry Potter Potion Result</title></head>";
+echo "<head><title>Magical Potion Result</title></head>";
 echo "<body>";
-echo "<h1>Harry Potter Potion Created!</h1>";
+echo "<h1>Magical Potion Created!</h1>";
 echo "<p>Your potion, named <strong>$potionName</strong>, has been successfully brewed.</p>";
 echo "<p>Enjoy your magical concoction!</p>";
 echo "</body>";

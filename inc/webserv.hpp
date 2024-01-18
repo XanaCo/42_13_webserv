@@ -183,6 +183,7 @@ void 						printCharTab(char **charTab);
 
 // Parsing utils
 int							strToInt(const std::string& str);
+std::string					intToStr(const int number);
 std::vector<std::string>	splitString(const std::string& input, char delimiter);
 void						eraseComments(std::string &content);
 std::vector<std::string>	cSplitLine(std::string line, char const *charset);
