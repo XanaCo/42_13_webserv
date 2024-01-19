@@ -88,7 +88,7 @@ std::string getNameDir(const std::string& path)
 {
     size_t lastSep = path.find_last_of('/');
     
-    if (lastSep != std::string::npos)
+    if (lastSep != std::string::npos && path[1])
     {
         if (lastSep == 0)
             return path;

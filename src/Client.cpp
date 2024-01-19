@@ -115,7 +115,7 @@ bool    Client::getRes()
 
 
         }
-        if (_request->getPath().find("/CGI/") != std::string::npos)
+        if (_request->getPath().find("/CGI/") != std::string::npos && !_request->getPath().find("html"))
         {
             if (!_server->findCgiRessource(_request->getPath(), path))
                 std::cerr << "Run : on ne trouve pas la ressource CGI" << std::endl;
