@@ -19,6 +19,17 @@ int strToInt(const std::string& str) {
 	return (result * sign);
 }
 
+std::string intToStr(const int number) {
+
+	std::string res;
+	std::stringstream ss;
+
+	ss << number;
+	res = ss.str();
+
+	return res;
+}
+
 char **mapToCharTab(std::map<std::string, std::string> mapToConvert) { // A TESTER
 
 	std::map<std::string, std::string>::iterator iter;

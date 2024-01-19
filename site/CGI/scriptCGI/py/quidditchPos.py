@@ -27,12 +27,13 @@ def main():
 	else :
 		position = random.choice(list(qualities.values()))
 
-# html response
-print("status-code: 200\n")
-print("content-type: text/html\n")
-print("protocol: HTTP/1.1\n")
-print("\n")
+# HTTP Header
+print("content-type: text/html")
+print("status-code: 200")
+print("protocol: HTTP/1.1")
+print()
 
+# html response
 print("<html><body>")
 print(f"<h1>Position Assignment</h1>")
 print(f"<p>{name}, you are a <strong>{position}</strong>.</p>")

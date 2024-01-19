@@ -27,6 +27,12 @@ def main():
 	else
 		selected_house = random.choice(list(creatures.values()))
 
+# HTTP Header
+print("content-type: text/html")
+print("status-code: 200")
+print("protocol: HTTP/1.1")
+print()
+
 # html response
 print("<html><body>")
 print(f"<h1>Sorting Hat Result</h1>")

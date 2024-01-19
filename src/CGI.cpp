@@ -138,20 +138,20 @@ int Cgi::setEnvironment(ServerInfo *server, Request *req) {
 		if (setMethod(req->getMethod()))
 			return -1;		
 		this->_envpMap["REQUEST_METHOD"] = this->_method;
-		//PATH_INFO - request->URIPathInfo (extra info about the script directory location, others directories inside)
-		this->_envpMap["PATH_INFO"] = "req.getPathInfo()";
-		//PATH_TRANSLATED - request->getPath() (path to the script to use) //reviser
+			//PATH_INFO - request->URIPathInfo (extra info about the script directory location, others directories inside)
+		this->_envpMap["PATH_INFO"] = "";
+			//PATH_TRANSLATED - request->getPath() (path to the script to use) //reviser
 		this->_envpMap["PATH_TRANSLATED"] = this->_cgiLoc->getLPathName();
-		//SCRIPT_NAME - virtual path of the script //reviser
+			//SCRIPT_NAME - virtual path of the script //reviser
 		this->_envpMap["SCRIPT_NAME"] = req->getPath();
 		this->_envpMap["QUERY_STRING"] = req->getArgs();
 		this->_envpMap["REMOTE_HOST"] = req->getHost();
-		//REMOTE_ADDR - request->_ClientAddress (IP address of the client)
+			//REMOTE_ADDR - request->_ClientAddress (IP address of the client)
 		this->_envpMap["REMOTE_ADDR"] = "";
 		// debat pour garder cette variable juste en dessous
 		// this->_envpMap["AUTH_TYPE"] = "Basic";
 		this->_envpMap["CONTENT_TYPE"] = req->getContentType();
-		this->_envpMap["CONTENT_LENGTH"] = req->getContentLength(); // att!! INTTOSTR
+		this->_envpMap["CONTENT_LENGTH"] = intToStr(req->getContentLength());
 		this->_envpMap["CONTENT_BODY"] = req->getBody();
 
 	//client specific
@@ -222,36 +222,35 @@ void Cgi::executeScript() {
 		
 		char *argvToExec[3];
 		
-			// REQUEST tells me if I need to execute php or python?
+		// REQUEST tells me if I need to execute php or python?
 		// if (_request->getScriptType() == PY)
-		// 	argvToExec[0] = const_cast<char *>("/bin/python3.10");
+		// 	argvToExec[0] = const_cast<char *>("python3.10");
 		// else if (_request->getScriptType() == PHP)
-		// 	argvToExec[0] = const_cast<char *>("/usr/bin/php-cgi");
+		// 	argvToExec[0] = const_cast<char *>("php-cgi");
 
-		argvToExec[0] = const_cast<char *>("/bin/python3.10"); // TEST a effacer
+		argvToExec[0] = const_cast<char *>("python3"); // TEST a effacer
 		
 			// REQUEST gives me the script path?
 		argvToExec[1] = const_cast<char *>("site/CGI/scriptCGI/py/quidditchPos.py"); //+ _request->getScriptPath(); //SCRIPT TO EXECUTE//
 		argvToExec[2] = NULL;
-		
-		//closeallfds sockets?
+
+		//check if allsockets are closed
 
 		execve(argvToExec[0], argvToExec, _envpToExec);
-		freeCharTab(this->_envpToExec);
+		freeCharTab(this->_envpToExec); // check
 		exit(E_INTERNAL_SERVER);
 
 	}
 	_response->setCgiFdRessource(_pipeOut[0]); //copies fd out in parent response?
-	
 }
 
 void Cgi::setArgvToExec(int type)
 {
 
 	if (type == PY)
-		_argvToExec[0] = const_cast<char *>("/bin/python3.10");
+		_argvToExec[0] = const_cast<char *>("python3.10");
 	else if (type == PHP)
-		_argvToExec[0] = const_cast<char *>("/usr/bin/php-cgi");
+		_argvToExec[0] = const_cast<char *>("php-cgi");
 	
 	_argvToExec[1] = const_cast<char *>("site/CGI/scriptCGI/");// + _request->getScriptPath()); //SCRIPT TO EXECUTE
 	_argvToExec[2] = NULL;
