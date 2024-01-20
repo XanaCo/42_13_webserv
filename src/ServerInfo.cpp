@@ -432,8 +432,6 @@ void ServerInfo::setListen(std::string port) {
 	this->_listen = port;
 }
 
-
-
 void ServerInfo::setTimeout(std::string timeout) {
 
 	int res = strToInt(timeout);
@@ -522,6 +520,8 @@ bool ServerInfo::findRessource(std::string path, std::string& newPath) const
         if (nameDir == it->getLPathName())
         {
             //newPath = _Root + getNameFile(path);
+            if (it->getLAutoindex())
+                return true;
             newPath = _Root + nameDir + "/" + getNameFile(path); // Modifie par Alban, a remettre
             return true;
         }

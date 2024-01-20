@@ -132,6 +132,8 @@ bool    Client::getRes()
                 // la ressource n'a pas ete trouvee 404
                 // ouvrir un fd de la loose
             }
+            if (_server->getOneLocation(path)->getLAutoindex())
+                return (this->_response->craftAutoIndex(path));
             _fdRessource = open(path.c_str(), O_RDONLY);
             if (_fdRessource < 0)
             {

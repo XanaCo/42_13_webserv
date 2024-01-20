@@ -39,6 +39,13 @@ std::ostream&   operator<<(std::ostream& os, const Response& obj)
 //	GET / POST / DELETE METHODS
 // ************************************************************************** //
 
+bool    Response::craftAutoIndex(std::string path){
+
+
+
+    return true;
+}
+
 bool    Response::readRessource(int fd)
 {
     char    buffer[BUFFER_SIZE];
