@@ -40,7 +40,8 @@ std::ostream&   operator<<(std::ostream& os, const Response& obj)
 // ************************************************************************** //
 
 bool    Response::craftAutoIndex(std::string path){
-
+    
+    (void)path;
 
 
     return true;

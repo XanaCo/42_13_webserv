@@ -157,14 +157,12 @@ int identifyFile(const std::string& str) // voir si on retourne une erreur en ca
     return PHP;
 }
 
-/*bool    getactualTimestamp(long *actual){
 
-    struct timeval tv;
+void    getactualTimestamp(void){
 
-    if(gettimeofday(&tv, NULL) < 0)
-        return false;
+    std::time_t actualTime = std::time(0);
+    std::tm *localTime = std::localtime(&actualTime);
 
-
-
-    
-}*/
+    std::cout << localTime->tm_hour << ":" << localTime->tm_min << ":" << localTime->tm_sec << " ";
+    return ;
+}
