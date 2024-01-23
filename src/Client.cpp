@@ -77,6 +77,35 @@ std::ostream &  operator<<(std::ostream & o, Client const & rhs){
 //  v METHODS PABLO v
 // ************************************************************************** //
 
+bool    Client::parseCgiExit()
+{
+    std::vector<std::string>    lines = splitString(_body, '\n');
+
+    int size = lines.size();
+    for (int i = 0; i < size; i++)
+    {
+        int length = lines[0].size();
+        if (length >= 13 && lines[i].substr(0, 13) == "content-type:")
+            _response->setContentType(lines[i]);
+        else if (length >= 12 && lines[i].substr(0, 12) == "status-code:")
+            _response->setContentType(lines[i]);
+        else if (length >= 8 && lines[i].substr(0, 8) == "protocol:")
+            _response->setProtocol(lines[i]);
+        else if (length >= 6 && lines[i].substr(0, 6) == "<html>")
+        {
+            _response->setContent(lines[i]);
+            for (; i < size; i++)
+            {
+                std::string newContent = _response->getContent() + "\n" + lines[i];
+                _response->setContent(newContent);
+                if (lines[i] == "</html>")
+                    return (true);
+            }
+        }
+    }
+    return (false);
+}
+
 void    Client::openErrorPage()
 {
     int status = _request->getReturnStatus();

@@ -85,6 +85,7 @@ class   Client{
         bool            send_data(void);
 
         //                  routine
+        bool                parseCgiExit();
         void                openErrorPage();
         bool                getRes();
         bool                postRes();

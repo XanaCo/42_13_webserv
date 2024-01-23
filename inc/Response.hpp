@@ -49,7 +49,10 @@ class Response
         void    setCgiOutput(std::string cgiOutput);
         void    setCgiBytesWritten(long cgiBytesWritten);
         void    setCgiFdRessource(int cgiFdRessource);
-        
+        void    setStatusCode(std::string statusCode);
+        void    setProtocol(std::string protocol);
+
+
         pid_t           getCgiPid(void) const;
         int             getCgiFd(void) const;
         std::string     getCgiOutput(void) const;
@@ -60,6 +63,9 @@ class Response
         uint16_t        getPort() const;
         int             getContentLength() const;
         std::string     getContentType() const;
+        std::string     getStatusCode() const;
+        std::string     getProtocol() const;
+
 
     private:
 
@@ -73,6 +79,10 @@ class Response
         std::string _cgiOutput;
         long        _cgiBytesWritten;
         int         _cgiFdRessource;
+
+        std::string _statusCode;
+        std::string _protocol;
+        // std::string _contentType;
 };
 std::ostream& operator<<(std::ostream& os, const Response& obj);
 

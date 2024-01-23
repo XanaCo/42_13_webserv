@@ -169,6 +169,8 @@ void    Response::setCgiFd(int cgiFd) {_cgiFd = cgiFd;}
 void    Response::setCgiOutput(std::string cgiOutput) {_cgiOutput = cgiOutput;}
 void    Response::setCgiBytesWritten(long cgiBytesWritten) {_cgiBytesWritten = cgiBytesWritten;}
 void    Response::setCgiFdRessource(int cgiFdRessource) {_cgiFdRessource = cgiFdRessource;}
+void    Response::setStatusCode(std::string statusCode) {_statusCode = statusCode;}
+void    Response::setProtocol(std::string protocol) {_protocol = protocol;}
 
 
 pid_t           Response::getCgiPid(void) const {return (_cgiPid);}
@@ -181,3 +183,5 @@ std::string     Response::getContent() const {return (_content);}
 // uint16_t        Response::getPort() const {return (_port);}
 int             Response::getContentLength() const {return (_contentLength);}
 std::string     Response::getContentType() const {return (_contentType);}
+std::string     Response::getStatusCode() const {return (_statusCode);}
+std::string     Response::getProtocol() const {return (_protocol);}
