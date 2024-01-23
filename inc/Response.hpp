@@ -42,7 +42,7 @@ class Response
         void    setReturnStatus(int returnStatus);
         void    setContent(std::string& content);
         void    setPort(uint16_t port);
-        void    setContentType(std::string& contentType);
+        void    setContentType(std::string contentType);
         void    setContentLength(int contentLength);
         void    setCgiPid(pid_t cgiPid);
         void    setCgiFd(int cgiFd);

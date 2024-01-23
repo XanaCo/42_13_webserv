@@ -150,12 +150,36 @@ bool    Client::getRes()
 
     if (_fdRessource < 3)
     {
+        std::string contentType;
         _response->resetValues();
         if (_request->getReturnStatus() != 200)
         {
             openErrorPage();
-
-
+            contentType = "Content-Type: text/html";
+            _response->setContentType(contentType);
+        }
+        else
+        {
+            if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".html"))
+            {
+                contentType = "Content-Type: text/html";
+                _response->setContentType("Content-Type: text/html");
+            }
+            else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".mp4"))
+            {
+                contentType = "Content-Type: video/mp4";
+                _response->setContentType("Content-Type: video/mp4");
+            }
+            else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".png"))
+            {
+                contentType = "Content-Type: image/png";
+                _response->setContentType("Content-Type: image/png");
+            }
+            else if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".jpeg"))
+            {
+                contentType = "Content-Type: image/jpeg";
+                _response->setContentType("Content-Type: image/jpeg");
+            }
         }
         if (_request->getPath().find("/CGI/") != std::string::npos && !_request->getPath().find("html"))
         {

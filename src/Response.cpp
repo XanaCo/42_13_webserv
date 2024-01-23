@@ -161,7 +161,7 @@ void    Response::resetValues(void)
 
 void    Response::setReturnStatus(int returnStatus) {returnStatus = returnStatus;}
 void    Response::setContent(std::string& content) {_content = content;}
-void    Response::setContentType(std::string& contentType) {_contentType = contentType;}
+void    Response::setContentType(std::string contentType) {_contentType = contentType;}
 void    Response::setContentLength(int contentLength) {_contentLength = contentLength;}
 void    Response::setCgiPid(pid_t cgiPid) {_cgiPid = cgiPid;}
 void    Response::setCgiFd(int cgiFd) {_cgiFd = cgiFd;}
