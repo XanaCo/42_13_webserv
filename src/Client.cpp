@@ -128,7 +128,7 @@ bool    Client::getRes()
 
 
         }
-        if (_request->getPath().find("/CGI/") != std::string::npos)
+        if (_request->getPath().find("/CGI/") != std::string::npos && !_request->getPath().find("html"))
         {
             if (!(_request->getMethod() & GET) && !(_request->getMethod() & POST))
             {
@@ -155,6 +155,8 @@ bool    Client::getRes()
                 // la ressource n'a pas ete trouvee 404
                 // ouvrir un fd de la loose
             }
+            /*if (_server->getOneLocation(_request->getPath())->getLAutoindex())
+                return (this->_response->craftAutoIndex(path));*/ // handle the auto index and handle the fact that there could be a default file too
             _fdRessource = open(path.c_str(), O_RDONLY);
             if (_fdRessource < 0)
             {
@@ -168,6 +170,23 @@ bool    Client::getRes()
             _request->setReturnStatus(500);
             openErrorPage();
         }
+    }
+    //Gros pansement, a mettre au propre
+    std::string type;
+    if (_request->getPath().find("css") != std::string::npos)
+    {
+        type.append("text/css");
+        this->_response->setContentType(type);
+    }
+    else if (_request->getPath().find("img") != std::string::npos)
+    {
+        type.append("image/png");
+        this->_response->setContentType(type);
+    }
+    else
+    {
+        type.append("text/html");
+        this->_response->setContentType(type);
     }
     return (_response->readRessource(_fdRessource));
 }
@@ -389,11 +408,13 @@ bool    Client::receive_data(void){
     int nbytes = recv(this->_new_socket, buffer, BUFFER_SIZE, 0);
     if (nbytes == 0)
     {
+        getactualTimestamp();
         std::cout << "Client " << this->get_socket() << " closed connection" << std::endl; // Handle a client closing
         return false;
     }
     else if (nbytes < 0)
     {
+        getactualTimestamp();
         std::cout << "Client " << *this << " encountered error while recv" << std::endl; // See for exception and handling of recv error
         return false;
     }
@@ -449,8 +470,10 @@ void    Client::receive_header_data(char *buffer, int nbytes){
         //send_to_pablo(curated_header(_received));
         _header = curated_header(found);
         _header_bytes = found + 4;
-        std::cout << "Header : "<< _header << std::endl;
-        std::cout << std::endl << "_received still got : " << std::endl << _received << std::endl;
+        //std::cout << "Header : "<< _header << std::endl;
+        //std::cout << std::endl << "_received still got : " << std::endl << _received << std::endl;
+        getactualTimestamp();
+        std::cout << "Client n : " << this->_new_socket << " sent a request." << std::endl;
         if (this->_received.size() > 0)
         {
             this->_client_status = RECEIVED_REQ_HEADER;
@@ -499,7 +522,7 @@ std::string Client::make_temp_header(void){
         int cont_len = this->getResponse()->getContent().size();
         std::stringstream con;
         con << cont_len;
-        std::string to_send = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " + con.str() + "\n\n" + this->getResponse()->getContent() + "\r\n\r\n";
+        std::string to_send = "HTTP/1.1 200 OK\nContent-Type: " + this->getResponse()->getContentType() + "\nContent-Length: " + con.str() + "\n\n" + this->getResponse()->getContent() + "\r\n\r\n";
         return (to_send);
 }
 

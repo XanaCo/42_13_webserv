@@ -519,7 +519,10 @@ bool ServerInfo::findRessource(std::string path, std::string& newPath) const
     {
         if (nameDir == it->getLPathName())
         {
-            newPath = _Root + getNameFile(path);
+            //newPath = _Root + getNameFile(path);
+            //if (it->getLAutoindex())
+                //return true; // Voir pour handle l'auto index et les defaults files. A faire ici ou dans le client...
+            newPath = _Root + nameDir + "/" + getNameFile(path); // Modifie par Alban, a remettre
             return true;
         }
     }

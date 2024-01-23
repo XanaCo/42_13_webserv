@@ -88,8 +88,12 @@ std::string getNameDir(const std::string& path)
 {
     size_t lastSep = path.find_last_of('/');
     
-    if (lastSep != std::string::npos)
+    if (lastSep != std::string::npos && path[1])
+    {
+        if (lastSep == 0)
+            return path;
         return path.substr(0, lastSep);
+    }
     else
         return ".";
 }
@@ -151,4 +155,14 @@ int identifyFile(const std::string& str) // voir si on retourne une erreur en ca
         }
     }
     return PHP;
+}
+
+
+void    getactualTimestamp(void){
+
+    std::time_t actualTime = std::time(0);
+    std::tm *localTime = std::localtime(&actualTime);
+
+    std::cout << localTime->tm_hour << ":" << localTime->tm_min << ":" << localTime->tm_sec << " ";
+    return ;
 }

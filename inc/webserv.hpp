@@ -173,6 +173,7 @@ void						compressionOfSlashes(std::string& str);
 bool						isAlphaDigit(char c);
 char						hexToChar(const std::string& hex);
 void						remplacerPercentEncoding(std::string& chaine);
+void                        getactualTimestamp(void);
 
 // Print and Debug utils
 void						printStringVector(std::vector<std::string> stringVector);
