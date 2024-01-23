@@ -157,6 +157,13 @@ int identifyFile(const std::string& str) // voir si on retourne une erreur en ca
     return PHP;
 }
 
+int hexStrToInt(const std::string& hexStr)
+{
+    std::istringstream iss(hexStr);
+    int num;
+    iss >> std::hex >> num;
+    return num;
+}
 
 void    getactualTimestamp(void){
 

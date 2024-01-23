@@ -48,6 +48,7 @@ void    Request::resetValues()
     _contentLength = 0;
     _connection = "";
     _body = "";
+    _chunkTransf = false;
 }
 
 void    Request::fillArgs(std::string str)
@@ -125,7 +126,10 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
         else if (length >= 11 && lines[i].substr(0, 11) == "Connection:")
             this->setConnection(lines[i].substr(12, length));
         else if (length >= 18 && lines[i].substr(0, 11) == "Transfer-Encoding:")
+        {
             this->setTransfertEncoding(lines[i].substr(19, length));
+            this->_chunkTransf = true;
+        }
         for (int j = i + 1; j < size; j++)
         {
             if (lines[i].size() && lines[i] == lines[j]) // si deux lignes sont identiques, c'est interdit
@@ -192,4 +196,5 @@ std::string                 Request::getBody(void) const {return (_body);}
 int                         Request::getReturnStatus(void) const {return (_returnStatus);}
 std::string                 Request::getArgs(void) const {return (_args);};
 std::string                 Request::getTransfertEncoding(void) const {return (_transfertEncoding);};
+bool                        Request::getChunkTransf(void) const {return _chunkTransf;};
 
