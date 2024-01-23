@@ -124,6 +124,8 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
             this->setCookies(splitString(lines[i].substr(7, length), ' '));
         else if (length >= 11 && lines[i].substr(0, 11) == "Connection:")
             this->setConnection(lines[i].substr(12, length));
+        else if (length >= 18 && lines[i].substr(0, 11) == "Transfer-Encoding:")
+            this->setTransfertEncoding(lines[i].substr(19, length));
         for (int j = i + 1; j < size; j++)
         {
             if (lines[i].size() && lines[i] == lines[j]) // si deux lignes sont identiques, c'est interdit
@@ -172,6 +174,8 @@ void    Request::setBody(std::string body) {_body = body;}
 // void    Request::setServer(ServerInfo* server) {_server = server;}
 void    Request::setReturnStatus(int returnStatus) {_returnStatus = returnStatus;}
 void    Request::setArgs(std::string args) {_args = args;}
+void    Request::setTransfertEncoding(std::string transfertEncoding) {_transfertEncoding = transfertEncoding;}
+
 
 int                         Request::getMethod(void) const {return (_method);}
 std::string                 Request::getPath(void) const {return (_path);}
@@ -187,4 +191,5 @@ std::string                 Request::getBody(void) const {return (_body);}
 // ServerInfo*                 Request::getServer(void) {return (_server);}
 int                         Request::getReturnStatus(void) const {return (_returnStatus);}
 std::string                 Request::getArgs(void) const {return (_args);};
+std::string                 Request::getTransfertEncoding(void) const {return (_transfertEncoding);};
 

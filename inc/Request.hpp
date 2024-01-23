@@ -39,6 +39,7 @@ class Request
         void        setBody(std::string body);
         void        setReturnStatus(int returnStatus);
         void        setArgs(std::string args);
+        void        setTransfertEncoding(std::string args);
     
         //                          get
         int                         getMethod(void) const;
@@ -54,6 +55,7 @@ class Request
         std::string                 getBody(void) const;
         int                         getReturnStatus(void) const;
         std::string                 getArgs(void) const;
+        std::string                 getTransfertEncoding(void) const;
 
     private:
 
@@ -70,6 +72,7 @@ class Request
         std::string                 _body;
         int                         _returnStatus;
         std::string                 _args;
+        std::string                 _transfertEncoding;
 
         // ServerInfo*                 _server;
         // bool                        _headerCompleted;

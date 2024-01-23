@@ -77,7 +77,20 @@ std::ostream &  operator<<(std::ostream & o, Client const & rhs){
 //  v METHODS PABLO v
 // ************************************************************************** //
 
-bool    Client::checkHttpVersion(void)
+void    Client::openErrorPage()
+{
+    int status = _request->getReturnStatus();
+
+    if (status == E_NOT_FOUND)
+        _fdRessource = open("../site/errorPages/error404.html", O_RDONLY);
+    else if (E_BAD_REQUEST <= status  && status < E_INTERNAL_SERVER)
+        _fdRessource = open("../site/errorPages/error400.html", O_RDONLY);
+    else
+        _fdRessource = open("../site/errorPages/error500.html", O_RDONLY);
+
+}
+
+bool    Client::checkHttpVersion()
 {
     std::string version = _request->getVersion();
     if (version != "HTTP/1.0" && version != "HTTP/1.1" && version != "HTTP/0.9")
@@ -111,14 +124,24 @@ bool    Client::getRes()
         _response->resetValues();
         if (_request->getReturnStatus() != 200)
         {
-            // recup un fd de la loose
+            openErrorPage();
 
 
         }
         if (_request->getPath().find("/CGI/") != std::string::npos)
         {
+            if (!(_request->getMethod() & GET) && !(_request->getMethod() & POST))
+            {
+                std::cerr << "Run : methode interdite avec les CGI" << std::endl;
+
+                openErrorPage();
+            }
             if (!_server->findCgiRessource(_request->getPath(), path))
+            {
                 std::cerr << "Run : on ne trouve pas la ressource CGI" << std::endl;
+
+                openErrorPage();
+            }
             //exec cgi
             Cgi cgi(*_server, *_request, *_response);
             cgi.executeScript();    // pas oublier de renseigner le fd de la pipe
@@ -139,7 +162,12 @@ bool    Client::getRes()
             }
 
         }
-
+        if (_fdRessource < 0)
+        {
+            std::cerr << "Open : on ne peut pas ouvrir le fichier" << std::endl;
+            _request->setReturnStatus(500);
+            openErrorPage();
+        }
     }
     return (_response->readRessource(_fdRessource));
 }
@@ -153,15 +181,21 @@ bool    Client::postRes()
         _response->resetValues();
         if (_request->getReturnStatus() != 200)
         {
-            // recup un fd de la loose
+            this->openErrorPage();
         }
         if (_request->getPath().find("/CGI/") != std::string::npos)
         {
             if (!_server->findCgiRessource(_request->getPath(), path))
+            {
+
                 std::cerr << "Run : on ne trouve pas la ressource CGI" << std::endl;
+                _request->setReturnStatus(404);
+                this->openErrorPage();
+            }
             //exec cgi
             Cgi cgi(*_server, *_request, *_response);
-            cgi.executeScript();    // pas oublier de renseigner le fd de la pipe
+            cgi.executeScript();
+            // pas oublier de renseigner le fd de la pipe
             // _fdRessource = ;
         }
         else
@@ -169,17 +203,20 @@ bool    Client::postRes()
             // resoudre le path
             if (!_server->findRessource(_request->getPath(), path))
             {
-                // la ressource n'a pas ete trouvee 404
+                _request->setReturnStatus(404);
+                this->openErrorPage();
             }
             _fdRessource = open(path.c_str(), O_RDONLY);
-            if (_fdRessource < 0)
-            {
-                // ouvrir un fichier de la loose
-            }
-            _response->postRessource(path, _request->getBody());   // penser a mettre a jour le status du retour
+            if (_fdRessource > 2)
+                _response->postRessource(path, _request->getBody());   // penser a mettre a jour le status du retour
 
         }
-
+        if (_fdRessource < 0)
+        {
+            std::cerr << "Open error: can't open file" << std::endl;
+            _request->setReturnStatus(500);
+            this->openErrorPage();
+        }
     }
     return (_response->readRessource(_fdRessource));
 }
@@ -193,24 +230,30 @@ bool    Client::deleteRes()
         _response->resetValues();
         if (_request->getReturnStatus() != 200)
         {
-            // recup un fd de la loose
+            this->openErrorPage();
         }
         else
         {
             // resoudre le path
             if (!_server->findRessource(_request->getPath(), path))
             {
-                // la ressource n'a pas ete trouvee 404
+                _request->setReturnStatus(404);
+                this->openErrorPage();
             }
             _fdRessource = open(path.c_str(), O_RDONLY);
             if (_fdRessource < 0)
             {
-                // ouvrir un fichier de la loose
+                _request->setReturnStatus(500);
+                this->openErrorPage();
             }
             _response->deleteRessource(path);
             // open un fichier du success
         }
-
+        if (_fdRessource < 0)
+        {
+            _request->setReturnStatus(500);
+            this->openErrorPage();
+        }
     }
     return (_response->readRessource(_fdRessource));
 }
