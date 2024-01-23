@@ -161,7 +161,6 @@ void    Response::resetValues(void)
 
 void    Response::setReturnStatus(int returnStatus) {returnStatus = returnStatus;}
 void    Response::setContent(std::string& content) {_content = content;}
-// void    Response::setPort(uint16_t port) {_port = port;}
 void    Response::setContentType(std::string& contentType) {_contentType = contentType;}
 void    Response::setContentLength(int contentLength) {_contentLength = contentLength;}
 void    Response::setCgiPid(pid_t cgiPid) {_cgiPid = cgiPid;}
@@ -171,6 +170,7 @@ void    Response::setCgiBytesWritten(long cgiBytesWritten) {_cgiBytesWritten = c
 void    Response::setCgiFdRessource(int cgiFdRessource) {_cgiFdRessource = cgiFdRessource;}
 void    Response::setStatusCode(std::string statusCode) {_statusCode = statusCode;}
 void    Response::setProtocol(std::string protocol) {_protocol = protocol;}
+// void    Response::setPort(uint16_t port) {_port = port;}
 
 
 pid_t           Response::getCgiPid(void) const {return (_cgiPid);}
@@ -180,8 +180,8 @@ long            Response::getCgiBytesWritten(void) const {return (_cgiBytesWritt
 int             Response::getCgiFdRessource(void) const {return (_cgiFdRessource);}
 int             Response::getReturnStatus() const {return (_returnStatus);}
 std::string     Response::getContent() const {return (_content);}
-// uint16_t        Response::getPort() const {return (_port);}
 int             Response::getContentLength() const {return (_contentLength);}
 std::string     Response::getContentType() const {return (_contentType);}
 std::string     Response::getStatusCode() const {return (_statusCode);}
 std::string     Response::getProtocol() const {return (_protocol);}
+// uint16_t        Response::getPort() const {return (_port);}

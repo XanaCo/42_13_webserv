@@ -48,6 +48,7 @@ void    Request::resetValues()
     _contentLength = 0;
     _connection = "";
     _body = "";
+    _cookies.clear();
 }
 
 void    Request::fillArgs(std::string str)
@@ -55,7 +56,7 @@ void    Request::fillArgs(std::string str)
     std::istringstream    ss(str);
 
     std::getline(ss, _path, ' '); //Modifie par Alban, a remettre en etat
-    std::getline(ss, _args, ' ');//Modifie par Alban, a remettre en etat
+    std::getline(ss, _args, ' '); //Modifie par Alban, a remettre en etat
     std::getline(ss, _version, '\0');
 }
 
