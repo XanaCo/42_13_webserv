@@ -48,11 +48,8 @@ void    Request::resetValues()
     _contentLength = 0;
     _connection = "";
     _body = "";
-<<<<<<< HEAD
     _chunkTransf = false;
-=======
     _cookies.clear();
->>>>>>> 1da25e33de72a5860ab40c419aef83d6a6c12ea0
 }
 
 void    Request::fillArgs(std::string str)
