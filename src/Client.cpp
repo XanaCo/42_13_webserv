@@ -31,6 +31,8 @@ Client::Client(int socket, struct sockaddr_in *r_address, std::vector<ServerInfo
     _base = base;
     _server = NULL;
     _fdRessource = 0;
+    _first_chunk = true;
+    _chunk_index_type = CHUNK_SIZE;
     return  ;
 }
 
@@ -170,6 +172,11 @@ bool    Client::getRes()
                 // contentType = "Content-Type: video/mp4";
                 _response->setContentType("Content-Type: video/mp4");
             }
+            else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".css"))
+            {
+                contentType = "Content-Type: text/css";
+                _response->setContentType("Content-Type: text/css");
+            }
             else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".png"))
             {
                 // contentType = "Content-Type: image/png";
@@ -231,7 +238,7 @@ bool    Client::getRes()
     }
     //Gros pansement, a mettre au propre
     std::string type;
-    if (_request->getPath().find("css") != std::string::npos)
+    /*if (_request->getPath().find("css") != std::string::npos)
     {
         type.append("text/css");
         this->_response->setContentType(type);
@@ -245,7 +252,7 @@ bool    Client::getRes()
     {
         type.append("text/html");
         this->_response->setContentType(type);
-    }
+    }*/
     return (_response->readRessource(_fdRessource));
 }
 
@@ -450,6 +457,9 @@ void    Client::reset_client(void){
     this->_header = "";
     this->_body = "";
     this->_to_send = "";
+    this->_chunk_pool = "";
+    this->_first_chunk = true;
+    this->_chunk_index_type = CHUNK_SIZE;
     this->_req_end = false;
     return ;
 }
@@ -486,6 +496,8 @@ bool    Client::receive_data(void){
     {
         if (this->_client_status == WANT_TO_RECEIVE_REQ || this->_client_status == RECEIVING_REQ_HEADER)
             this->receive_header_data(buffer, nbytes);
+        else if (this->_client_status == RECEIVING_REQ_BODY && this->_request->getChunkTransf())
+            this->receive_chunked_body_data(buffer, nbytes);
         else if (this->_client_status == RECEIVING_REQ_BODY)
             this->receive_body_data(buffer, nbytes);
     }
@@ -525,8 +537,6 @@ void    Client::receive_header_data(char *buffer, int nbytes){
     this->_bytes_received += nbytes;
     if (found_header_end(&found))
     {
-        //Passer le header complet a Pablo _request->fillContent(string)
-        //send_to_pablo(curated_header(_received));
         _header = curated_header(found);
         _header_bytes = found + 4;
         //std::cout << "Header : "<< _header << std::endl;
@@ -548,6 +558,70 @@ void    Client::receive_header_data(char *buffer, int nbytes){
         return ;
     }
 //    std::cout << this->_received << std::endl;
+    return ;
+}
+
+void    Client::receive_chunked_body_data(char *buffer, int nbytes){
+
+    size_t         chunk_size = 0;
+    if (this->_first_chunk && this->_received.size())
+    {
+        _chunk_pool.clear();
+        _chunk_pool.append(_received);
+        _bytes_received -= _received.size();
+        _received.clear();
+        this->_first_chunk = false;
+    }
+    _chunk_pool.append(buffer);
+    if (_chunk_pool.find("\r\n") == std::string::npos)
+        return ;
+    std::vector<std::string>    chunk_vec = cSplitLine(_chunk_pool, "\r\n");
+    for (size_t i = 0; i < chunk_vec.size(); i++)
+    {
+        if (this->_chunk_index_type == CHUNK_SIZE)
+        {
+            chunk_size = hexStrToInt(chunk_vec[i]);
+            if (i + 1 < chunk_vec.size())
+                this->_chunk_index_type = CHUNK_DATA;
+        }
+        else if (this->_chunk_index_type == CHUNK_DATA)
+        {
+            if (chunk_vec[i].size() == chunk_size)
+            {
+                _received.append(chunk_vec[i]);
+                _chunk_pool = _chunk_pool.substr(_chunk_pool.find(chunk_vec[i]) + chunk_size + 2);
+                _bytes_received += chunk_size;
+                this->_chunk_index_type = CHUNK_SIZE;
+            }
+            else if (chunk_vec[i].size() != chunk_size && i != (chunk_vec.size() - 1))
+            {
+                this->_client_status = REQ_RECEIVED;
+                this->_request->setReturnStatus(400);
+                this->_chunk_index_type = CHUNK_SIZE;
+                this->_first_chunk = true;
+                return ;
+            }
+            else if (chunk_vec[i].size() != chunk_size && i == (chunk_vec.size() - 1))
+            {
+                if (nbytes == 1024)
+                    return ;
+                else
+                {
+                    this->_client_status = REQ_RECEIVED;
+                    this->_request->setReturnStatus(400);
+                    this->_chunk_index_type = CHUNK_SIZE;
+                    this->_first_chunk = true;
+                    return ;
+                }
+            }
+        }
+    }
+    if (chunk_size == 0)
+    {
+        this->_first_chunk = true;
+        this->_client_status = REQ_RECEIVED;
+        _chunk_pool.clear();
+    }
     return ;
 }
 

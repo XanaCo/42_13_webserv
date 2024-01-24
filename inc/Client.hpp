@@ -12,6 +12,12 @@ class Response;
 #  define BUFFER_SIZE 1024 
 # endif
 
+typedef enum e_chunk_c
+{
+    CHUNK_SIZE,
+    CHUNK_DATA,
+}   t_chunk_c;
+
 typedef enum e_status_c
 {
 	WANT_TO_RECEIVE_REQ,
@@ -45,6 +51,7 @@ class   Client{
         std::string                 _header;
         std::string                 _body;
         std::string                 _to_send;
+        std::string                 _chunk_pool;
         int                         _bytes_received;
         int                         _header_bytes;
         int                         _body_bytes;
@@ -52,6 +59,8 @@ class   Client{
         bool                        _req_end;
         int                         _bytes_to_send;
         int                         _bytes_sent;
+        bool                        _first_chunk;
+        int                         _chunk_index_type;
         std::vector<ServerInfo>     _servers;
         Base *                      _base;
 
@@ -77,6 +86,7 @@ class   Client{
         std::string     curated_header(size_t end);
         void            receive_header_data(char *buffer, int nbytes);
         void            receive_body_data(char *buffer, int nbytes);
+        void            receive_chunked_body_data(char *buffer, int nbytes);
 
         bool            send_all(int s, const char *buf, int *len);                                            
         bool            send_partial(int socket);                                            

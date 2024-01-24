@@ -174,6 +174,7 @@ bool						isAlphaDigit(char c);
 char						hexToChar(const std::string& hex);
 void						remplacerPercentEncoding(std::string& chaine);
 void                        getactualTimestamp(void);
+int                         hexStrToInt(const std::string& hexStr);
 
 // Print and Debug utils
 void						printStringVector(std::vector<std::string> stringVector);

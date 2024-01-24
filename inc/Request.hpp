@@ -40,6 +40,7 @@ class Request
         void        setReturnStatus(int returnStatus);
         void        setArgs(std::string args);
         void        setTransfertEncoding(std::string args);
+        void        setChunkTransf(bool value);
     
         //                          get
         int                         getMethod(void) const;
@@ -56,6 +57,7 @@ class Request
         int                         getReturnStatus(void) const;
         std::string                 getArgs(void) const;
         std::string                 getTransfertEncoding(void) const;
+        bool                        getChunkTransf(void) const;
 
     private:
 
@@ -73,6 +75,7 @@ class Request
         int                         _returnStatus;
         std::string                 _args;
         std::string                 _transfertEncoding;
+        bool                        _chunkTransf;
 
         // ServerInfo*                 _server;
         // bool                        _headerCompleted;
