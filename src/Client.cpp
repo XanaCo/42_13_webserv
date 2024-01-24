@@ -79,6 +79,35 @@ std::ostream &  operator<<(std::ostream & o, Client const & rhs){
 //  v METHODS PABLO v
 // ************************************************************************** //
 
+bool    Client::parseCgiExit()
+{
+    std::vector<std::string>    lines = splitString(_body, '\n');
+
+    int size = lines.size();
+    for (int i = 0; i < size; i++)
+    {
+        int length = lines[0].size();
+        if (length >= 13 && lines[i].substr(0, 13) == "content-type:")
+            _response->setContentType(lines[i]);
+        else if (length >= 12 && lines[i].substr(0, 12) == "status-code:")
+            _response->setContentType(lines[i]);
+        else if (length >= 8 && lines[i].substr(0, 8) == "protocol:")
+            _response->setProtocol(lines[i]);
+        else if (length >= 6 && lines[i].substr(0, 6) == "<html>")
+        {
+            _response->setContent(lines[i]);
+            for (; i < size; i++)
+            {
+                std::string newContent = _response->getContent() + "\n" + lines[i];
+                _response->setContent(newContent);
+                if (lines[i] == "</html>")
+                    return (true);
+            }
+        }
+    }
+    return (false);
+}
+
 void    Client::openErrorPage()
 {
     int status = _request->getReturnStatus();
@@ -123,12 +152,36 @@ bool    Client::getRes()
 
     if (_fdRessource < 3)
     {
+        std::string contentType;
         _response->resetValues();
         if (_request->getReturnStatus() != 200)
         {
             openErrorPage();
-
-
+            contentType = "Content-Type: text/html";
+            _response->setContentType(contentType);
+        }
+        else
+        {
+            if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".html"))
+            {
+                contentType = "Content-Type: text/html";
+                _response->setContentType("Content-Type: text/html");
+            }
+            else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".mp4"))
+            {
+                contentType = "Content-Type: video/mp4";
+                _response->setContentType("Content-Type: video/mp4");
+            }
+            else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".png"))
+            {
+                contentType = "Content-Type: image/png";
+                _response->setContentType("Content-Type: image/png");
+            }
+            else if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".jpeg"))
+            {
+                contentType = "Content-Type: image/jpeg";
+                _response->setContentType("Content-Type: image/jpeg");
+            }
         }
         if (_request->getPath().find("/CGI/") != std::string::npos && !_request->getPath().find("html"))
         {
@@ -313,6 +366,7 @@ void    Client::routine()
                     _client_status = RECEIVING_REQ_BODY;
             }
             _server = this->findServer();
+            // if (_client_status != )
             return ;
         }
         case REQ_RECEIVED:

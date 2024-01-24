@@ -4,6 +4,7 @@ html, body {
 	margin: 20px;
 	padding: 20px;
 	text-align: center;
+	cursor: url('../img/LOGO_cursor.png');
 }
 
 h1 {
