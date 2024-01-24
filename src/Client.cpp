@@ -162,23 +162,28 @@ bool    Client::getRes()
         {
             if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".html"))
             {
-                contentType = "Content-Type: text/html";
+                // contentType = "Content-Type: text/html";
                 _response->setContentType("Content-Type: text/html");
             }
             else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".mp4"))
             {
-                contentType = "Content-Type: video/mp4";
+                // contentType = "Content-Type: video/mp4";
                 _response->setContentType("Content-Type: video/mp4");
             }
             else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".png"))
             {
-                contentType = "Content-Type: image/png";
+                // contentType = "Content-Type: image/png";
                 _response->setContentType("Content-Type: image/png");
             }
             else if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".jpeg"))
             {
-                contentType = "Content-Type: image/jpeg";
+                // contentType = "Content-Type: image/jpeg";
                 _response->setContentType("Content-Type: image/jpeg");
+            }
+            else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".css"))
+            {
+                // contentType = "Content-Type: text/css";
+                _response->setContentType("Content-Type: text/css");
             }
         }
         if (_request->getPath().find("/CGI/") != std::string::npos && !_request->getPath().find("html"))
