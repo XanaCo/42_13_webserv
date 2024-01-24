@@ -364,6 +364,7 @@ void    Client::routine()
                     _client_status = RECEIVING_REQ_BODY;
             }
             _server = this->findServer();
+            // if (_client_status != )
             return ;
         }
         case REQ_RECEIVED:
