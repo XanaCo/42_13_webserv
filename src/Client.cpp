@@ -172,6 +172,11 @@ bool    Client::getRes()
                 contentType = "Content-Type: video/mp4";
                 _response->setContentType("Content-Type: video/mp4");
             }
+            else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".css"))
+            {
+                contentType = "Content-Type: text/css";
+                _response->setContentType("Content-Type: text/css");
+            }
             else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".png"))
             {
                 contentType = "Content-Type: image/png";
@@ -228,7 +233,7 @@ bool    Client::getRes()
     }
     //Gros pansement, a mettre au propre
     std::string type;
-    if (_request->getPath().find("css") != std::string::npos)
+    /*if (_request->getPath().find("css") != std::string::npos)
     {
         type.append("text/css");
         this->_response->setContentType(type);
@@ -242,7 +247,7 @@ bool    Client::getRes()
     {
         type.append("text/html");
         this->_response->setContentType(type);
-    }
+    }*/
     return (_response->readRessource(_fdRessource));
 }
 
