@@ -5,9 +5,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["file"])) {
     $targetFile = $uploadDirectory . basename($_FILES["file"]["name"]);
 
     if (move_uploaded_file($_FILES["file"]["tmp_name"], $targetFile)) {
-        echo "File uploaded successfully.";
+        echo "File deleted successfully.";
     } else {
-        echo "Error uploading file.";
+        echo "Error deleting file.";
     }
 }
 
