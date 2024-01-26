@@ -294,7 +294,7 @@ bool    Client::postRes()
             Cgi cgi(*_server, *_request, *_response);
             cgi.executeScript();
             // pas oublier de renseigner le fd de la pipe
-            // _fdRessource = ;
+            _fdRessource = _response->getCgiFdRessource() ;
         }
         else
         {

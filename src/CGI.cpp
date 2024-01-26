@@ -228,10 +228,10 @@ void Cgi::executeScript() {
 		// else if (_request->getScriptType() == PHP)
 		// 	argvToExec[0] = const_cast<char *>("php-cgi");
 
-		argvToExec[0] = const_cast<char *>("python3"); // TEST a effacer
+		argvToExec[0] = const_cast<char *>("/bin/python3.10"); // TEST a effacer
 		
 			// REQUEST gives me the script path?
-		argvToExec[1] = const_cast<char *>("../site/CGI/scriptCGI/py/sortingHat.py"); //+ _request->getScriptPath(); //SCRIPT TO EXECUTE//
+		argvToExec[1] = const_cast<char *>("./site/CGI/scriptCGI/py/sortingHat.py"); //+ _request->getScriptPath(); //SCRIPT TO EXECUTE//
 		argvToExec[2] = NULL;
 
 		//check if allsockets are closed
