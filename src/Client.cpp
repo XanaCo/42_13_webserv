@@ -160,7 +160,7 @@ bool    Client::getRes()
             contentType = "Content-Type: text/html";
             _response->setContentType(contentType);
         }
-        else
+        /*else
         {
             if (_request->getPath().size() > 5)
             {
@@ -195,7 +195,7 @@ bool    Client::getRes()
                     _response->setContentType("Content-Type: text/css");
                 }
             }
-        }
+        }*/
         if (_request->getPath().find("/CGI/scriptCGI/") != std::string::npos)
         {
             if (!(_request->getMethod() & GET) && !(_request->getMethod() & POST))
@@ -239,23 +239,34 @@ bool    Client::getRes()
             openErrorPage();
         }
     }
-    //Gros pansement, a mettre au propre
-    std::string type;
-    /*if (_request->getPath().find("css") != std::string::npos)
+    if (_request->getPath().size() >= 5)
     {
-        type.append("text/css");
-        this->_response->setContentType(type);
+        if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".html"))
+        {
+                // contentType = "Content-Type: text/html";
+            _response->setContentType("Content-Type: text/html\n");
+        }
+        else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".mp4"))
+        {
+                // contentType = "Content-Type: video/mp4";
+            _response->setContentType("Content-Type: video/mp4\n");
+        }
+        else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".png"))
+        {
+                // contentType = "Content-Type: image/png";
+            _response->setContentType("Content-Type: image/png\n");
+        }
+        else if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".jpeg") || !_request->getPath().compare(_request->getPath().length() - 5, 5, ".jpg"))
+        {
+                // contentType = "Content-Type: image/jpeg";
+            _response->setContentType("Content-Type: image/jpeg\n");
+        }
+        else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".css"))
+        {
+                // contentType = "Content-Type: text/css";
+            _response->setContentType("Content-Type: text/css\n");
+        }
     }
-    else if (_request->getPath().find("img") != std::string::npos)
-    {
-        type.append("image/png");
-        this->_response->setContentType(type);
-    }
-    else
-    {
-        type.append("text/html");
-        this->_response->setContentType(type);
-    }*/
     return (_response->readRessource(_fdRessource));
 }
 
@@ -672,7 +683,7 @@ std::string Client::make_temp_header(void){
         int cont_len = this->getResponse()->getContent().size();
         std::stringstream con;
         con << cont_len;
-        std::string to_send = "HTTP/1.1 200 OK\nContent-Type: " + this->getResponse()->getContentType() + "\nContent-Length: " + con.str() + "\n\n" + this->getResponse()->getContent() + "\r\n\r\n";
+        std::string to_send = "HTTP/1.1 200 OK\n" + this->getResponse()->getContentType() + "Content-Length: " + con.str() + "\n\n" + this->getResponse()->getContent() + "\r\n\r\n";
         return (to_send);
 }
 
