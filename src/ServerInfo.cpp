@@ -494,18 +494,18 @@ bool	ServerInfo::findCgiRessource(std::string path, std::string& newPath) const
 	std::string	nameDir = getNameDir(path);
 	for (long unsigned int i = 0; i < _locations.size(); i++)
 	{
-		if (nameDir == _locations[i].getLPathName())
+		if (nameDir == _locations[i].getLPathName() + "/scriptCGI")
 		{
-			size_t limit = path.find(".html");
-			newPath = _Root + "/CGI/" + getNameFile(path).substr(0, limit) + ".py";
+			// size_t limit = path.find(".html");
+			newPath = "../" + _Root + "/CGI/scriptCGI/py/" + getNameFile(path) + ".py";
 			if (access(newPath.c_str(), F_OK))
 				return (true);
-			newPath = _Root + "/CGI/" + getNameFile(path).substr(0, limit) + ".php";
+			newPath = _Root + "/CGI/scriptCGI/php/" + getNameFile(path) + ".php";
 			if (access(newPath.c_str(), F_OK))
 				return (true);
 		}
 	}
-	newPath = _Root + "/index.html";
+	newPath = _Root + "/index.html"; // mettre une erreur
 	return (false); // voir pour afficher une page d'erreur html
 }
 
@@ -526,7 +526,6 @@ bool ServerInfo::findRessource(std::string path, std::string& newPath) const
             return true;
         }
     }
-
     newPath = _Root + "/index.html";
     return true;
 }

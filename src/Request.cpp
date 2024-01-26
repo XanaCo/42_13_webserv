@@ -49,6 +49,7 @@ void    Request::resetValues()
     _connection = "";
     _body = "";
     _chunkTransf = false;
+    _returnStatus = 200;
     _cookies.clear();
 }
 

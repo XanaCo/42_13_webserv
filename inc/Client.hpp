@@ -101,7 +101,7 @@ class   Client{
         bool                postRes();
         bool                deleteRes();
         bool                executeMethod();
-        void                routine();
+        void                routine(int bytes);
         ServerInfo*         findServer();
 
         static std::vector<bool (Client::*)()>& methodFunctions() {

@@ -162,38 +162,41 @@ bool    Client::getRes()
         }
         else
         {
-            if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".html"))
+            if (_request->getPath().size() > 5)
             {
-                // contentType = "Content-Type: text/html";
-                _response->setContentType("Content-Type: text/html");
-            }
-            else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".mp4"))
-            {
-                // contentType = "Content-Type: video/mp4";
-                _response->setContentType("Content-Type: video/mp4");
-            }
-            else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".css"))
-            {
-                contentType = "Content-Type: text/css";
-                _response->setContentType("Content-Type: text/css");
-            }
-            else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".png"))
-            {
-                // contentType = "Content-Type: image/png";
-                _response->setContentType("Content-Type: image/png");
-            }
-            else if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".jpeg"))
-            {
-                // contentType = "Content-Type: image/jpeg";
-                _response->setContentType("Content-Type: image/jpeg");
-            }
-            else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".css"))
-            {
-                // contentType = "Content-Type: text/css";
-                _response->setContentType("Content-Type: text/css");
+                if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".html"))
+                {
+                    // contentType = "Content-Type: text/html";
+                    _response->setContentType("Content-Type: text/html");
+                }
+                else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".mp4"))
+                {
+                    // contentType = "Content-Type: video/mp4";
+                    _response->setContentType("Content-Type: video/mp4");
+                }
+                else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".css"))
+                {
+                    contentType = "Content-Type: text/css";
+                    _response->setContentType("Content-Type: text/css");
+                }
+                else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".png"))
+                {
+                    // contentType = "Content-Type: image/png";
+                    _response->setContentType("Content-Type: image/png");
+                }
+                else if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".jpeg"))
+                {
+                    // contentType = "Content-Type: image/jpeg";
+                    _response->setContentType("Content-Type: image/jpeg");
+                }
+                else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".css"))
+                {
+                    // contentType = "Content-Type: text/css";
+                    _response->setContentType("Content-Type: text/css");
+                }
             }
         }
-        if (_request->getPath().find("/CGI/") != std::string::npos && !_request->getPath().find("html"))
+        if (_request->getPath().find("/CGI/scriptCGI/") != std::string::npos)
         {
             if (!(_request->getMethod() & GET) && !(_request->getMethod() & POST))
             {
@@ -302,7 +305,13 @@ bool    Client::postRes()
             this->openErrorPage();
         }
     }
-    return (_response->readRessource(_fdRessource));
+    if (_response->readRessource(_fdRessource))
+    {
+        if (_request->getPath().find("/CGI/") != std::string::npos)
+            this->parseCgiExit();
+        return (true);
+    }
+    return (false);
 }
 
 bool    Client::deleteRes()
@@ -353,7 +362,7 @@ bool    Client::executeMethod()
     return ((this->*(Client::methodFunctions()[method]))());
 }
 
-void    Client::routine()
+void    Client::routine(int nbytes)
 {
     switch (_client_status)
     {
@@ -364,20 +373,28 @@ void    Client::routine()
             {
                 _client_status = WAITING_FOR_RES;
                 this->_base->change_poll_event(this->_new_socket, pollout);
+                return ;
             }
             else
             {
                 if (this->_req_end == true)
                 {
+                    _server = this->findServer();
                     _client_status = WAITING_FOR_RES;
                     this->_base->change_poll_event(this->_new_socket, pollout);
+                    return ;
+                }
+                else if (!this->_req_end && nbytes < 1024)
+                {
+                    _client_status = REQ_RECEIVED;
+                    _body.append(_received);
                 }
                 else
                     _client_status = RECEIVING_REQ_BODY;
             }
             _server = this->findServer();
-            // if (_client_status != )
-            return ;
+            if (_client_status != REQ_RECEIVED)
+                return ;
         }
         case REQ_RECEIVED:
         {
@@ -484,7 +501,7 @@ bool    Client::receive_data(void){
     else if (nbytes < 0)
     {
         getactualTimestamp();
-        std::cout << "Client " << *this << " encountered error while recv" << std::endl; // See for exception and handling of recv error
+        std::cout << "Client " << *this << " encountered error while recv" << std::endl; // See for exception and hgetandling of recv error
         return false;
     }
     /*else
@@ -546,13 +563,13 @@ void    Client::receive_header_data(char *buffer, int nbytes){
         if (this->_received.size() > 0)
         {
             this->_client_status = RECEIVED_REQ_HEADER;
-            this->routine();
+            this->routine(nbytes);
         }
         else
         {
             this->_client_status = RECEIVED_REQ_HEADER;
             this->_req_end = true;
-            this->routine();
+            this->routine(nbytes);
             //this->_base->change_poll_event(this->_new_socket, pollout);
         }
         return ;
@@ -633,7 +650,7 @@ void    Client::receive_body_data(char *buffer, int nbytes){
     if (nbytes < BUFFER_SIZE)
     {
         this->_client_status = REQ_RECEIVED;
-        this->routine();
+        this->routine(nbytes);
         //this->_base->change_poll_event(this->_new_socket, pollout);
         return ;
     }
@@ -642,7 +659,7 @@ void    Client::receive_body_data(char *buffer, int nbytes){
         if (this->_body_bytes == this->_request->getContentLength())
         {
             this->_client_status = REQ_RECEIVED;
-            this->routine();
+            this->routine(nbytes);
             //this->_base->change_poll_event(this->_new_socket, pollout);
             return ;
         }
@@ -681,7 +698,7 @@ std::string Client::make_temp_header(void){
 bool    Client::send_data(void)
 {
     if (this->_client_status == WAITING_FOR_RES)
-        this->routine();
+        this->routine(0);
     else
     {
         if (!send_partial(this->_new_socket))
