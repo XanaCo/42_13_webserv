@@ -91,11 +91,13 @@ bool    Client::parseCgiExit()
         int length = lines[0].size();
         if (length >= 13 && lines[i].substr(0, 13) == "content-type:")
             _response->setContentType(lines[i]);
-        else if (length >= 12 && lines[i].substr(
-<html><body>
-<h1>Sorting Hat Result</h1>
-<p>{Alban, you belong to <strong>Serpentard</strong>.</p>
-</body></html>
+        else if (length >= 12 && lines[i].substr(0, 12) == "status-code:")
+            _response->setContentType(lines[i]);
+        else if (length >= 8 && lines[i].substr(0, 8) == "protocol:")
+            _response->setProtocol(lines[i]);
+        else if (length >= 6 && lines[i].substr(0, 6) == "<html>")
+        {
+            _response->setContent(lines[i]);
             for (; i < size; i++)
             {
                 std::string newContent = _response->getContent() + "\n" + lines[i];
@@ -142,10 +144,8 @@ bool    Client::checkHttpVersion()
 
 ServerInfo*    Client::findServer()
 {
-<html><body>
-<h1>Sorting Hat Result</h1>
-<p>{Alban, you belong to <strong>Serpentard</strong>.</p>
-</body></html>
+    if (_servers.size() == 1)
+        return (&(_servers[0]));
     for (std::vector<ServerInfo>::iterator i = _servers.begin(); i != _servers.end(); i++)
     {
         if (i->getServerName() == _request->getHost())
