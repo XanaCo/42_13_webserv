@@ -401,7 +401,12 @@ void    Client::routine(int nbytes)
                     _body.append(_received);
                 }
                 else
-                    _client_status = RECEIVING_REQ_BODY;
+                {
+                    if (this->_request->getChunkTransf())
+                        receive_chunked_body_data((char *)_received.c_str(), nbytes);
+                    else
+                        _client_status = RECEIVING_REQ_BODY;
+                }
             }
             _server = this->findServer();
             if (_client_status != REQ_RECEIVED)
@@ -592,6 +597,7 @@ void    Client::receive_header_data(char *buffer, int nbytes){
 void    Client::receive_chunked_body_data(char *buffer, int nbytes){
 
     size_t         chunk_size = 0;
+    this->_chunk_index_type = CHUNK_SIZE;
     if (this->_first_chunk && this->_received.size())
     {
         _chunk_pool.clear();
@@ -627,6 +633,7 @@ void    Client::receive_chunked_body_data(char *buffer, int nbytes){
                 this->_request->setReturnStatus(400);
                 this->_chunk_index_type = CHUNK_SIZE;
                 this->_first_chunk = true;
+                this->routine(nbytes);
                 return ;
             }
             else if (chunk_vec[i].size() != chunk_size && i == (chunk_vec.size() - 1))
