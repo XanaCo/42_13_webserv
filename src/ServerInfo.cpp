@@ -446,6 +446,15 @@ void ServerInfo::setTimeout(std::string timeout) {
 //	METHODS
 // ************************************************************************** //
 
+std::string	ServerInfo::getNameFileS(std::string path) const
+{
+	std::string	file_name = getNameFile(path);
+
+	if (file_name == "")
+		return (_index);
+	return (file_name);
+}
+
 void ServerInfo::checkAllInfos() {
 
 	if (this->_Host == 0)
@@ -494,18 +503,18 @@ bool	ServerInfo::findCgiRessource(std::string path, std::string& newPath) const
 	std::string	nameDir = getNameDir(path);
 	for (long unsigned int i = 0; i < _locations.size(); i++)
 	{
-		if (nameDir == _locations[i].getLPathName())
+		if (nameDir == _locations[i].getLPathName() + "/scriptCGI")
 		{
-			size_t limit = path.find(".html");
-			newPath = _Root + "/CGI/" + getNameFile(path).substr(0, limit) + ".py";
+			// size_t limit = path.find(".html");
+			newPath = "../" + _Root + "/CGI/scriptCGI/py/" + this->getNameFileS(path) + ".py";
 			if (access(newPath.c_str(), F_OK))
 				return (true);
-			newPath = _Root + "/CGI/" + getNameFile(path).substr(0, limit) + ".php";
+			newPath = _Root + "/CGI/scriptCGI/php/" + getNameFileS(path) + ".php";
 			if (access(newPath.c_str(), F_OK))
 				return (true);
 		}
 	}
-	newPath = _Root + "/index.html";
+	newPath = _Root + "/index.html"; // mettre une erreur
 	return (false); // voir pour afficher une page d'erreur html
 }
 
@@ -522,13 +531,12 @@ bool ServerInfo::findRessource(std::string path, std::string& newPath) const
             //newPath = _Root + getNameFile(path);
             //if (it->getLAutoindex())
                 //return true; // Voir pour handle l'auto index et les defaults files. A faire ici ou dans le client...
-            newPath = _Root + nameDir + "/" + getNameFile(path); // Modifie par Alban, a remettre
+            newPath = _Root + nameDir + "/" + getNameFileS(path); // Modifie par Alban, a remettre
             return true;
         }
     }
-
     newPath = _Root + "/index.html";
-    return true;
+    return false;
 }
 
 // ************************************************************************** //

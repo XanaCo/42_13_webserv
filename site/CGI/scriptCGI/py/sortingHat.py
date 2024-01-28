@@ -19,25 +19,29 @@ def get_form():
 	return name, creature
 
 # main function
-def main():
-	name, preferred_creature = get_form()
+#def main():
+#	name, preferred_creature = get_form()
+#
+#	if preferred_creature in creatures:
+#		selected_house = creatures[preferred_creature]
+#	else :
+#		selected_house = random.choice(list(creatures.values()))
 
-	if preferred_creature in creatures:
-		selected_house = creatures[preferred_creature]
-	else
-		selected_house = random.choice(list(creatures.values()))
+def main():
+    name = "Alban"
+    selected_house = "Serpentard"
 
 # HTTP Header
-print("content-type: text/html")
-print("status-code: 200")
-print("protocol: HTTP/1.1")
-print()
+    print("content-type: text/html")
+    print("status-code: 200")
+    print("protocol: HTTP/1.1")
+    print()
 
 # html response
-print("<html><body>")
-print(f"<h1>Sorting Hat Result</h1>")
-print(f"<p>{name}, you belong to <strong>{selected_house}</strong>.</p>")
-print("</body></html>")
+    print("<html><body>")
+    print('<h1>Sorting Hat Result</h1>')
+    print('<p>{Alban, you belong to <strong>Serpentard</strong>.</p>')
+    print("</body></html>")
 
 # security
 if __name__ == "__main__":

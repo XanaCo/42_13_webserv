@@ -49,6 +49,7 @@ void    Request::resetValues()
     _connection = "";
     _body = "";
     _chunkTransf = false;
+    _returnStatus = 200;
     _cookies.clear();
 }
 
@@ -126,7 +127,7 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
             this->setCookies(splitString(lines[i].substr(7, length), ' '));
         else if (length >= 11 && lines[i].substr(0, 11) == "Connection:")
             this->setConnection(lines[i].substr(12, length));
-        else if (length >= 18 && lines[i].substr(0, 11) == "Transfer-Encoding:")
+        else if (length >= 18 && lines[i].substr(0, 18) == "Transfer-Encoding:")
         {
             this->setTransfertEncoding(lines[i].substr(19, length));
             this->_chunkTransf = true;

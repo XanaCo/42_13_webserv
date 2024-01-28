@@ -20,7 +20,7 @@ Response	&Response::operator=(const Response& obj)
         _content = obj._content;
         _contentType = obj._contentType;
         _contentLength = obj._contentLength;
-        _returnStatus = obj._returnStatus;
+        _statusCode = obj._statusCode;
     }
     return (*this);
 }
@@ -28,7 +28,7 @@ Response	&Response::operator=(const Response& obj)
 std::ostream&   operator<<(std::ostream& os, const Response& obj)
 {
     os << "--" << RESPONSE << "--" << std::endl;
-    os << "return status  : " << obj.getReturnStatus() << std::endl;
+    os << "return status  : " << obj.getStatusCode() << std::endl;
     os << "content type   : " << obj.getContentType() << std::endl;
     os << "content Length : " << obj.getContentLength() << std::endl;
     os << "content        : " << obj.getContent() << std::endl;
@@ -151,18 +151,16 @@ void    Response::resetValues(void)
     // _port = 0;
     _content = "";
     _location = "";
-    _returnStatus = I_CONTIUE;  // inutile
     _contentType = "";
     _contentLength = 0;
-    _
 }
 
 // ************************************************************************** //
 //	LA GET-SET
 // ************************************************************************** //
 
-void    Response::setReturnStatus(int returnStatus) {returnStatus = returnStatus;}
-void    Response::setContent(std::string& content) {_content = content;}
+// void    Response::setReturnStatus(int returnStatus) {_returnStatus = returnStatus;}
+void    Response::setContent(std::string content) {_content = content;}
 void    Response::setContentType(std::string contentType) {_contentType = contentType;}
 void    Response::setContentLength(int contentLength) {_contentLength = contentLength;}
 void    Response::setCgiPid(pid_t cgiPid) {_cgiPid = cgiPid;}
@@ -181,7 +179,7 @@ int             Response::getCgiFd(void) const {return (_cgiFd);}
 std::string     Response::getCgiOutput(void) const {return (_cgiOutput);}
 long            Response::getCgiBytesWritten(void) const {return (_cgiBytesWritten);}
 int             Response::getCgiFdRessource(void) const {return (_cgiFdRessource);}
-int             Response::getReturnStatus() const {return (_returnStatus);}
+// int             Response::getReturnStatus() const {return (_returnStatus);}
 std::string     Response::getContent() const {return (_content);}
 int             Response::getContentLength() const {return (_contentLength);}
 std::string     Response::getContentType() const {return (_contentType);}

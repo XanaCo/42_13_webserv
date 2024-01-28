@@ -39,8 +39,8 @@ class Response
         bool    cgiRead();
         bool    cgiWrite();
 
-        void    setReturnStatus(int returnStatus);
-        void    setContent(std::string& content);
+        // void    setReturnStatus(int returnStatus);
+        void    setContent(std::string content);
         void    setPort(uint16_t port);
         void    setContentType(std::string contentType);
         void    setContentLength(int contentLength);
@@ -59,7 +59,7 @@ class Response
         std::string     getCgiOutput(void) const;
         long            getCgiBytesWritten(void) const;
         int             getCgiFdRessource(void) const;
-        int             getReturnStatus() const;
+        // int             getReturnStatus() const;
         std::string     getContent() const;
         uint16_t        getPort() const;
         int             getContentLength() const;
@@ -73,7 +73,7 @@ class Response
 
         uint16_t    _port;
         int         _contentLength;
-        int         _returnStatus;  // ne sert a rien ?
+        // int         _returnStatus;  // ne sert a rien ?
         pid_t       _cgiPid;
         int         _cgiFd;
         std::string _cgiOutput;

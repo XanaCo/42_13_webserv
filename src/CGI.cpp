@@ -169,7 +169,7 @@ void Cgi::executeScript() {
 	if (pipe(this->_pipeOut) == -1)
 	{
 		// std::cerr << "PipeOut could not be created" << std::endl; //EFFACER
-		_response->setReturnStatus(E_INTERNAL_SERVER);
+		_request->setReturnStatus(E_INTERNAL_SERVER);
 		return;
 	}
 
@@ -178,7 +178,7 @@ void Cgi::executeScript() {
 		close(_pipeOut[1]);
 		close(_pipeOut[0]);
 		// std::cerr << "PipeIn could not be created" << std::endl; //EFFACER
-		_response->setReturnStatus(E_INTERNAL_SERVER);
+		_request->setReturnStatus(E_INTERNAL_SERVER);
 		return;
 	}
 
@@ -191,7 +191,7 @@ void Cgi::executeScript() {
 		close(_pipeIn[1]);
 		close(_pipeIn[0]);
 		// std::cerr << "Pid == -1" << std::endl; //EFFACER
-		_response->setReturnStatus(E_INTERNAL_SERVER);
+		_request->setReturnStatus(E_INTERNAL_SERVER);
 		return;
 	}
 
@@ -228,10 +228,10 @@ void Cgi::executeScript() {
 		// else if (_request->getScriptType() == PHP)
 		// 	argvToExec[0] = const_cast<char *>("php-cgi");
 
-		argvToExec[0] = const_cast<char *>("python3"); // TEST a effacer
+		argvToExec[0] = const_cast<char *>("/bin/python3.10"); // TEST a effacer
 		
 			// REQUEST gives me the script path?
-		argvToExec[1] = const_cast<char *>("site/CGI/scriptCGI/py/quidditchPos.py"); //+ _request->getScriptPath(); //SCRIPT TO EXECUTE//
+		argvToExec[1] = const_cast<char *>("./site/CGI/scriptCGI/py/sortingHat.py"); //+ _request->getScriptPath(); //SCRIPT TO EXECUTE//
 		argvToExec[2] = NULL;
 
 		//check if allsockets are closed

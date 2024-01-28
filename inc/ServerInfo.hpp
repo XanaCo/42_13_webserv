@@ -48,6 +48,8 @@ public:
 	size_t setErrorPages(std::vector<std::string> &serverTab, size_t pos);
 	size_t setLocations(std::vector<std::string> &serverTab, size_t pos);
 
+	std::string	getNameFileS(std::string path) const;
+
 	void checkAllInfos();
 
 	bool	findCgiRessource(std::string path, std::string& newPath) const;

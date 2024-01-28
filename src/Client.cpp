@@ -114,18 +114,18 @@ void    Client::openErrorPage()
 
     if (status == R_MOVED_PERMANENTLY)
     {
-        _response->setReturnStatus("status-code: 301")
+        _response->setStatusCode("status-code: 301");
         _response->setContentType("");          // peut etre pas
-        _response->setLocation("Location: " + _request->getPath())
+        _response->setLocation("Location: " + _request->getPath());
         _response->setContent("");
         _client_status = RES_READY_TO_BE_SENT;  // peut etre pas / ouvrir une fichier peut etre
     }
     else if (status == E_NOT_FOUND)
-        _fdRessource = open("../site/errorPages/error404.html", O_RDONLY);
+        _fdRessource = open("site/errorPages/error404.html", O_RDONLY);
     else if (E_BAD_REQUEST <= status  && status < E_INTERNAL_SERVER)
-        _fdRessource = open("../site/errorPages/error400.html", O_RDONLY);
+        _fdRessource = open("site/errorPages/error400.html", O_RDONLY);
     else
-        _fdRessource = open("../site/errorPages/error500.html", O_RDONLY);
+        _fdRessource = open("site/errorPages/error500.html", O_RDONLY);
 
 }
 
@@ -134,7 +134,7 @@ bool    Client::checkHttpVersion()
     std::string version = _request->getVersion();
     if (version != "HTTP/1.0" && version != "HTTP/1.1" && version != "HTTP/0.9")
     {
-        _response->setReturnStatus(E_HTTP_VERSION);
+        _request->setReturnStatus(E_HTTP_VERSION);
         return (false);
     }
     return (true);
@@ -150,6 +150,8 @@ ServerInfo*    Client::findServer()
         if (i->getServerName() == _request->getHost())
             return &(*i);
     }
+    if (_request->getPath().length() > 4 && _request->getPath().substr(4) == "www.")
+        _request->setReturnStatus(301);
     return &(_servers[0]);
     // throw exception ?
 }
@@ -167,34 +169,7 @@ bool    Client::getRes()
             openErrorPage();
             _response->setContentType("Content-Type: text/html");
         }
-        else
-        {
-            if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".html"))
-            {
-                _response->setContentType("Content-Type: text/html");
-            }
-            else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".mp4"))
-            {
-                _response->setContentType("Content-Type: video/mp4");
-            }
-            else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".css"))
-            {
-                _response->setContentType("Content-Type: text/css");
-            }
-            else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".png"))
-            {
-                _response->setContentType("Content-Type: image/png");
-            }
-            else if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".jpeg"))
-            {
-                _response->setContentType("Content-Type: image/jpeg");
-            }
-            else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".css"))
-            {
-                _response->setContentType("Content-Type: text/css");
-            }
-        }
-        if (_request->getPath().find("/CGI/") != std::string::npos && !_request->getPath().find("html"))
+        if (_request->getPath().find("/CGI/scriptCGI/") != std::string::npos)
         {
             if (!(_request->getMethod() & GET) && !(_request->getMethod() & POST))
             {
@@ -208,9 +183,8 @@ bool    Client::getRes()
 
                 openErrorPage();
             }
-            //exec cgi
             Cgi cgi(*_server, *_request, *_response);
-            cgi.executeScript();    // pas oublier de renseigner le fd de la pipe
+            cgi.executeScript();
             _fdRessource = _response->getCgiFdRessource();
         }
         else
@@ -218,13 +192,12 @@ bool    Client::getRes()
             // resoudre le path
             if (!_server->findRessource(_request->getPath(), path))
             {
-                // la ressource n'a pas ete trouvee 404
-                // ouvrir un fd de la loose
+                _request->setReturnStatus(404);
+                openErrorPage();
+                _response->setContentType("Content-Type: text/html");
             }
-            /*if (_server->getOneLocation(_request->getPath())->getLAutoindex())
-                return (this->_response->craftAutoIndex(path));*/ // handle the auto index and handle the fact that there could be a default file too
-            _fdRessource = open(path.c_str(), O_RDONLY);
-
+            else
+                _fdRessource = open(path.c_str(), O_RDONLY);
         }
         if (_fdRessource < 0)
         {
@@ -233,23 +206,19 @@ bool    Client::getRes()
             openErrorPage();
         }
     }
-    //Gros pansement, a mettre au propre
-    std::string type;
-    /*if (_request->getPath().find("css") != std::string::npos)
+    if (_request->getPath().size() >= 5)
     {
-        type.append("text/css");
-        this->_response->setContentType(type);
+        if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".html"))
+            _response->setContentType("Content-Type: text/html\n");
+        else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".mp4"))
+            _response->setContentType("Content-Type: video/mp4\n");
+        else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".png"))
+            _response->setContentType("Content-Type: image/png\n");
+        else if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".jpeg") || !_request->getPath().compare(_request->getPath().length() - 5, 5, ".jpg"))
+            _response->setContentType("Content-Type: image/jpeg\n");
+        else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".css"))
+            _response->setContentType("Content-Type: text/css\n");
     }
-    else if (_request->getPath().find("img") != std::string::npos)
-    {
-        type.append("image/png");
-        this->_response->setContentType(type);
-    }
-    else
-    {
-        type.append("text/html");
-        this->_response->setContentType(type);
-    }*/
     return (_response->readRessource(_fdRessource));
 }
 
@@ -276,7 +245,7 @@ bool    Client::postRes()
             //exec cgi
             Cgi cgi(*_server, *_request, *_response);
             cgi.executeScript();
-            _fdRessource = ;
+            _fdRessource = _response->getCgiFdRessource() ;
         }
         else
         {
@@ -289,7 +258,8 @@ bool    Client::postRes()
             _fdRessource = open(path.c_str(), O_RDONLY);
             if (_fdRessource > 2)
                 _response->postRessource(path, _request->getBody());   // penser a mettre a jour le status du retour
-
+            // else 
+            //     couille
         }
         if (_fdRessource < 0)
         {
@@ -298,7 +268,13 @@ bool    Client::postRes()
             this->openErrorPage();
         }
     }
-    return (_response->readRessource(_fdRessource));
+    if (_response->readRessource(_fdRessource))
+    {
+        if (_request->getPath().find("/CGI/") != std::string::npos)
+            this->parseCgiExit();
+        return (true);
+    }
+    return (false);
 }
 
 bool    Client::deleteRes()
@@ -321,7 +297,7 @@ bool    Client::deleteRes()
                 this->openErrorPage();
             }
             _fdRessource = open(path.c_str(), O_RDONLY);
-            if (_fdRessource < 0)
+            if (_fdRessource < 2)
             {
                 _request->setReturnStatus(500);
                 this->openErrorPage();
@@ -329,7 +305,7 @@ bool    Client::deleteRes()
             _response->deleteRessource(path);
             // open un fichier du success
         }
-        if (_fdRessource < 0)
+        if (_fdRessource < 2)
         {
             _request->setReturnStatus(500);
             this->openErrorPage();
@@ -340,16 +316,12 @@ bool    Client::deleteRes()
 
 bool    Client::executeMethod()
 {
-    // if (_client_status == REQ_RECEIVED)
-    // {
-        // _server = this->findServer();
-    // }
     int method = _request->getMethod() >> 1;
 
     return ((this->*(Client::methodFunctions()[method]))());
 }
 
-void    Client::routine()
+void    Client::routine(int nbytes)
 {
     switch (_client_status)
     {
@@ -360,20 +332,36 @@ void    Client::routine()
             {
                 _client_status = WAITING_FOR_RES;
                 this->_base->change_poll_event(this->_new_socket, pollout);
+                return ;
             }
             else
             {
+                // if (_request->getPath() == "/")
+                //     _request->setPath("/" + _servers[0].getRoot() + "/index.html");
                 if (this->_req_end == true)
                 {
+                    _server = this->findServer();
                     _client_status = WAITING_FOR_RES;
                     this->_base->change_poll_event(this->_new_socket, pollout);
+                    return ;
+                }
+                else if (!this->_req_end && nbytes < 1024)
+                {
+                    _client_status = REQ_RECEIVED;
+                    _body.append(_received);
                 }
                 else
-                    _client_status = RECEIVING_REQ_BODY;
+                {
+                    if (this->_request->getChunkTransf())
+                        receive_chunked_body_data((char *)_received.c_str(), nbytes);
+                    else
+                        _client_status = RECEIVING_REQ_BODY;
+                }
+
             }
             _server = this->findServer();
-            // if (_client_status != )
-            return ;
+            if (_client_status != REQ_RECEIVED)
+                return ;
         }
         case REQ_RECEIVED:
         {
@@ -480,7 +468,7 @@ bool    Client::receive_data(void){
     else if (nbytes < 0)
     {
         getactualTimestamp();
-        std::cout << "Client " << *this << " encountered error while recv" << std::endl; // See for exception and handling of recv error
+        std::cout << "Client " << *this << " encountered error while recv" << std::endl; // See for exception and hgetandling of recv error
         return false;
     }
     /*else
@@ -542,13 +530,13 @@ void    Client::receive_header_data(char *buffer, int nbytes){
         if (this->_received.size() > 0)
         {
             this->_client_status = RECEIVED_REQ_HEADER;
-            this->routine();
+            this->routine(nbytes);
         }
         else
         {
             this->_client_status = RECEIVED_REQ_HEADER;
             this->_req_end = true;
-            this->routine();
+            this->routine(nbytes);
             //this->_base->change_poll_event(this->_new_socket, pollout);
         }
         return ;
@@ -560,6 +548,7 @@ void    Client::receive_header_data(char *buffer, int nbytes){
 void    Client::receive_chunked_body_data(char *buffer, int nbytes){
 
     size_t         chunk_size = 0;
+    this->_chunk_index_type = CHUNK_SIZE;
     if (this->_first_chunk && this->_received.size())
     {
         _chunk_pool.clear();
@@ -595,6 +584,7 @@ void    Client::receive_chunked_body_data(char *buffer, int nbytes){
                 this->_request->setReturnStatus(400);
                 this->_chunk_index_type = CHUNK_SIZE;
                 this->_first_chunk = true;
+                this->routine(nbytes);
                 return ;
             }
             else if (chunk_vec[i].size() != chunk_size && i == (chunk_vec.size() - 1))
@@ -629,7 +619,7 @@ void    Client::receive_body_data(char *buffer, int nbytes){
     if (nbytes < BUFFER_SIZE)
     {
         this->_client_status = REQ_RECEIVED;
-        this->routine();
+        this->routine(nbytes);
         //this->_base->change_poll_event(this->_new_socket, pollout);
         return ;
     }
@@ -638,7 +628,7 @@ void    Client::receive_body_data(char *buffer, int nbytes){
         if (this->_body_bytes == this->_request->getContentLength())
         {
             this->_client_status = REQ_RECEIVED;
-            this->routine();
+            this->routine(nbytes);
             //this->_base->change_poll_event(this->_new_socket, pollout);
             return ;
         }
@@ -651,7 +641,7 @@ std::string Client::make_temp_header(void){
         int cont_len = this->getResponse()->getContent().size();
         std::stringstream con;
         con << cont_len;
-        std::string to_send = "HTTP/1.1 200 OK\nContent-Type: " + this->getResponse()->getContentType() + "\nContent-Length: " + con.str() + "\n\n" + this->getResponse()->getContent() + "\r\n\r\n";
+        std::string to_send = "HTTP/1.1 200 OK\n" + this->getResponse()->getContentType() + "Content-Length: " + con.str() + "\n\n" + this->getResponse()->getContent() + "\r\n\r\n";
         return (to_send);
 }
 
@@ -677,7 +667,7 @@ std::string Client::make_temp_header(void){
 bool    Client::send_data(void)
 {
     if (this->_client_status == WAITING_FOR_RES)
-        this->routine();
+        this->routine(0);
     else
     {
         if (!send_partial(this->_new_socket))

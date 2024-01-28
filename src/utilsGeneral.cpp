@@ -84,6 +84,20 @@ void deEncodingHexa(std::string& chaine)
 	chaine = resultat;
 }
 
+// std::string getFirstNameDir(const std::string& path)
+// {
+//     size_t lastSep = path.find('/');
+    
+//     if (lastSep != std::string::npos && path[1])
+//     {
+//         if (lastSep == 0)
+//             return path;
+//         return path.substr(0, lastSep);
+//     }
+//     else
+//         return ".";
+// }
+
 std::string getNameDir(const std::string& path)
 {
     size_t lastSep = path.find_last_of('/');
@@ -95,7 +109,7 @@ std::string getNameDir(const std::string& path)
         return path.substr(0, lastSep);
     }
     else
-        return ".";
+        return "/";
 }
 
 std::string getNameFile(const std::string& path)
