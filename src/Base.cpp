@@ -225,7 +225,6 @@ void    Base::handle_new_connection(int serv_sock)
 }
 
 // function used to change a poll event
-
 void    Base::change_poll_event(int socket, int event){
 
     struct pollfd   *tmp;

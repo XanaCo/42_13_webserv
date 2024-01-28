@@ -51,6 +51,7 @@ class Response
         void    setCgiFdRessource(int cgiFdRessource);
         void    setStatusCode(std::string statusCode);
         void    setProtocol(std::string protocol);
+        void    setLocation(std::string protocol);
 
 
         pid_t           getCgiPid(void) const;
@@ -65,15 +66,14 @@ class Response
         std::string     getContentType() const;
         std::string     getStatusCode() const;
         std::string     getProtocol() const;
+        std::string     getLocation() const;
 
 
     private:
 
         uint16_t    _port;
-        std::string _content;
         int         _contentLength;
-        std::string _contentType;
-        int         _returnStatus;
+        int         _returnStatus;  // ne sert a rien ?
         pid_t       _cgiPid;
         int         _cgiFd;
         std::string _cgiOutput;
@@ -82,7 +82,9 @@ class Response
 
         std::string _statusCode;
         std::string _protocol;
-        // std::string _contentType;
+        std::string _contentType;
+        std::string _content;
+        std::string _location;
 };
 std::ostream& operator<<(std::ostream& os, const Response& obj);
 

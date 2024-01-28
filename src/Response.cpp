@@ -150,9 +150,11 @@ void    Response::resetValues(void)
 {
     // _port = 0;
     _content = "";
-    _returnStatus = I_CONTIUE;
+    _location = "";
+    _returnStatus = I_CONTIUE;  // inutile
     _contentType = "";
     _contentLength = 0;
+    _
 }
 
 // ************************************************************************** //
@@ -170,6 +172,7 @@ void    Response::setCgiBytesWritten(long cgiBytesWritten) {_cgiBytesWritten = c
 void    Response::setCgiFdRessource(int cgiFdRessource) {_cgiFdRessource = cgiFdRessource;}
 void    Response::setStatusCode(std::string statusCode) {_statusCode = statusCode;}
 void    Response::setProtocol(std::string protocol) {_protocol = protocol;}
+void    Response::setLocation(std::string location) {_location = location;}
 // void    Response::setPort(uint16_t port) {_port = port;}
 
 
@@ -184,4 +187,5 @@ int             Response::getContentLength() const {return (_contentLength);}
 std::string     Response::getContentType() const {return (_contentType);}
 std::string     Response::getStatusCode() const {return (_statusCode);}
 std::string     Response::getProtocol() const {return (_protocol);}
+std::string     Response::getLocation() const {return (_location);}
 // uint16_t        Response::getPort() const {return (_port);}

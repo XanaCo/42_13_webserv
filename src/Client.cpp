@@ -112,7 +112,15 @@ void    Client::openErrorPage()
 {
     int status = _request->getReturnStatus();
 
-    if (status == E_NOT_FOUND)
+    if (status == R_MOVED_PERMANENTLY)
+    {
+        _response->setReturnStatus("status-code: 301")
+        _response->setContentType("");          // peut etre pas
+        _response->setLocation("Location: " + _request->getPath())
+        _response->setContent("");
+        _client_status = RES_READY_TO_BE_SENT;  // peut etre pas / ouvrir une fichier peut etre
+    }
+    else if (status == E_NOT_FOUND)
         _fdRessource = open("../site/errorPages/error404.html", O_RDONLY);
     else if (E_BAD_REQUEST <= status  && status < E_INTERNAL_SERVER)
         _fdRessource = open("../site/errorPages/error400.html", O_RDONLY);
@@ -157,39 +165,32 @@ bool    Client::getRes()
         if (_request->getReturnStatus() != 200)
         {
             openErrorPage();
-            contentType = "Content-Type: text/html";
-            _response->setContentType(contentType);
+            _response->setContentType("Content-Type: text/html");
         }
         else
         {
             if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".html"))
             {
-                // contentType = "Content-Type: text/html";
                 _response->setContentType("Content-Type: text/html");
             }
             else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".mp4"))
             {
-                // contentType = "Content-Type: video/mp4";
                 _response->setContentType("Content-Type: video/mp4");
             }
             else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".css"))
             {
-                contentType = "Content-Type: text/css";
                 _response->setContentType("Content-Type: text/css");
             }
             else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".png"))
             {
-                // contentType = "Content-Type: image/png";
                 _response->setContentType("Content-Type: image/png");
             }
             else if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".jpeg"))
             {
-                // contentType = "Content-Type: image/jpeg";
                 _response->setContentType("Content-Type: image/jpeg");
             }
             else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".css"))
             {
-                // contentType = "Content-Type: text/css";
                 _response->setContentType("Content-Type: text/css");
             }
         }
@@ -223,10 +224,6 @@ bool    Client::getRes()
             /*if (_server->getOneLocation(_request->getPath())->getLAutoindex())
                 return (this->_response->craftAutoIndex(path));*/ // handle the auto index and handle the fact that there could be a default file too
             _fdRessource = open(path.c_str(), O_RDONLY);
-            if (_fdRessource < 0)
-            {
-                // ouvrir un fichier de la loose
-            }
 
         }
         if (_fdRessource < 0)
@@ -279,8 +276,7 @@ bool    Client::postRes()
             //exec cgi
             Cgi cgi(*_server, *_request, *_response);
             cgi.executeScript();
-            // pas oublier de renseigner le fd de la pipe
-            // _fdRessource = ;
+            _fdRessource = ;
         }
         else
         {
