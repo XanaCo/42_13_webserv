@@ -124,6 +124,7 @@
 # define E_GATEWAY_TIMEOUT		504 // renvoye par un serveur proxi pour indiquer qu'il n'a pas recu de reponde de la part d'un serveur en amont
 # define E_HTTP_VERSION			505 // la version d'http precise en requette n'est pas traitee par le serveur
 
+
 typedef enum e_headerRequest {
 	RQ_METHOD,
 	RQ_HOST,

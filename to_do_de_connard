@@ -1,0 +1,31 @@
+
+Check le status code et le retour a chaque fois
+
+
+- GET		classique
+- POST		classique
+- DELETE	classique
+
+- GET		interdit
+- POST		interdit
+- DELETE	interdit
+
+- GET		sans ressource -> 404 not found
+
+- Unknow method (HEAD / PUT)
+
+- GET		CGI
+- POST		CGI
+
+- Directory
+
+- Les redirections
+
+- POST		Upload
+- GET		Download
+
+- GET		index par defaut
+- Chunk encoding request
+
+- Cookies
+

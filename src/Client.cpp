@@ -1,5 +1,7 @@
 #include "../inc/Client.hpp"
 #include "../inc/Base.hpp"
+#define DIR_LIST    2000000000
+
 
 // ************************************************************************** //
 //	CONSTRUCTOR / DESTRUCTOR
@@ -89,13 +91,11 @@ bool    Client::parseCgiExit()
         int length = lines[0].size();
         if (length >= 13 && lines[i].substr(0, 13) == "content-type:")
             _response->setContentType(lines[i]);
-        else if (length >= 12 && lines[i].substr(0, 12) == "status-code:")
-            _response->setContentType(lines[i]);
-        else if (length >= 8 && lines[i].substr(0, 8) == "protocol:")
-            _response->setProtocol(lines[i]);
-        else if (length >= 6 && lines[i].substr(0, 6) == "<html>")
-        {
-            _response->setContent(lines[i]);
+        else if (length >= 12 && lines[i].substr(
+<html><body>
+<h1>Sorting Hat Result</h1>
+<p>{Alban, you belong to <strong>Serpentard</strong>.</p>
+</body></html>
             for (; i < size; i++)
             {
                 std::string newContent = _response->getContent() + "\n" + lines[i];
@@ -142,9 +142,10 @@ bool    Client::checkHttpVersion()
 
 ServerInfo*    Client::findServer()
 {
-    if (_servers.size() == 1)
-        return (&(_servers[0]));
-
+<html><body>
+<h1>Sorting Hat Result</h1>
+<p>{Alban, you belong to <strong>Serpentard</strong>.</p>
+</body></html>
     for (std::vector<ServerInfo>::iterator i = _servers.begin(); i != _servers.end(); i++)
     {
         if (i->getServerName() == _request->getHost())
@@ -159,6 +160,7 @@ ServerInfo*    Client::findServer()
 bool    Client::getRes()
 {
     std::string path;
+    int         returnFindRes;
 
     if (_fdRessource < 3)
     {
@@ -190,14 +192,21 @@ bool    Client::getRes()
         else
         {
             // resoudre le path
-            if (!_server->findRessource(_request->getPath(), path))
+            returnFindRes = _server->findRessource(_request->getPath(), path);
+            if (!returnFindRes)
             {
                 _request->setReturnStatus(404);
                 openErrorPage();
                 _response->setContentType("Content-Type: text/html");
             }
-            else
+            else if (returnFindRes == 1)
+            {
                 _fdRessource = open(path.c_str(), O_RDONLY);
+            }
+            else
+            {
+                _fdRessource = DIR_LIST;
+            }
         }
         if (_fdRessource < 0)
         {
@@ -218,6 +227,13 @@ bool    Client::getRes()
             _response->setContentType("Content-Type: image/jpeg\n");
         else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".css"))
             _response->setContentType("Content-Type: text/css\n");
+        else
+            _response->setContentType("Content-Type: text/html\n");
+    }
+    if (_fdRessource == DIR_LIST)
+    {
+        _response->setContent("Je vais mettre ma fonction turgescente");
+        return (true);
     }
     return (_response->readRessource(_fdRessource));
 }
@@ -752,3 +768,6 @@ void    Client::set_bytes_received(int nbytes) {this->_bytes_received = nbytes;}
 void    Client::set_req_end(bool end){this->_req_end = end;}
 void    Client::setFdRessource(int fd) {_fdRessource = fd;}
 void    Client::setServer(ServerInfo* server) {_server = server;}
+
+
+

@@ -53,7 +53,7 @@ public:
 	void checkAllInfos();
 
 	bool	findCgiRessource(std::string path, std::string& newPath) const;
-	bool	findRessource(std::string path, std::string& newPath) const;
+	int	findRessource(std::string path, std::string& newPath) const;
 
 	class ServerInfoError : public std::exception {
 	
