@@ -652,12 +652,36 @@ void    Client::receive_body_data(char *buffer, int nbytes){
     return ;
 }
 
+// std::string Client::make_temp_header(void){
+
+//         int cont_len = this->getResponse()->getContent().size();
+//         std::stringstream con;
+//         con << cont_len;
+//         std::string to_send = "HTTP/1.1 200 OK\n" + this->getResponse()->getContentType() + "Content-Length: " + con.str() + "\n\n" + this->getResponse()->getContent() + "\r\n\r\n";
+//         return (to_send);
+// }
+
 std::string Client::make_temp_header(void){
 
-        int cont_len = this->getResponse()->getContent().size();
-        std::stringstream con;
-        con << cont_len;
-        std::string to_send = "HTTP/1.1 200 OK\n" + this->getResponse()->getContentType() + "Content-Length: " + con.str() + "\n\n" + this->getResponse()->getContent() + "\r\n\r\n";
+        std::string to_send = "HTTP/1.1 ";
+        
+        if (_response->getStatusCode() != "")
+            to_send += _response->getStatusCode() + "\n";
+        else
+        {
+            std::stringstream con2;
+            con2 << _request->getReturnStatus();
+            to_send += "Status-Code: " + con2.str() + "OK\n";
+        }
+        if (_response->getContentType() != "")
+            to_send += _response->getContentType();
+        if (_response->getContent() != "")
+        {
+            int cont_len = this->getResponse()->getContent().size();
+            std::stringstream con;
+            con << cont_len;
+            to_send += "Content-Length: " + con.str() + "\n\n" + _response->getContent();
+        }
         return (to_send);
 }
 
