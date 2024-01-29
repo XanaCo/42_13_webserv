@@ -70,9 +70,8 @@ function generatePotionName($ingredients, $ingredientNames, $potionRecipes, $pre
 $potionName = generatePotionName($selectedIngredients, $ingredientNames, $potionRecipes, $predefinedPotionNames);
 
 // Print the CGI header
+header("protocol: HTTP/1.1 200");
 header("content-type: text/html");
-header("status-code: 200");
-header("protocol: HTTP/1.1");
 header("");
 
 // Output HTML content
