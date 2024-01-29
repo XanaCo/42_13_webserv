@@ -215,7 +215,9 @@ bool    Client::getRes()
             openErrorPage();
         }
     }
-    if (_request->getPath().size() >= 5)
+    if (_response->getContentType() == "")
+        _response->setMimeType(_request->getPath());
+    /*if (_request->getPath().size() >= 5)
     {
         if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".html"))
             _response->setContentType("Content-Type: text/html\n");
@@ -223,13 +225,13 @@ bool    Client::getRes()
             _response->setContentType("Content-Type: video/mp4\n");
         else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".png"))
             _response->setContentType("Content-Type: image/png\n");
-        else if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".jpeg") || !_request->getPath().compare(_request->getPath().length() - 5, 5, ".jpg"))
+        else if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".jpeg") || !_request->getPath().compare(_request->getPath().length() - 4, 4, ".jpg"))
             _response->setContentType("Content-Type: image/jpeg\n");
         else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".css"))
             _response->setContentType("Content-Type: text/css\n");
         else
             _response->setContentType("Content-Type: text/html\n");
-    }
+    }*/
     if (_fdRessource == DIR_LIST)
     {
         _response->setContent("Je vais mettre ma fonction turgescente");
