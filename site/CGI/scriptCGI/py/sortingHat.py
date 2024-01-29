@@ -32,9 +32,8 @@ def main():
     selected_house = "Serpentard"
 
 # HTTP Header
+    print("protocol: HTTP/1.1 200")
     print("content-type: text/html")
-    print("status-code: 200")
-    print("protocol: HTTP/1.1")
     print()
 
 # html response

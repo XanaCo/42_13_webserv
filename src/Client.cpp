@@ -91,8 +91,8 @@ bool    Client::parseCgiExit()
         int length = lines[0].size();
         if (length >= 13 && lines[i].substr(0, 13) == "content-type:")
             _response->setContentType(lines[i]);
-        else if (length >= 12 && lines[i].substr(0, 12) == "status-code:")
-            _response->setContentType(lines[i]);
+        // else if (length >= 12 && lines[i].substr(0, 12) == "status-code:")
+        //     _response->setContentType(lines[i]);
         else if (length >= 8 && lines[i].substr(0, 8) == "protocol:")
             _response->setProtocol(lines[i]);
         else if (length >= 6 && lines[i].substr(0, 6) == "<html>")
@@ -116,7 +116,7 @@ void    Client::openErrorPage()
 
     if (status == R_MOVED_PERMANENTLY)
     {
-        _response->setStatusCode("status-code: 301");
+        _response->setProtocol("protocol: HTTP/1.1 301");
         _response->setContentType("");          // peut etre pas
         _response->setLocation("Location: " + _request->getPath());
         _response->setContent("");

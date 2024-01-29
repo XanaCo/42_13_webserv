@@ -151,6 +151,7 @@ void    Response::resetValues(void)
     // _port = 0;
     _content = "";
     _location = "";
+    _statusCode = "";
     _contentType = "";
     _contentLength = 0;
 }

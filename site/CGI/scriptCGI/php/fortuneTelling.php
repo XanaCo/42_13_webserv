@@ -27,8 +27,7 @@ $fortune = generateFortune($question);
 
 // Print the CGI header
 header("content-type: text/html");
-header("status-code: 200");
-header("protocol: HTTP/1.1");
+header("protocol: HTTP/1.1 200");
 header("");
 
 // Output HTML content

@@ -28,9 +28,8 @@ def main():
 		position = random.choice(list(qualities.values()))
 
 # HTTP Header
+print("protocol: HTTP/1.1 200")
 print("content-type: text/html")
-print("status-code: 200")
-print("protocol: HTTP/1.1")
 print()
 
 # html response
