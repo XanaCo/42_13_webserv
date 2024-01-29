@@ -95,6 +95,7 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
     // clean le header avant
 
     removeBackSlashR(header);
+    std::cout << "Le header : " << header << std::endl;
 
     std::vector<std::string> lines = splitString(header, '\n');	// voir si on doit pas creer notre propre split
     int size = lines.size();
@@ -149,6 +150,7 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
 
 bool    Request::fillBody(std::string&  body)   // a voir si on fait des modifs
 {
+    std::cout << "Le body : " << body << std::endl;
     _body = body;
     // mettre a jour le status en waiting for response quel que soit le status;
     return (true);
