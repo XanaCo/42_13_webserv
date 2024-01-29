@@ -54,7 +54,7 @@ bool    Response::readRessource(int fd)
 
     if (nbBytesReaded < 0)
     {
-        close(fd);
+        // close(fd);
         return (true); // a changer
     }
     _content.append(buffer, nbBytesReaded);
@@ -113,34 +113,34 @@ void Response::deleteRessource(const std::string path)
 //	
 // ************************************************************************** //
 
-bool    Response::addBuffer(int fd)
-{
-    // if (_fdFileToSend < 3)
-    // {
-    //     // le fichier n'est pas ouvert
-    //     return (false);
-    // }
-    int     bytesReaded;
-    char    line[BUFFER_SIZE + 1];
-    bytesReaded = read(fd, line, BUFFER_SIZE);
-    if (bytesReaded < 0)
-    {
+// bool    Response::addBuffer(int fd)
+// {
+//     // if (_fdFileToSend < 3)
+//     // {
+//     //     // le fichier n'est pas ouvert
+//     //     return (false);
+//     // }
+//     int     bytesReaded;
+//     char    line[BUFFER_SIZE + 1];
+//     bytesReaded = read(fd, line, BUFFER_SIZE);
+//     if (bytesReaded < 0)
+//     {
 
-        return (false);
-    }
-    else if (bytesReaded)
-    {
-        line[bytesReaded] = 0;
-        _content += line;
-    }
-    if (bytesReaded < BUFFER_SIZE)
-    {
-        return (false);
-        // close le fichier
-        // mettre a jour le status en mode "on a tout recu"
-    }
-    return (true);
-}
+//         return (false);
+//     }
+//     else if (bytesReaded)
+//     {
+//         line[bytesReaded] = 0;
+//         _content += line;
+//     }
+//     if (bytesReaded < BUFFER_SIZE)
+//     {
+//         return (false);
+//         // close le fichier
+//         // mettre a jour le status en mode "on a tout recu"
+//     }
+//     return (true);
+// }
 
 // ************************************************************************** //
 //	

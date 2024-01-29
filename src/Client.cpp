@@ -334,7 +334,12 @@ bool    Client::executeMethod()
 {
     int method = _request->getMethod() >> 1;
 
-    return ((this->*(Client::methodFunctions()[method]))());
+    if ((this->*(Client::methodFunctions()[method]))())
+    {
+        closeFile(&_fdRessource);
+        return (true);
+    }
+    return (false);
 }
 
 void    Client::routine(int nbytes)
