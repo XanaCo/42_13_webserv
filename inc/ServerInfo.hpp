@@ -48,7 +48,7 @@ public:
 	size_t setErrorPages(std::vector<std::string> &serverTab, size_t pos);
 	size_t setLocations(std::vector<std::string> &serverTab, size_t pos);
 
-	std::string	getNameFileS(std::string path) const;
+	std::string	getNameFileS(std::string path, Location & loc) const;
 
 	void checkAllInfos();
 

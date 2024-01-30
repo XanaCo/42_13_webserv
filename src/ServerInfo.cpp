@@ -446,12 +446,12 @@ void ServerInfo::setTimeout(std::string timeout) {
 //	METHODS
 // ************************************************************************** //
 
-std::string	ServerInfo::getNameFileS(std::string path) const
+std::string	ServerInfo::getNameFileS(std::string path, Location & loc) const
 {
 	std::string	file_name = getNameFile(path);
 
-	if (file_name == "")
-		return (_index);
+	if (file_name == "" || !checkFileExists(file_name))
+		return (loc.getLIndex());
 	return (file_name);
 }
 
@@ -530,6 +530,7 @@ int ServerInfo::findRessource(std::string path, std::string& newPath) const
         {
             //newPath = _Root + getNameFile(path);
             if (it->getLAutoindex() && getNameFileS(path) == "")
+
 			{
 				newPath = _Root + nameDir;
 				return (2);
