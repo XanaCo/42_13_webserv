@@ -189,6 +189,11 @@ int ServerInfo::getTimeout() const {
 	return this->_timeout;
 }
 
+int ServerInfo::getTypeCgi() const {
+
+	return this->_typeCgi;
+}
+
 bool    ServerInfo::setListenSocket(std::string l_port){
 
     int listener;
@@ -276,6 +281,11 @@ void ServerInfo::setIndex(std::string index) {
 void ServerInfo::setMaxClientBody(std::string max) {
 
 	this->_maxClientBody = strToInt(max);
+}
+
+void ServerInfo::setTypeCgi(int typeCgi) {
+
+	_typeCgi = typeCgi;
 }
 
 size_t ServerInfo::setLocations(std::vector<std::string> &serverTab, size_t pos) {
@@ -498,7 +508,7 @@ void ServerInfo::checkAllInfos() {
 	this->setSockAddress();
 }
 
-bool	ServerInfo::findCgiRessource(std::string path, std::string& newPath) const
+bool	ServerInfo::findCgiRessource(std::string path, std::string& newPath)
 {
 	std::string	nameDir = getNameDir(path);
 	for (long unsigned int i = 0; i < _locations.size(); i++)
@@ -506,12 +516,21 @@ bool	ServerInfo::findCgiRessource(std::string path, std::string& newPath) const
 		if (nameDir == _locations[i].getLPathName() + "/scriptCGI")
 		{
 			// size_t limit = path.find(".html");
-			newPath = "../" + _Root + "/CGI/scriptCGI/py/" + this->getNameFileS(path) + ".py";
-			if (access(newPath.c_str(), F_OK))
+			newPath = "./" + _Root + "/CGI/scriptCGI/py/" + this->getNameFileS(path) + ".py";
+			if (!access(newPath.c_str(), F_OK))
+			{
+				_typeCgi = PY;
+				//newPath = newPath.substr(1, newPath.length());
 				return (true);
-			newPath = _Root + "/CGI/scriptCGI/php/" + getNameFileS(path) + ".php";
-			if (access(newPath.c_str(), F_OK))
+			}
+			newPath = "./" + _Root + "/CGI/scriptCGI/php/" + getNameFileS(path) + ".php";
+			if (!access(newPath.c_str(), F_OK))
+			{
+				_typeCgi = PHP;
+				//newPath = newPath.substr(1, newPath.length());
 				return (true);
+
+			}
 		}
 	}
 	newPath = _Root + "/index.html"; // mettre une erreur

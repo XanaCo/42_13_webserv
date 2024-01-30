@@ -33,6 +33,7 @@ public:
 	int getTimeout() const;
 	char getAllowed() const;
 	Location *getOneLocation(std::string Locname);
+	int			getTypeCgi() const;
 
     bool setListenSocket(std::string l_port);
     void setSameListen(int same);
@@ -47,12 +48,13 @@ public:
 	void setTimeout(std::string timeout);
 	size_t setErrorPages(std::vector<std::string> &serverTab, size_t pos);
 	size_t setLocations(std::vector<std::string> &serverTab, size_t pos);
+	void setTypeCgi(int typeCgi);
 
 	std::string	getNameFileS(std::string path, Location & loc) const;
 
 	void checkAllInfos();
 
-	bool	findCgiRessource(std::string path, std::string& newPath) const;
+	bool	findCgiRessource(std::string path, std::string& newPath);
 	int	findRessource(std::string path, std::string& newPath) const;
 
 	class ServerInfoError : public std::exception {
@@ -82,6 +84,7 @@ private:
 	std::string					_listen; // PORT in string type
 	int							_timeout;
 
+	int							_typeCgi;
 };
 
 std::ostream &operator<<(std::ostream &out, ServerInfo const &ServerInfo);

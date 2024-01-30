@@ -43,7 +43,15 @@ def main():
     print()
 
 # html response
-    print("<html><body>")
+    print("<html>")
+    print("<head>")
+    print('<meta charset="UTF-8">')
+    print('<meta name="viewport" content="width=device-width, initial-scale=1.0">')
+    print('<title>Welcome to Hogwarts</title>')
+    print('<link rel="stylesheet" href="../../../css/style.css" />')
+    print('<link rel="icon" type="image/png" href="../../../img/LOGO_cursor.png" />')
+    print("</head>")
+    print("<body>")
     print('<h1>Sorting Hat Result</h1>')
     print('<p>' + user_data.get('name') + ', you belong to <strong>' + creatures.get(user_data.get('creature')) + '</strong>.</p>')
     print("</body></html>")

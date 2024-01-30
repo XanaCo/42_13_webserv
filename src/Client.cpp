@@ -184,7 +184,9 @@ bool    Client::getRes()
                 std::cerr << "Run : on ne trouve pas la ressource CGI" << std::endl;
 
                 openErrorPage();
+                return (false);
             }
+            _request->setPath(path);
             Cgi cgi(*_server, *_request, *_response);
             cgi.executeScript();
             _fdRessource = _response->getCgiFdRessource();
@@ -246,6 +248,7 @@ bool    Client::postRes()
                 this->openErrorPage();
             }
             //exec cgi
+            _request->setPath(path);
             Cgi cgi(*_server, *_request, *_response);
             cgi.executeScript();
             _fdRessource = _response->getCgiFdRessource() ;
