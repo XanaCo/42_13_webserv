@@ -1,29 +1,30 @@
 #!/usr/bin/php-cgi
 <?php
 
-// parsing
-// parse_str(file_get_contents('php://input'), $parsed_data);
-// $user_data = $parsed_data;
+// Read the ingredients in the ENV data from the request body
+$postData = getenv("CONTENT_BODY");
 
-// Read the question from the form
-$question = $_POST['question'] ?? '';
+// Parse the raw data into an associative array
+parse_str($postData, $parsedData);
 
-// Generate a fortune based on the question
+// Take the question
+$question = $parsedData['question'] ?? '';
+
+// Generate random response
 function generateFortune($question) {
-    // You can create your own logic for generating fortunes here
-    // For simplicity, we'll provide a basic example
-    $fortunes = [
-        "Yes, definitely.",
-        "It is certain.",
-        "Ask again later.",
-        "Cannot predict now.",
-        "Don't count on it.",
-        "Very doubtful.",
-    ];
-    
-    // Use a simple hashing to select a fortune based on the question
-    $fortuneIndex = crc32($question) % count($fortunes);
-    return $fortunes[$fortuneIndex];
+
+	$fortunes = [
+		"Yes, definitely.",
+		"It is certain.",
+		"Ask again later.",
+		"Cannot predict now.",
+		"Don't count on it.",
+		"Very doubtful.",
+	];
+
+	$fortuneIndex = crc32($question) % count($fortunes);
+
+	return $fortunes[$fortuneIndex];
 }
 
 // Generate the fortune
@@ -36,12 +37,15 @@ header("");
 
 // Output HTML content
 echo "<html>";
-echo "<head><title>Devination Class Result</title></head>";
+echo "<head>";
+echo "<title>Devination Class Result</title>";
+echo '<link rel="stylesheet" href="../../../css/style.css" />';
+echo '<link rel="icon" type="image/png" href="../../../img/LOGO_cursor.png" />';
+echo "</head>";
 echo "<body>";
 echo "<h1>Your Fortune</h1>";
 echo "<p>You asked: <strong>$question</strong></p>";
 echo "<p>The magical answer is: <strong>$fortune</strong></p>";
-echo '<p>' . $user_data['name'] . ', you belong to <strong>' . $fortune[0] . '</strong>.</p>';
 echo "</body>";
 echo "</html>";
 

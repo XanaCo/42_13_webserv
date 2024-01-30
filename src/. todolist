@@ -1,6 +1,0 @@
-- Regarder l histoire des allocs qui ne baissent pas (req_res_alloc)
-- Mettre la fonction d'envoi basique dans le client
-- Mettre une fonction qui fait un header temporaire
-- Mettre les fonctions qui recoivent d abord le header puis le body
-- Si je vois que le body depasse la taille attendue, je mets le status sur waiting for response et un return status dans la requete de 493
-- Checker a chaque reception de buffer si la taille recue depuis le debut n est pas plus grande que la taille maximale du body ou que le content length annonce
