@@ -95,7 +95,7 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
     // clean le header avant
 
     removeBackSlashR(header);
-    std::cout << "Le header : " << header << std::endl;
+    //std::cout << "Le header : " << header << std::endl;
 
     std::vector<std::string> lines = splitString(header, '\n');	// voir si on doit pas creer notre propre split
     int size = lines.size();
