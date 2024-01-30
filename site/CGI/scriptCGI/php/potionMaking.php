@@ -105,18 +105,18 @@ header("content-type: text/html");
 header("");
 
 // Output HTML content
-echo '<html>';
-echo '<head>';
-echo '<meta charset=UTF-8>';
+echo "<html>";
+echo "<head>";
+echo '<meta charset="UTF-8">';
 echo '<meta name="viewport" content="width=device-width, initial-scale=1.0">';
-echo '<title>Magical Potion Result</title>';
+echo "<title>Magical Potion Result</title>";
 echo '<link rel="stylesheet" href="../../../css/style.css" />';
 echo '<link rel="icon" type="image/png" href="../../../img/LOGO_cursor.png" />';
-echo '</head>';
-echo '<body>';
-echo '<h1>Magical Potion Created!</h1>';
+echo "</head>";
+echo "<body>";
+echo "<h1>Magical Potion Created!</h1>";
 echo "<p>Your potion, <strong>$potionName</strong>, has been successfully brewed.</p>";
-echo '<p>Enjoy your magical concoction!</p>';
-echo '</body>';
-echo '</html>';
+echo "<p>Enjoy your magical concoction!</p>";
+echo "</body>";
+echo "</html>";
 ?>
