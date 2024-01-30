@@ -3,7 +3,7 @@
 import random
 import cgi
 import os
-from urllib.parse import parse_qs   # pour parse les arguments
+from urllib.parse import parse_qs
 
 # parsing
 parsed_data = parse_qs(os.environ.get('CONTENT_BODY'))
@@ -17,14 +17,7 @@ qualities = {
 	"Force": "Beater",
 }
 
-# # form input
-# def get_form():
-# 	form = cgi.FieldStorage()
-# 	name = form.getvalue('name', '')
-# 	quality = form.getvalue('quality', '')
-# 	return name, quality
-
-# # main function
+# main function
 def main():
 
 # HTTP Header
@@ -43,7 +36,7 @@ def main():
     print("</head>")
     print("<body>")
     print('<h1>Quidditch selection result</h1>')
-    print('<p>' + user_data.get('name') + ', you belong to <strong>' + qualities.get(user_data.get('quality')) + '</strong>.</p>')
+    print('<p>' + user_data.get('name') + ', you are a <strong>' + qualities.get(user_data.get('quality')) + '</strong>.</p>')
     print("</body></html>")
 
 # security

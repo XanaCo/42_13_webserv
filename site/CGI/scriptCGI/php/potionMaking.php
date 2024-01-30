@@ -20,7 +20,7 @@ $potionRecipes = [
     "knotgrass,fluxweed" => "Felix Felicis",
     // Add more potion recipes as needed
     // Example:
-    "some_ingredient,another_ingredient" => "Another Potion",
+    //"some_ingredient,another_ingredient" => "Another Potion",
 ];
 
 // List of predefined potion names
@@ -45,8 +45,8 @@ function generatePotionName($ingredients, $ingredientNames, $potionRecipes, $pre
     // Check if the selected combination matches any known potion recipe
     foreach ($potionRecipes as $recipeIngredients => $potionName) {
         // Ensure that keys are strings for comparison
-        $recipeIngredients = array_map('strval', $recipeIngredients);
-        if (array_diff($ingredients, $recipeIngredients) === array_diff($recipeIngredients, $ingredients)) {
+        $recipeIngredientsArray = explode(',', $recipeIngredients);
+        if (count(array_diff($ingredients, $recipeIngredientsArray)) === 0 && count(array_diff($recipeIngredientsArray, $ingredients)) === 0) {
             return $potionName;
         }
     }
@@ -83,5 +83,4 @@ echo "<p>Your potion, named <strong>$potionName</strong>, has been successfully 
 echo "<p>Enjoy your magical concoction!</p>";
 echo "</body>";
 echo "</html>";
-
 ?>
