@@ -1,6 +1,10 @@
 #!/usr/bin/php-cgi
 <?php
 
+// parsing
+// parse_str(file_get_contents('php://input'), $parsed_data);
+// $user_data = $parsed_data;
+
 // Read the question from the form
 $question = $_POST['question'] ?? '';
 
@@ -16,7 +20,7 @@ function generateFortune($question) {
         "Don't count on it.",
         "Very doubtful.",
     ];
-
+    
     // Use a simple hashing to select a fortune based on the question
     $fortuneIndex = crc32($question) % count($fortunes);
     return $fortunes[$fortuneIndex];
@@ -37,6 +41,7 @@ echo "<body>";
 echo "<h1>Your Fortune</h1>";
 echo "<p>You asked: <strong>$question</strong></p>";
 echo "<p>The magical answer is: <strong>$fortune</strong></p>";
+echo '<p>' . $user_data['name'] . ', you belong to <strong>' . $fortune[0] . '</strong>.</p>';
 echo "</body>";
 echo "</html>";
 

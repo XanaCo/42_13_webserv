@@ -2,6 +2,12 @@
 
 import random
 import cgi
+import os
+from urllib.parse import parse_qs   # pour parse les arguments
+
+# parsing
+parsed_data = parse_qs(os.environ.get('CONTENT_BODY'))
+user_data = {key: value[0] for key, value in parsed_data.items()}
 
 # data struct
 qualities = {
@@ -11,32 +17,34 @@ qualities = {
 	"Force": "Beater",
 }
 
-# form input
-def get_form():
-	form = cgi.FieldStorage()
-	name = form.getvalue('name', '')
-	quality = form.getvalue('quality', '')
-	return name, quality
+# # form input
+# def get_form():
+# 	form = cgi.FieldStorage()
+# 	name = form.getvalue('name', '')
+# 	quality = form.getvalue('quality', '')
+# 	return name, quality
 
-# main function
+# # main function
 def main():
-	name, preferred_quality = get_form()
-
-	if preferred_quality in qualities:
-		position = qualities[preferred_quality]
-	else :
-		position = random.choice(list(qualities.values()))
 
 # HTTP Header
-print("protocol: HTTP/1.1 200")
-print("content-type: text/html")
-print()
+    print("protocol: HTTP/1.1 200")
+    print("content-type: text/html")
+    print()
 
 # html response
-print("<html><body>")
-print(f"<h1>Position Assignment</h1>")
-print(f"<p>{name}, you are a <strong>{position}</strong>.</p>")
-print("</body></html>")
+    print("<html>")
+    print("<head>")
+    print('<meta charset="UTF-8">')
+    print('<meta name="viewport" content="width=device-width, initial-scale=1.0">')
+    print('<title>Welcome to Hogwarts</title>')
+    print('<link rel="stylesheet" href="../../../css/style.css" />')
+    print('<link rel="icon" type="image/png" href="../../../img/LOGO_cursor.png" />')
+    print("</head>")
+    print("<body>")
+    print('<h1>Quidditch selection result</h1>')
+    print('<p>' + user_data.get('name') + ', you belong to <strong>' + qualities.get(user_data.get('quality')) + '</strong>.</p>')
+    print("</body></html>")
 
 # security
 if __name__ == "__main__":

@@ -153,6 +153,9 @@ int Cgi::setEnvironment(ServerInfo *server, Request *req) {
 		this->_envpMap["CONTENT_TYPE"] = req->getContentType();
 		this->_envpMap["CONTENT_LENGTH"] = intToStr(req->getContentLength());
 		this->_envpMap["CONTENT_BODY"] = req->getBody();
+		this->_envpMap["REQUEST_METHOD"] = this->_method;
+		
+		this->_envpMap["REDIRECT_STATUS"] = "1";
 
 	//client specific
 		//HTTP_COOKIE
@@ -221,17 +224,20 @@ void Cgi::executeScript() {
 		}
 		
 		char *argvToExec[3];
-		
 		// REQUEST tells me if I need to execute php or python?
-		// if (_request->getScriptType() == PY)
-		// 	argvToExec[0] = const_cast<char *>("python3.10");
-		// else if (_request->getScriptType() == PHP)
-		// 	argvToExec[0] = const_cast<char *>("php-cgi");
+		if (_server->getTypeCgi() == PY)
+			argvToExec[0] = const_cast<char *>("/bin/python3.10");
+		else if (_server->getTypeCgi()  == PHP)
+			argvToExec[0] = const_cast<char *>("/bin/php-cgi");
 
-		argvToExec[0] = const_cast<char *>("/bin/python3.10"); // TEST a effacer
+		//argvToExec[0] = const_cast<char *>("/bin/python3.10"); // TEST a effacer
 		
 			// REQUEST gives me the script path?
-		argvToExec[1] = const_cast<char *>("./site/CGI/scriptCGI/py/sortingHat.py"); //+ _request->getScriptPath(); //SCRIPT TO EXECUTE//
+		//argvToExec[1] = (char *)((_request->getPath()).c_str()); //+ _request->getScriptPath(); //SCRIPT TO EXECUTE//
+		
+		std::string tmp = _request->getPath();
+		
+		argvToExec[1] = const_cast<char *>(tmp.c_str());
 		argvToExec[2] = NULL;
 
 		//check if allsockets are closed
