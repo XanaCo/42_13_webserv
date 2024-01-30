@@ -326,7 +326,8 @@ bool    Client::executeMethod()
 
     if ((this->*(Client::methodFunctions()[method]))())
     {
-        closeFile(&_fdRessource);
+        if (_fdRessource != 0)
+            closeFile(&_fdRessource);
         return (true);
     }
     return (false);

@@ -460,7 +460,7 @@ std::string	ServerInfo::getNameFileS(std::string path, Location const & loc) con
 {
 	std::string	file_name = getNameFile(path);
 
-	if (file_name == "" || !checkFileExists("./site" + path))
+	if (file_name == "" || !checkFileExists(path))
 		return (loc.getLIndex());
 	return (file_name);
 }
@@ -548,7 +548,7 @@ int ServerInfo::findRessource(std::string path, std::string& newPath) const
         if (nameDir == it->getLPathName())
         {
             //newPath = _Root + getNameFile(path);
-            if (it->getLAutoindex() && getNameFileS(path, *it) == "")
+            if (it->getLAutoindex() && getNameFileS("/site" + path, *it) == "")
 
 			{
 				newPath = _Root + nameDir;
