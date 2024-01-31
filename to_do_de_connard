@@ -28,4 +28,6 @@ Check le status code et le retour a chaque fois
 - Chunk encoding request
 
 - Cookies
+- Session
+
 

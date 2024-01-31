@@ -219,21 +219,6 @@ bool    Client::getRes()
     }
     if (_response->getContentType() == "")
         _response->setMimeType(_request->getPath());
-    /*if (_request->getPath().size() >= 5)
-    {
-        if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".html"))
-            _response->setContentType("Content-Type: text/html\n");
-        else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".mp4"))
-            _response->setContentType("Content-Type: video/mp4\n");
-        else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".png"))
-            _response->setContentType("Content-Type: image/png\n");
-        else if (!_request->getPath().compare(_request->getPath().length() - 5, 5, ".jpeg") || !_request->getPath().compare(_request->getPath().length() - 4, 4, ".jpg"))
-            _response->setContentType("Content-Type: image/jpeg\n");
-        else if (!_request->getPath().compare(_request->getPath().length() - 4, 4, ".css"))
-            _response->setContentType("Content-Type: text/css\n");
-        else
-            _response->setContentType("Content-Type: text/html\n");
-    }*/
     if (_fdRessource == DIR_LIST)
     {
         _response->setContent("Je vais mettre ma fonction turgescente");
@@ -341,7 +326,8 @@ bool    Client::executeMethod()
 
     if ((this->*(Client::methodFunctions()[method]))())
     {
-        closeFile(&_fdRessource);
+        if (_fdRessource != 0)
+            closeFile(&_fdRessource);
         return (true);
     }
     return (false);
@@ -687,6 +673,7 @@ std::string Client::make_temp_header(void)
             con << cont_len;
             to_send += "Content-Length: " + con.str() + "\n\n" + _response->getContent();
         }
+        this->_client_status = SENDING_RES_HEADER;
         return (to_send);
 }
 
@@ -727,12 +714,10 @@ bool    Client::send_data(void)
 bool    Client::send_partial(int socket){
 
     int sent = 0;
-    static bool craft_header = false;
-    if (!craft_header)
+    if (this->_client_status == RES_READY_TO_BE_SENT)
     {
         _to_send = make_temp_header();
         _bytes_to_send = _to_send.size();
-        craft_header = true;
     }
     if (_bytes_to_send - _bytes_sent > BUFFER_SIZE)
         sent = send(socket, _to_send.c_str() + _bytes_sent, BUFFER_SIZE, 0);
@@ -746,7 +731,6 @@ bool    Client::send_partial(int socket){
     _bytes_sent += sent;
     if (_bytes_sent == _bytes_to_send)
     {
-        craft_header = false;
         this->_client_status = WANT_TO_RECEIVE_REQ;
         this->_base->change_poll_event(this->_new_socket, pollin);
     }

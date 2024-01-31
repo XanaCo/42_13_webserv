@@ -50,7 +50,8 @@ public:
 	size_t setLocations(std::vector<std::string> &serverTab, size_t pos);
 	void setTypeCgi(int typeCgi);
 
-	std::string	getNameFileS(std::string path) const;
+	std::string	getNameFileS(std::string path, Location const & loc) const;
+	std::string	getNameFileC(std::string path, Location const & loc) const;
 
 	void checkAllInfos();
 
