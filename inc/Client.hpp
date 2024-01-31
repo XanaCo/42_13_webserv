@@ -78,6 +78,8 @@ class   Client{
         std::string         display_status(void) const;
 
         //              Function to receive data from a client
+        //
+        std::string     generate_directory_listing(const std::string& dir_path);
         bool            alloc_req_resp(void);
         bool            receive_data(void);
         bool            checkHttpVersion(void);

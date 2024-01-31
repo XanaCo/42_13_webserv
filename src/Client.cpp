@@ -157,6 +157,32 @@ ServerInfo*    Client::findServer()
     // throw exception ?
 }
 
+std::string     Client::generate_directory_listing(const std::string& dir_path){
+
+    DIR *dir;
+    struct dirent *ent;
+    std::string content = "<html><head><title>Directory Listing</title></head><body>";
+    content += "<h1>Directory Listing of " + dir_path + "</h1><ul>";
+
+    if ((dir = opendir(dir_path.c_str())) != NULL) {
+        while ((ent = readdir(dir)) != NULL) {
+            std::string file_or_dir(ent->d_name);
+            
+            if (file_or_dir == "." || file_or_dir == "..") {
+                continue;
+            }
+
+            content += "<li><a href='" + file_or_dir + "'>" + file_or_dir + "</a></li>";
+        }
+        closedir(dir);
+    } else {
+        content += "<p>Error: Could not open directory.</p>";
+    }
+    content += "</ul></body></html>";
+    return content;
+}
+
+
 bool    Client::getRes()
 {
     std::string path;
@@ -218,10 +244,11 @@ bool    Client::getRes()
         }
     }
     if (_response->getContentType() == "")
-        _response->setMimeType(_request->getPath());
+        _response->setMimeType(_request->getPath(), _base);
     if (_fdRessource == DIR_LIST)
     {
-        _response->setContent("Je vais mettre ma fonction turgescente");
+        
+        _response->setContent(generate_directory_listing(path));
         return (true);
     }
     return (_response->readRessource(_fdRessource));
@@ -459,6 +486,8 @@ void    Client::reset_client(void){
     this->_req_end = false;
     return ;
 }
+
+
 
 bool    Client::receive_data(void){
 

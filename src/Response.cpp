@@ -156,7 +156,22 @@ void    Response::resetValues(void)
     _contentLength = 0;
 }
         
-void    Response::setMimeType(std::string path)
+void    Response::setMimeType(std::string path, Base *_base){
+
+    size_t  p_length = path.length();
+    std::map<std::string, std::string>::const_iterator end = _base->_mime_types.end();
+
+    for (std::map<std::string, std::string>::const_iterator it = _base->_mime_types.begin(); it != end; ++it)
+    {
+        if (!path.compare(p_length - it->first.length(), it->first.length(), it->first))
+            return (void)(_contentType = it->second);
+    }
+    return (void)(_contentType = "Content-Type: text/html\n");
+}
+
+
+
+/*void    Response::setMimeTypex(std::string path)
 {
     if (path.size() >= 3)
     {
@@ -306,7 +321,7 @@ void    Response::setMimeType(std::string path)
     }
     else
             return (void)(_contentType = "Content-Type: text/html\n");
-    }
+    }*/
 
 // ************************************************************************** //
 //	LA GET-SET
