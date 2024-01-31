@@ -456,6 +456,15 @@ void ServerInfo::setTimeout(std::string timeout) {
 //	METHODS
 // ************************************************************************** //
 
+std::string	ServerInfo::getNameFileC(std::string path, Location const & loc) const
+{
+	std::string	file_name = getNameFile(path);
+
+	if (file_name == "")
+		return (loc.getLIndex());
+	return (file_name);
+}
+
 std::string	ServerInfo::getNameFileS(std::string path, Location const & loc) const
 {
 	std::string	file_name = getNameFile(path);
@@ -516,14 +525,14 @@ bool	ServerInfo::findCgiRessource(std::string path, std::string& newPath)
 		if (nameDir == _locations[i].getLPathName() + "/scriptCGI")
 		{
 			// size_t limit = path.find(".html");
-			newPath = "./" + _Root + "/CGI/scriptCGI/py/" + this->getNameFileS(path, _locations[i]) + ".py";
+			newPath = "./" + _Root + "/CGI/scriptCGI/py/" + this->getNameFileC(path, _locations[i]) + ".py";
 			if (!access(newPath.c_str(), F_OK))
 			{
 				_typeCgi = PY;
 				//newPath = newPath.substr(1, newPath.length());
 				return (true);
 			}
-			newPath = "./" + _Root + "/CGI/scriptCGI/php/" + getNameFileS(path, _locations[i]) + ".php";
+			newPath = "./" + _Root + "/CGI/scriptCGI/php/" + getNameFileC(path, _locations[i]) + ".php";
 			if (!access(newPath.c_str(), F_OK))
 			{
 				_typeCgi = PHP;

@@ -51,6 +51,7 @@ public:
 	void setTypeCgi(int typeCgi);
 
 	std::string	getNameFileS(std::string path, Location const & loc) const;
+	std::string	getNameFileC(std::string path, Location const & loc) const;
 
 	void checkAllInfos();
 
