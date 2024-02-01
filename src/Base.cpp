@@ -23,6 +23,8 @@ Base::Base(int argc, char **argv) : _clients(0), _sock_count(0){
 }*/
 
 Base::Base(std::vector<ServerInfo> & Servers) :  _clients(0), _pfds(0), _sock_count(0){
+
+    this->init_mime_types();
     if (PRINT)
         std::cout << BASE << "🐥 constructor called" << std::endl;
     this->_servers = Servers;
@@ -446,8 +448,6 @@ void    Base::start_servers(void) {
 // function used to review the poll of fd
 
 void    Base::review_poll(void){
-
-    // (void)char test[] = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 45\n\nPablo va bientot m'envoyer de belles reponses";
 
     for (int i = 0; i < this->_sock_count; i++)
     {

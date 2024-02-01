@@ -155,173 +155,23 @@ void    Response::resetValues(void)
     _contentType = "";
     _contentLength = 0;
 }
-        
-void    Response::setMimeType(std::string path, Base *_base){
+ 
+std::string    Response::extract_extension(std::string path){
 
-    size_t  p_length = path.length();
-    std::map<std::string, std::string>::const_iterator end = _base->_mime_types.end();
-
-    for (std::map<std::string, std::string>::const_iterator it = _base->_mime_types.begin(); it != end; ++it)
-    {
-        if (!path.compare(p_length - it->first.length(), it->first.length(), it->first))
-            return (void)(_contentType = it->second);
-    }
-    return (void)(_contentType = "Content-Type: text/html\n");
+    size_t  dot = path.find_last_of('.');
+    if (dot != std::string::npos && path.size() > 3)
+        return (path.substr(path.find_last_of('.'), path.length()));
+    return (path);
 }
 
+void    Response::setMimeType(std::string path, Base *_base){
 
-
-/*void    Response::setMimeTypex(std::string path)
-{
-    if (path.size() >= 3)
-    {
-        if (!path.compare(path.length() -3, 3, ".bz"))
-            return (void)(_contentType = "Content-Type: application/x-bzip\n");
-        else if (!path.compare(path.length() -3, 3, ".js"))
-            return (void)(_contentType = "Content-Type: application/javascript\n");
-        else if (!path.compare(path.length() -3, 3, ".sh"))
-            return (void)(_contentType = "Content-Type: application/x-sh\n");
-        else if (!path.compare(path.length() -3, 3, ".ts"))
-            return (void)(_contentType = "Content-Type: application/typescript\n");
-        else if (!path.compare(path.length() -3, 3, ".7z"))
-            return (void)(_contentType = "Content-Type: application/x-7z-compressed\n");
-    }
-    if (path.size() >= 4)
-    {
-        if (!path.compare(path.length() -4, 4, ".aac"))
-            return (void)(_contentType = "Content-Type: audio/aac\n");
-        else if (!path.compare(path.length() -4, 4, ".abw"))
-            return (void)(_contentType = "Content-Type: application/x-abiword\n");
-        else if (!path.compare(path.length() -4, 4, ".arc"))
-            return (void)(_contentType = "Content-Type: application/octet-stream\n");
-        else if (!path.compare(path.length() -4, 4, ".avi"))
-            return (void)(_contentType = "Content-Type: video/x-msvideo\n");
-        else if (!path.compare(path.length() -4, 4, ".azw"))
-            return (void)(_contentType = "Content-Type: application/vnd.amazon.ebook\n");
-        else if (!path.compare(path.length() -4, 4, ".bin"))
-            return (void)(_contentType = "Content-Type: application/octet-stream\n");
-        else if (!path.compare(path.length() -4, 4, ".bmp"))
-            return (void)(_contentType = "Content-Type: image/bmp\n");
-        else if (!path.compare(path.length() -4, 4, ".bz2"))
-            return (void)(_contentType = "Content-Type: application/x-bzip2\n");
-        else if (!path.compare(path.length() -4, 4, ".csh"))
-            return (void)(_contentType = "Content-Type: application/x-csh\n");
-        else if (!path.compare(path.length() -4, 4, ".css"))
-            return (void)(_contentType = "Content-Type: text/css\n");
-        else if (!path.compare(path.length() -4, 4, ".csv"))
-            return (void)(_contentType = "Content-Type: text/csv\n");
-        else if (!path.compare(path.length() -4, 4, ".doc"))
-            return (void)(_contentType = "Content-Type: application/msword\n");
-        else if (!path.compare(path.length() -4, 4, ".eot"))
-            return (void)(_contentType = "Content-Type: application/vnd.ms-fontobject\n");
-        else if (!path.compare(path.length() -4, 4, ".gif"))
-            return (void)(_contentType = "Content-Type: image/gif\n");
-        else if (!path.compare(path.length() -4, 4, ".htm"))
-            return (void)(_contentType = "Content-Type: text/html\n");
-        else if (!path.compare(path.length() -4, 4, ".ico"))
-            return (void)(_contentType = "Content-Type: image/x-icon\n");
-        else if (!path.compare(path.length() -4, 4, ".ics"))
-            return (void)(_contentType = "Content-Type: text/calendar\n");
-        else if (!path.compare(path.length() -4, 4, ".jar"))
-            return (void)(_contentType = "Content-Type: application/java-archive\n");
-        else if (!path.compare(path.length() -4, 4, ".jpg"))
-            return (void)(_contentType = "Content-Type: image/jpeg\n");
-        else if (!path.compare(path.length() -4, 4, ".mid"))
-            return (void)(_contentType = "Content-Type: audio/midi\n");
-        else if (!path.compare(path.length() -4, 4, ".odp"))
-            return (void)(_contentType = "Content-Type: application/vnd.oasis.opendocument.presentation\n");
-        else if (!path.compare(path.length() -4, 4, ".ods"))
-            return (void)(_contentType = "Content-Type: application/vnd.oasis.opendocument.spreadsheet\n");
-        else if (!path.compare(path.length() -4, 4, ".odt"))
-            return (void)(_contentType = "Content-Type: application/vnd.oasis.opendocument.text\n");
-        else if (!path.compare(path.length() -4, 4, ".oga"))
-            return (void)(_contentType = "Content-Type: audio/ogg\n");
-        else if (!path.compare(path.length() -4, 4, ".ogv"))
-            return (void)(_contentType = "Content-Type: video/ogg\n");
-        else if (!path.compare(path.length() -4, 4, ".ogx"))
-            return (void)(_contentType = "Content-Type: application/ogg\n");
-        else if (!path.compare(path.length() -4, 4, ".otf"))
-            return (void)(_contentType = "Content-Type: font/otf\n");
-        else if (!path.compare(path.length() -4, 4, ".png"))
-            return (void)(_contentType = "Content-Type: image/png\n");
-        else if (!path.compare(path.length() -4, 4, ".pdf"))
-            return (void)(_contentType = "Content-Type: application/pdf\n");
-        else if (!path.compare(path.length() -4, 4, ".ppt"))
-            return (void)(_contentType = "Content-Type: application/vnd.ms-powerpoint\n");
-        else if (!path.compare(path.length() -4, 4, ".rar"))
-            return (void)(_contentType = "Content-Type: application/x-rar-compressed\n");
-        else if (!path.compare(path.length() -4, 4, ".rtf"))
-            return (void)(_contentType = "Content-Type: application/rtf\n");
-        else if (!path.compare(path.length() -4, 4, ".svg"))
-            return (void)(_contentType = "Content-Type: image/svg+xml\n");
-        else if (!path.compare(path.length() -4, 4, ".swf"))
-            return (void)(_contentType = "Content-Type: application/x-shockwave-flash\n");
-        else if (!path.compare(path.length() -4, 4, ".tar"))
-            return (void)(_contentType = "Content-Type: application/x-tar\n");
-        else if (!path.compare(path.length() -4, 4, ".tif"))
-            return (void)(_contentType = "Content-Type: image/tiff\n");
-        else if (!path.compare(path.length() -4, 4, ".ttf"))
-            return (void)(_contentType = "Content-Type: font/ttf\n");
-        else if (!path.compare(path.length() -4, 4, ".vsd"))
-            return (void)(_contentType = "Content-Type: application/vnd.visio\n");
-        else if (!path.compare(path.length() -4, 4, ".wav"))
-            return (void)(_contentType = "Content-Type: audio/x-wav\n");
-        else if (!path.compare(path.length() -4, 4, ".xls"))
-            return (void)(_contentType = "Content-Type: application/vnd.ms-excel\n");
-        else if (!path.compare(path.length() -4, 4, ".xml"))
-            return (void)(_contentType = "Content-Type: application/xml\n");
-        else if (!path.compare(path.length() -4, 4, ".xul"))
-            return (void)(_contentType = "Content-Type: application/vnd.mozilla.xul+xml\n");
-        else if (!path.compare(path.length() -4, 4, ".zip"))
-            return (void)(_contentType = "Content-Type: application/zip\n");
-        else if (!path.compare(path.length() -4, 4, ".3gp"))
-            return (void)(_contentType = "Content-Type: video/3gpp\n");
-        else if (!path.compare(path.length() -4, 4, ".3g2"))
-            return (void)(_contentType = "Content-Type: video/3gpp2\n");
-    }
-    if (path.size() >= 5)
-    {
-        if (!path.compare(path.length() -5, 5, ".docx"))
-            return (void)(_contentType = "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document\n");
-        else if (!path.compare(path.length() -5, 5, ".epub"))
-            return (void)(_contentType = "Content-Type: application/epub+zip\n");
-         else if (!path.compare(path.length() -5, 5, ".html"))
-            return (void)(_contentType = "Content-Type: text/html\n");
-         else if (!path.compare(path.length() -5, 5, ".jpeg"))
-            return (void)(_contentType = "Content-Type: image/jpeg\n");
-         else if (!path.compare(path.length() -5, 5, ".json"))
-            return (void)(_contentType = "Content-Type: application/json\n");
-         else if (!path.compare(path.length() -5, 5, ".midi"))
-            return (void)(_contentType = "Content-Type: audio/midi\n");
-         else if (!path.compare(path.length() -5, 5, ".mpeg"))
-            return (void)(_contentType = "Content-Type: video/mpeg\n");
-         else if (!path.compare(path.length() -5, 5, ".mpkg"))
-            return (void)(_contentType = "Content-Type: application/vnd.apple.installer+xml\n");
-         else if (!path.compare(path.length() -5, 5, ".pptx"))
-            return (void)(_contentType = "Content-Type: application/vnd.openxmlformats-officedocument.presentationml.presentation\n");
-         else if (!path.compare(path.length() -5, 5, ".tiff"))
-            return (void)(_contentType = "Content-Type: image/tiff\n");
-         else if (!path.compare(path.length() -5, 5, ".weba"))
-            return (void)(_contentType = "Content-Type: audio/webm\n");
-         else if (!path.compare(path.length() -5, 5, ".webm"))
-            return (void)(_contentType = "Content-Type: video/webm\n");
-         else if (!path.compare(path.length() -5, 5, ".webp"))
-            return (void)(_contentType = "Content-Type: image/webp\n");
-         else if (!path.compare(path.length() -5, 5, ".woff"))
-            return (void)(_contentType = "Content-Type: font/woff\n");
-         else if (!path.compare(path.length() -5, 5, ".xlsx"))
-            return (void)(_contentType = "Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\n");
-    }
-   if (path.size() >= 6)
-    {
-        if (!path.compare(path.length() -6, 6, ".woff2"))
-            return (void)(_contentType = "Content-Type: font/woff2\n");
-        else if (!path.compare(path.length() -6, 6, ".xhtml"))
-            return (void)(_contentType = "Content-Type: application/xhtml+xml\n");
-    }
-    else
-            return (void)(_contentType = "Content-Type: text/html\n");
-    }*/
+    std::string key = extract_extension(path);
+    std::map<std::string, std::string>::const_iterator search = _base->_mime_types.find(key);
+    if (search != _base->_mime_types.end())
+        return (void)(_contentType = search->second);
+    return (void)(_contentType = "content-Type: text/html\n");
+}
 
 // ************************************************************************** //
 //	LA GET-SET
