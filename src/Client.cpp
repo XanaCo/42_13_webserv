@@ -157,6 +157,32 @@ ServerInfo*    Client::findServer()
     // throw exception ?
 }
 
+std::string     Client::generate_directory_listing(const std::string& dir_path){
+
+    DIR *dir;
+    struct dirent *ent;
+    std::string content = "<html><head><title>Directory Listing</title></head><body>";
+    content += "<h1>Directory Listing of " + dir_path + "</h1><ul>";
+
+    if ((dir = opendir(dir_path.c_str())) != NULL) {
+        while ((ent = readdir(dir)) != NULL) {
+            std::string file_or_dir(ent->d_name);
+            
+            if (file_or_dir == "." || file_or_dir == "..") {
+                continue;
+            }
+
+            content += "<li><a href='" + file_or_dir + "'>" + file_or_dir + "</a></li>";
+        }
+        closedir(dir);
+    } else {
+        content += "<p>Error: Could not open directory.</p>";
+    }
+    content += "</ul></body></html>";
+    return content;
+}
+
+
 bool    Client::getRes()
 {
     std::string path;
@@ -218,10 +244,11 @@ bool    Client::getRes()
         }
     }
     if (_response->getContentType() == "")
-        _response->setMimeType(_request->getPath());
+        _response->setMimeType(_request->getPath(), _base);
     if (_fdRessource == DIR_LIST)
     {
-        _response->setContent("Je vais mettre ma fonction turgescente");
+        
+        _response->setContent(generate_directory_listing(path));
         return (true);
     }
     return (_response->readRessource(_fdRessource));
@@ -460,6 +487,8 @@ void    Client::reset_client(void){
     return ;
 }
 
+
+
 bool    Client::receive_data(void){
 
     char   buffer[BUFFER_SIZE + 1];
@@ -537,11 +566,10 @@ void    Client::receive_header_data(char *buffer, int nbytes){
         _header_bytes = found + 4;
         //std::cout << "Header : "<< _header << std::endl;
         //std::cout << std::endl << "_received still got : " << std::endl << _received << std::endl;
-        getactualTimestamp();
-        std::cout << "Client n : " << this->_new_socket << " sent a request." << std::endl;
         if (this->_received.size() > 0)
         {
             this->_client_status = RECEIVED_REQ_HEADER;
+            this->_body_bytes += _received.size();
             this->routine(nbytes);
         }
         else
@@ -644,6 +672,13 @@ void    Client::receive_body_data(char *buffer, int nbytes){
             //this->_base->change_poll_event(this->_new_socket, pollout);
             return ;
         }
+        else if (this->_body_bytes > this->_request->getContentLength())
+        {
+            this->_request->setReturnStatus(400); // voir avec Pablo
+            this->_client_status = REQ_RECEIVED;
+            this->routine(nbytes);
+            return ;
+        }
     }
     return ;
 }
@@ -666,6 +701,8 @@ std::string Client::make_temp_header(void)
         }
         if (_response->getContentType() != "")
             to_send += _response->getContentType();
+        //getactualTimestamp();
+        //std::cout <<  "Response header to client :" << this->_new_socket << "" << std::endl << to_send << std::endl;
         if (_response->getContent() != "")
         {
             int cont_len = this->getResponse()->getContent().size();
@@ -731,6 +768,8 @@ bool    Client::send_partial(int socket){
     _bytes_sent += sent;
     if (_bytes_sent == _bytes_to_send)
     {
+        getactualTimestamp();
+        std::cout << "Response sent to client n : " << this->_new_socket << std::endl;
         this->_client_status = WANT_TO_RECEIVE_REQ;
         this->_base->change_poll_event(this->_new_socket, pollin);
     }

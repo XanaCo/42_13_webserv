@@ -144,13 +144,13 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
     }
     // changer la status pour receiving body ou alors si ca passe mal -> waiting for respond
     endTime = clock();
-    std::cout << REQUEST << " fillContent method : exec time : " << endTime - startTime << std::endl;
+    //std::cout << REQUEST << " fillContent method : exec time : " << endTime - startTime << std::endl;
     return (true);
 }
 
 bool    Request::fillBody(std::string&  body)   // a voir si on fait des modifs
 {
-    std::cout << "Le body : " << body << std::endl;
+    //std::cout << "Le body : " << body << std::endl;
     _body = body;
     // mettre a jour le status en waiting for response quel que soit le status;
     return (true);

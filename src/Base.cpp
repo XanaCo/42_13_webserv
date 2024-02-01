@@ -3,6 +3,8 @@
 // Constructors
 
 Base::Base() : _servers(0), _clients(0), _pfds(0), _sock_count(0){
+
+    this->init_mime_types();
     if (PRINT)
         std::cout << BASE << "🐥 constructor called" << std::endl;
     return ;
@@ -21,6 +23,8 @@ Base::Base(int argc, char **argv) : _clients(0), _sock_count(0){
 }*/
 
 Base::Base(std::vector<ServerInfo> & Servers) :  _clients(0), _pfds(0), _sock_count(0){
+
+    this->init_mime_types();
     if (PRINT)
         std::cout << BASE << "🐥 constructor called" << std::endl;
     this->_servers = Servers;
@@ -71,6 +75,78 @@ void    Base::add_to_servers(char *port){
 
     this->_servers.push_back(server);
 }*/
+
+void    Base::init_mime_types(void){
+
+    _mime_types[".html"] = "Content-Type: text/html\n";
+    _mime_types[".css"] = "Content-Type: text/css\n";
+    _mime_types[".ico"] = "Content-Type: image/x-icon\n";
+    _mime_types[".jpeg"] = "Content-Type: image/jpeg\n";
+    _mime_types[".jpg"] = "Content-Type: image/jpeg\n";
+    _mime_types[".mpeg"] = "Content-Type: video/mpeg\n";
+    _mime_types[".htm"] = "Content-Type: text/html\n";
+    _mime_types[".bz"] = "Content-Type: application/x-bzip\n";
+    _mime_types[".js"] = "Content-Type: application/javascript\n";
+    _mime_types[".sh"] = "Content-Type: application/x-sh\n";
+    _mime_types[".ts"] = "Content-Type: application/typescript\n";
+    _mime_types[".7z"] = "Content-Type: application/x-7z-compressed\n";
+    _mime_types[".aac"] = "Content-Type: audio/aac\n";
+    _mime_types[".abw"] = "Content-Type: application/x-abiword\n";
+    _mime_types[".arc"] = "Content-Type: application/octet-stream\n";
+    _mime_types[".avi"] = "Content-Type: video/x-msvideo\n";
+    _mime_types[".azw"] = "Content-Type: application/vnd.amazon.ebook\n";
+    _mime_types[".bin"] = "Content-Type: application/octet-stream\n";
+    _mime_types[".bmp"] = "Content-Type: image/bmp\n";
+    _mime_types[".bz2"] = "Content-Type: application/x-bzip2\n";
+    _mime_types[".csh"] = "Content-Type: application/x-csh\n";
+    _mime_types[".csv"] = "Content-Type: text/csv\n";
+    _mime_types[".doc"] = "Content-Type: application/msword\n";
+    _mime_types[".eot"] = "Content-Type: application/vnd.ms-fontobject\n";
+    _mime_types[".gif"] = "Content-Type: image/gif\n";
+    _mime_types[".ics"] = "Content-Type: text/calendar\n";
+    _mime_types[".jar"] = "Content-Type: application/java-archive\n";
+    _mime_types[".mid"] = "Content-Type: audio/midi\n";
+    _mime_types[".odp"] = "Content-Type: application/vnd.oasis.opendocument.presentation\n";
+    _mime_types[".ods"] = "Content-Type: application/vnd.oasis.opendocument.spreadsheet\n";
+    _mime_types[".odt"] = "Content-Type: application/vnd.oasis.opendocument.text\n";
+    _mime_types[".oga"] = "Content-Type: audio/ogg\n";
+    _mime_types[".ogv"] = "Content-Type: video/ogg\n";
+    _mime_types[".ogx"] = "Content-Type: application/ogg\n";
+    _mime_types[".otf"] = "Content-Type: font/otf\n";
+    _mime_types[".png"] = "Content-Type: image/png\n";
+    _mime_types[".pdf"] = "Content-Type: application/pdf\n";
+    _mime_types[".ppt"] = "Content-Type: application/vnd.ms-powerpoint\n";
+    _mime_types[".rar"] = "Content-Type: application/x-rar-compressed\n";
+    _mime_types[".rtf"] = "Content-Type: application/rtf\n";
+    _mime_types[".svg"] = "Content-Type: image/svg+xml\n";
+    _mime_types[".swf"] = "Content-Type: application/x-shockwave-flash\n";
+    _mime_types[".tar"] = "Content-Type: application/x-tar\n";
+    _mime_types[".tif"] = "Content-Type: image/tiff\n";
+    _mime_types[".ttf"] = "Content-Type: font/ttf\n";
+    _mime_types[".vsd"] = "Content-Type: application/vnd.visio\n";
+    _mime_types[".wav"] = "Content-Type: audio/x-wav\n";
+    _mime_types[".xls"] = "Content-Type: application/vnd.ms-excel\n";
+    _mime_types[".xml"] = "Content-Type: application/xml\n";
+    _mime_types[".xul"] = "Content-Type: application/vnd.mozilla.xul+xml\n";
+    _mime_types[".zip"] = "Content-Type: application/zip\n";
+    _mime_types[".3gp"] = "Content-Type: video/3gpp\n";
+    _mime_types[".3g2"] = "Content-Type: video/3gpp2\n";
+    _mime_types[".docx"] = "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document\n";
+    _mime_types[".epub"] = "Content-Type: application/epub+zip\n";
+    _mime_types[".json"] = "Content-Type: application/json\n";
+    _mime_types[".midi"] = "Content-Type: audio/midi\n";
+    _mime_types[".mpkg"] = "Content-Type: application/vnd.apple.installer+xml\n";
+    _mime_types[".pptx"] = "Content-Type: application/vnd.openxmlformats-officedocument.presentationml.presentation\n";
+    _mime_types[".tiff"] = "Content-Type: image/tiff\n";
+    _mime_types[".weba"] = "Content-Type: audio/webm\n";
+    _mime_types[".webm"] = "Content-Type: video/webm\n";
+    _mime_types[".webp"] = "Content-Type: image/webp\n";
+    _mime_types[".woff"] = "Content-Type: font/woff\n";
+    _mime_types[".xlsx"] = "Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\n";
+    _mime_types[".woff2"] = "Content-Type: font/woff2\n";
+    _mime_types[".xhtml"] = "Content-Type: application/xhtml+xml\n";
+    return ;
+}
 
 void    Base::add_to_clients(int socket, struct sockaddr_in* address, std::vector<ServerInfo> servers, int serv_sock){
 
@@ -126,7 +202,8 @@ void    Base::remove_from_clients(int socket){
         if (socket == _clients[i]->get_socket())
         {
             //std::cout << "Client n " << socket << " trying to be erased" << std::endl;
-            close(_clients[i]->getFdRessource());
+            if (_clients[i]->getFdRessource() > 2)
+                close(_clients[i]->getFdRessource());
             delete _clients[i];
             _clients.erase(_clients.begin() + i);
             //std::cout << "Client n " << socket << " erased" << std::endl;
@@ -371,8 +448,6 @@ void    Base::start_servers(void) {
 // function used to review the poll of fd
 
 void    Base::review_poll(void){
-
-    // (void)char test[] = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 45\n\nPablo va bientot m'envoyer de belles reponses";
 
     for (int i = 0; i < this->_sock_count; i++)
     {
