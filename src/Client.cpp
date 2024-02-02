@@ -88,6 +88,7 @@ bool    Client::parseCgiExit()
     int size = lines.size();
     for (int i = 0; i < size; i++)
     {
+        std::cout << "PARSECGI :" << lines[i];
         int length = lines[0].size();
         if (length >= 13 && lines[i].substr(0, 13) == "content-type:")
             _response->setContentType(lines[i]+"\n");
@@ -97,6 +98,7 @@ bool    Client::parseCgiExit()
             _response->setProtocol(lines[i]);
         else if (length >= 6 && lines[i].substr(0, 6) == "<html>")
         {
+            std::cout << "JE PARSE BIEN PAR LA\n";
             _response->setContent(lines[i]);
             for (; i < size; i++)
             {
@@ -176,13 +178,13 @@ bool    Client::getRes()
             if (!(_request->getMethod() & GET) && !(_request->getMethod() & POST))
             {
                 std::cerr << "Run : methode interdite avec les CGI" << std::endl;
-
+                // code d'erreur 400 a mettre a jour
                 openErrorPage();
             }
             if (!_server->findCgiRessource(_request->getPath(), path))
             {
                 std::cerr << "Run : on ne trouve pas la ressource CGI" << std::endl;
-
+                // code d'erreur 404 a mettre a jour
                 openErrorPage();
                 return (false);
             }
@@ -348,6 +350,12 @@ void    Client::routine(int nbytes)
             }
             else
             {
+                for (int i = 0; i < _request->getCookies().size(); i++)
+                    std::cout << "COOKIES fill header <" << _request->getCookies()[i] << ">";
+                std::cout << "\n";
+                _response->setCookies(formCookies(_request->getCookies()));
+                std::cout << "COOKIES after form Cookies <" << _response->getCookies() << ">\n";
+                // la
                 // if (_request->getPath() == "/")
                 //     _request->setPath("/" + _servers[0].getRoot() + "/index.html");
                 if (this->_req_end == true)
@@ -538,7 +546,7 @@ void    Client::receive_header_data(char *buffer, int nbytes){
         //std::cout << "Header : "<< _header << std::endl;
         //std::cout << std::endl << "_received still got : " << std::endl << _received << std::endl;
         getactualTimestamp();
-        std::cout << "Client n : " << this->_new_socket << " sent a request." << std::endl;
+        std::cout << "Client n : " << this->_new_socket << " sent a request :" << std::endl << _header <<  std::endl;
         if (this->_received.size() > 0)
         {
             this->_client_status = RECEIVED_REQ_HEADER;
@@ -666,6 +674,11 @@ std::string Client::make_temp_header(void)
         }
         if (_response->getContentType() != "")
             to_send += _response->getContentType();
+        if (!_response->getCookies().empty())
+        {
+            to_send += _response->getCookies();
+            // std::cout << "COOKIES : to send : <" << _response->getCookies() << ">\n";
+        }
         if (_response->getContent() != "")
         {
             int cont_len = this->getResponse()->getContent().size();

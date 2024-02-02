@@ -102,7 +102,7 @@ int Cgi::setEnvironment(ServerInfo *server, Request *req) {
 		this->_envpMap["REQUEST_METHOD"] = this->_method;
 		
 		this->_envpMap["REDIRECT_STATUS"] = "1";
-
+		this->_envpMap["WIZARD_ID"] = _request->getCookies()[0];
 	//client specific
 		//HTTP_COOKIE
 

@@ -86,6 +86,18 @@ bool	Request::fillMethod(std::string& line)
 	return (true);
 }
 
+void    Request::updateCookie()
+{
+    if (_cookies.empty())
+    {
+        // std::cout << "COOKIES : au secour !!!\n";
+        _cookies.push_back("wizard_id=" + get_cookie());
+        // for (int i = 0; i < _cookies.size(); i++)
+        //     std::cout << "COOKIES apres ajout <" << _cookies[i] << ">";
+        std::cout << "\n";
+    }
+}
+
 bool Request::fillHeader(std::string& header)	// attention c'est pontentielement juste le header
 {
     time_t  startTime;
@@ -124,8 +136,16 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
             this->setContentType(lines[i].substr(14, length));
         else if (length >= 15 && lines[i].substr(0, 15) == "Content-length:")
             this->setContentLength(atoi(lines[i].substr(16, length).c_str()));
-        else if (length >= 6 && lines[i].substr(0, 6) == "Cookie:")
-            this->setCookies(splitString(lines[i].substr(7, length), ' '));
+        else if (length >= 6 && lines[i].substr(0, 7) == "Cookie:")
+        {
+            std::cout << "c'est quoi le pb avec <" << lines[i].substr(8, length) << ">\n";
+            this->setCookies(splitString(lines[i].substr(8, length), ' '));
+            for (int k = 0; k < _cookies.size(); k++)
+            {
+                removeLastChar(_cookies[k]);
+                // std::cout << _cookies[k]
+            }
+        }
         else if (length >= 11 && lines[i].substr(0, 11) == "Connection:")
             this->setConnection(lines[i].substr(12, length));
         else if (length >= 18 && lines[i].substr(0, 18) == "Transfer-Encoding:")
@@ -145,6 +165,7 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
     // changer la status pour receiving body ou alors si ca passe mal -> waiting for respond
     endTime = clock();
     std::cout << REQUEST << " fillContent method : exec time : " << endTime - startTime << std::endl;
+    updateCookie();
     return (true);
 }
 

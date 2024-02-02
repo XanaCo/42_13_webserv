@@ -2,12 +2,14 @@
 
 import random
 import cgi
+import sys
 import os
 from urllib.parse import parse_qs
 
 # parsing
 parsed_data = parse_qs(os.environ.get('CONTENT_BODY'))
 user_data = {key: value[0] for key, value in parsed_data.items()}
+wizard_id = os.environ.get('WIZARD_ID').replace("wizard_id=", "")
 
 # data struct
 creatures = {
@@ -18,6 +20,11 @@ creatures = {
 }
 
 def main():
+
+# register data
+	sys.stderr.write("voici mon wizard id :" + wizard_id + "\n")
+	with open(wizard_id + '_house', 'w') as file:
+		file.write(creatures.get(user_data.get('creature')))
 
 # HTTP Header
 	print("protocol: HTTP/1.1 200")

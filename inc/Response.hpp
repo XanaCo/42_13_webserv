@@ -53,6 +53,8 @@ class Response
         void    setStatusCode(std::string statusCode);
         void    setProtocol(std::string protocol);
         void    setLocation(std::string protocol);
+        void    setCookies(std::string cookies);
+
 
 
         pid_t           getCgiPid(void) const;
@@ -68,6 +70,7 @@ class Response
         std::string     getStatusCode() const;
         std::string     getProtocol() const;
         std::string     getLocation() const;
+        std::string     getCookies() const;
 
 
     private:
@@ -86,6 +89,7 @@ class Response
         std::string _contentType;
         std::string _content;
         std::string _location;
+        std::string _cookies;
 };
 std::ostream& operator<<(std::ostream& os, const Response& obj);
 

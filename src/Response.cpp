@@ -94,6 +94,8 @@ bool    Response::readRessource(int fd)
 // 	return ;
 // }
 
+
+// a jeter il me semble
 void    Response::postRessource(const std::string path, std::string content)
 {
     std::ofstream file(path.c_str());
@@ -101,6 +103,7 @@ void    Response::postRessource(const std::string path, std::string content)
     file.close();
 }
 
+// a jeter il me semble
 void Response::deleteRessource(const std::string path)
 {
     if (unlink(path.c_str()) != 0)
@@ -324,6 +327,7 @@ void    Response::setCgiFdRessource(int cgiFdRessource) {_cgiFdRessource = cgiFd
 void    Response::setStatusCode(std::string statusCode) {_statusCode = statusCode;}
 void    Response::setProtocol(std::string protocol) {_protocol = protocol;}
 void    Response::setLocation(std::string location) {_location = location;}
+void    Response::setCookies(std::string cookies) {_cookies = cookies;}
 // void    Response::setPort(uint16_t port) {_port = port;}
 
 
@@ -339,4 +343,5 @@ std::string     Response::getContentType() const {return (_contentType);}
 std::string     Response::getStatusCode() const {return (_statusCode);}
 std::string     Response::getProtocol() const {return (_protocol);}
 std::string     Response::getLocation() const {return (_location);}
+std::string     Response::getCookies() const {return (_cookies);}
 // uint16_t        Response::getPort() const {return (_port);}

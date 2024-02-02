@@ -41,6 +41,8 @@ class Request
         void        setArgs(std::string args);
         void        setTransfertEncoding(std::string args);
         void        setChunkTransf(bool value);
+        void        updateCookie();
+
     
         //                          get
         int                         getMethod(void) const;

@@ -187,3 +187,81 @@ void    getactualTimestamp(void){
     std::cout << localTime->tm_hour << ":" << localTime->tm_min << ":" << localTime->tm_sec << " ";
     return ;
 }
+
+
+// ************************************************************************** //
+//	COOKIES
+// ************************************************************************** //
+
+// std::string	random_file_generator()
+// {
+// 	unsigned char	buffer[8];
+// 	int				fd;
+// 	unsigned long	nbr;
+// 	std::string     file_name;
+
+// 	fd = open("/dev/urandom", O_RDONLY);
+// 	if (fd < 0)
+// 		fd = open("/dev/random", O_RDONLY);
+// 	if (fd < 0)
+// 		return ("");
+// 	else
+// 	{
+// 		read(fd, buffer, 8);
+// 		close(fd);
+// 		memcpy(&nbr, buffer, 8);
+// 	}
+// 	file_name = std::to_string(nbr);
+// 	if (file_name == "")
+// 		return ("");
+// 	return (file_name);
+// }
+
+// faire une fonction qui check si il y a pas un fichier qui porte le nom du cookie
+// auquel cas le cookie a deja ete attribue a qq1
+// bool	ft_get_random_name(std::string& name)
+// {
+// 	while (1)
+// 	{
+// 		name = random_file_generator();
+// 		if (name == "")
+// 			return (false);
+// 		if (access(name.c_str(), F_OK))
+// 			break ;
+// 	}
+// 	return (true);
+// }
+
+std::string	get_cookie()
+{
+	static char	cookie[] = "000000000000";
+	char		digit = cookie[11];
+	int			pow = 0;
+
+	while (digit == '9')
+	{
+		cookie[11 - pow] = '0';
+		pow++;
+		digit = cookie[11 - pow];
+	}
+	cookie[11 - pow]++;
+	// std::cout << "COOKIES : je donne un nouveau cookie !\n";
+	return (std::string(cookie));
+}
+
+std::string formCookies(std::vector<std::string> cookies)
+{
+	std::string cook = "";
+
+	for (auto i = cookies.begin(); i != cookies.end(); i++)
+	{
+		cook += "Set-Cookie: " + *i + "\n";
+	}
+	return (cook);
+}
+
+void removeLastChar(std::string &str)
+{
+	if (str[str.size() - 1] == ';')
+		str = str.substr(0, str.size() - 1);
+}

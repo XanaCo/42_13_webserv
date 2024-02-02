@@ -201,6 +201,8 @@ void 						freeCharTab(char **charTab);
 void						deEncodingHexa(std::string& chaine);
 bool						isHtmlComplete(const std::string& html);
 int 						identifyFile(const std::string& str);
-
+std::string					get_cookie();
+std::string					formCookies(std::vector<std::string> cookies);
+void						removeLastChar(std::string &str);
 
 #endif
