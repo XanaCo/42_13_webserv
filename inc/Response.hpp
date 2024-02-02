@@ -34,8 +34,8 @@ class Response
         // bool        addBuffer(int fd);
         // void        openFileToSend(std::string& file);
         bool        craftAutoIndex(std::string path);
-        void        setMimeType(std::string path);
-
+        void        setMimeType(std::string path, Base * _base);
+        std::string    extract_extension(std::string path);
 
         bool    cgiRead();
         bool    cgiWrite();

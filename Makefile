@@ -5,8 +5,8 @@
 NAME		= webserv
 
 # Compiler
-CPP			= g++
-FLAGS		= -g3 #-Wall -Wextra -Werror -MMD -MP -std=c++98 -g3
+CPP			= c++
+FLAGS		= -Wall -Wextra -Werror -MMD -MP -std=c++98 -g3
 EXTRAF		= -Wshadow #-Wno-shadow
 
 # Paths
@@ -49,7 +49,8 @@ LF			= --leak-check=full \
 
 all : ${NAME}
 
-db :  ${DB}
+db : ${NAME}
+	gdb -tui ${NAME}
 
 .c.o :
 	@ ${CPP} ${FLAGS} ${EXTRAF} -I ${INCLUDES} -c $< -o ${<:.cpp=.o}

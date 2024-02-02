@@ -171,7 +171,7 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
 
 bool    Request::fillBody(std::string&  body)   // a voir si on fait des modifs
 {
-    std::cout << "Le body : " << body << std::endl;
+    //std::cout << "Le body : " << body << std::endl;
     _body = body;
     // mettre a jour le status en waiting for response quel que soit le status;
     return (true);

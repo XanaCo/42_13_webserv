@@ -167,7 +167,7 @@ Location *ServerInfo::getOneLocation(std::string Locname) {
 
 	for (size_t it = 0; it != this->_locations.size(); it++)
 	{
-		std::cout << this->_locations[it].getLPathName() << std::endl;
+		//std::cout << this->_locations[it].getLPathName() << std::endl;
 		if (this->_locations[it].getLPathName() == Locname)
 			return &this->_locations[it];
 	}

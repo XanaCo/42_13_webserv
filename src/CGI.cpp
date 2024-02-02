@@ -19,17 +19,6 @@ Cgi::Cgi(ServerInfo &server, Request &req, Response &resp) {
 
 }
 
-// Cgi::Cgi(Cgi const &copy) {
-
-// 	//copie profonde get all
-// 	(void)copy;
-	
-// 	if (PRINT)
-// 		std::cout << CGI << "🐥 copy constructor called" << std::endl;
-
-// 	return ;
-// }
-
 Cgi::~Cgi() {
 
 	// if (this->_envpToExec)
@@ -39,21 +28,6 @@ Cgi::~Cgi() {
 		std::cout << CGI << "🗑️  destructor called" << std::endl;
 
 }
-
-// // ************************************************************************** //
-// //  OPERATORS
-// // ************************************************************************** //
-
-// Cgi &Cgi::operator=(Cgi const &other) {
-
-// 	//copie profonde get all
-// 	(void)other;
-
-// 	if (PRINT)
-// 		std::cout << CGI << "🐥 = constructor called" << std::endl;
-
-// 	return *this;
-// }
 
 // ************************************************************************** //
 //	LA GET-SET
@@ -166,12 +140,15 @@ int		Cgi::getTypeScript() const {
 //	METHODS
 // ************************************************************************** //
 
-void Cgi::executeScript() {
+bool Cgi::executeScript() {
+
+	int wstatus;
+	signal(SIGALRM, &timeoutHandler);
 
 	if (pipe(this->_pipeOut) == -1)
 	{
 		_request->setReturnStatus(E_INTERNAL_SERVER);
-		return;
+		return false;
 	}
 
 	if (pipe(this->_pipeIn) == -1)
@@ -179,10 +156,9 @@ void Cgi::executeScript() {
 		close(_pipeOut[1]);
 		close(_pipeOut[0]);
 		_request->setReturnStatus(E_INTERNAL_SERVER);
-		return;
+		return false;
 	}
 
-	// start timer _timestart
 	_response->setCgiPid(fork());
 	if (_response->getCgiPid() == -1)
 	{
@@ -191,7 +167,7 @@ void Cgi::executeScript() {
 		close(_pipeIn[1]);
 		close(_pipeIn[0]);
 		_request->setReturnStatus(E_INTERNAL_SERVER);
-		return;
+		return false;
 	}
 
 	if (_response->getCgiPid() == 0)
@@ -225,12 +201,20 @@ void Cgi::executeScript() {
 		argvToExec[1] = const_cast<char *>(tmp.c_str());
 		argvToExec[2] = NULL;
 
-		//check if allsockets are closed!!
+		alarm(1);
 		execve(argvToExec[0], argvToExec, _envpToExec);
-
-		freeCharTab(this->_envpToExec); // check
+		freeCharTab(this->_envpToExec);
 		exit(E_INTERNAL_SERVER);
-
 	}
+
+	alarm(0);
+	waitpid(-1, &wstatus, 0);
+	if (wstatus == SIGALRM)
+	{
+		_request->setReturnStatus(E_INTERNAL_SERVER); 
+		return false;
+	}
+
 	_response->setCgiFdRessource(_pipeOut[0]);
+	return true;
 }

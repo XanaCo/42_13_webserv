@@ -31,6 +31,10 @@ class   Base{
         ~Base(void);
         Base &  operator=(const Base & rhs);
 
+        std::map<std::string, std::string> _mime_types;
+
+        void    init_mime_types(void);
+
         // Add to structures 
         void    add_to_servers(char *port);
         void    add_to_clients(int socket, struct sockaddr_in* address, std::vector<ServerInfo> servers, int serv_sock);

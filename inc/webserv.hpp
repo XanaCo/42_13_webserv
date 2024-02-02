@@ -173,9 +173,10 @@ bool						containsParentDirectory(const std::string& str);
 void						compressionOfSlashes(std::string& str);
 bool						isAlphaDigit(char c);
 char						hexToChar(const std::string& hex);
-void						remplacerPercentEncoding(std::string& chaine);
-void                        getactualTimestamp(void);
-int                         hexStrToInt(const std::string& hexStr);
+// void						remplacerPercentEncoding(std::string& chaine);
+void						getactualTimestamp(void);
+int							hexStrToInt(const std::string& hexStr);
+void						timeoutHandler(int sign);
 
 // Print and Debug utils
 void						printStringVector(std::vector<std::string> stringVector);
