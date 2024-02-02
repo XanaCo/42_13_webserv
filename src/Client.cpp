@@ -265,7 +265,7 @@ bool    Client::postRes()
         {
             this->openErrorPage();
         }
-        if (_request->getPath().find("/CGI/") != std::string::npos)
+        if (_request->getPath().find("/CGI/") != std::string::npos && _request->getReturnStatus() != 200)
         {
             if (!_server->findCgiRessource(_request->getPath(), path))
             {
@@ -277,7 +277,8 @@ bool    Client::postRes()
             //exec cgi
             _request->setPath(path);
             Cgi cgi(*_server, *_request, *_response);
-            cgi.executeScript();
+            if (!cgi.executeScript())
+                return false;
             _fdRessource = _response->getCgiFdRessource() ;
         }
         else
