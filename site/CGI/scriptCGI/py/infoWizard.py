@@ -16,7 +16,7 @@ def main():
 	# HTTP Header
 	print("protocol: HTTP/1.1 200")
 	print("content-type: text/html")
-	print()
+	print("")
 	# html response
 	print("<html>")
 	print("<head>")

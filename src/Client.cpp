@@ -88,8 +88,8 @@ bool    Client::parseCgiExit()
     int size = lines.size();
     for (int i = 0; i < size; i++)
     {
-        std::cout << "PARSECGI :" << lines[i];
         int length = lines[0].size();
+	
         if (length >= 13 && lines[i].substr(0, 13) == "content-type:")
             _response->setContentType(lines[i]+"\n");
         // else if (length >= 12 && lines[i].substr(0, 12) == "status-code:")
@@ -98,14 +98,13 @@ bool    Client::parseCgiExit()
             _response->setProtocol(lines[i]);
         else if (length >= 6 && lines[i].substr(0, 6) == "<html>")
         {
-            std::cout << "JE PARSE BIEN PAR LA\n";
             _response->setContent(lines[i]);
             for (; i < size; i++)
             {
                 std::string newContent = _response->getContent() + "\n" + lines[i];
                 _response->setContent(newContent);
                 if (lines[i] == "</html>")
-                    return (true);
+					return (true);
             }
         }
     }
