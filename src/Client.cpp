@@ -160,6 +160,7 @@ ServerInfo*    Client::findServer()
 
 std::string     Client::generate_directory_listing(std::string& dir_path){
 
+    std::cout << "Je fais l 'auto index'" << std::endl;
     DIR *dir;
     struct dirent *ent;
     std::string content = "<html><head><title>Directory Listing</title></head><body>";
@@ -172,8 +173,10 @@ std::string     Client::generate_directory_listing(std::string& dir_path){
             //if (file_or_dir == "." || file_or_dir == "..") {
                 //continue;
             //}
-
-            content += "<li><a href='" + dir_path + "/" + file_or_dir + "'>" + file_or_dir + "</a></li>";
+            if (!checkFileExists("/site" + dir_path + file_or_dir))
+                content += "<li> Directory : <a href='" + dir_path + "/" + file_or_dir + "/" + "'>" + file_or_dir + "</a></li>";
+            else
+                content += "<li> File : <a href='" + dir_path + "/" + file_or_dir + "'>" + file_or_dir + "</a></li>";
         }
         closedir(dir);
     } else {
