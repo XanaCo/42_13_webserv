@@ -157,22 +157,22 @@ ServerInfo*    Client::findServer()
     // throw exception ?
 }
 
-std::string     Client::generate_directory_listing(const std::string& dir_path){
+std::string     Client::generate_directory_listing(std::string& dir_path){
 
     DIR *dir;
     struct dirent *ent;
     std::string content = "<html><head><title>Directory Listing</title></head><body>";
     content += "<h1>Directory Listing of " + dir_path + "</h1><ul>";
-
     if ((dir = opendir(dir_path.c_str())) != NULL) {
+        dir_path = dir_path.substr(4, dir_path.size());
         while ((ent = readdir(dir)) != NULL) {
             std::string file_or_dir(ent->d_name);
             
-            if (file_or_dir == "." || file_or_dir == "..") {
-                continue;
-            }
+            //if (file_or_dir == "." || file_or_dir == "..") {
+                //continue;
+            //}
 
-            content += "<li><a href='" + file_or_dir + "'>" + file_or_dir + "</a></li>";
+            content += "<li><a href='" + dir_path + "/" + file_or_dir + "'>" + file_or_dir + "</a></li>";
         }
         closedir(dir);
     } else {
@@ -370,6 +370,8 @@ void    Client::routine(int nbytes)
             if (!_request->fillHeader(_header)) // + faire des verifs et en fonction mettre a jour la variable de routine
             {
                 _client_status = WAITING_FOR_RES;
+                getactualTimestamp();
+                std::cout << "Request received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << std::endl;
                 this->_base->change_poll_event(this->_new_socket, pollout);
                 return ;
             }
@@ -381,6 +383,8 @@ void    Client::routine(int nbytes)
                 {
                     _server = this->findServer();
                     _client_status = WAITING_FOR_RES;
+                    getactualTimestamp();
+                    std::cout << "Request received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << std::endl;
                     this->_base->change_poll_event(this->_new_socket, pollout);
                     return ;
                 }
@@ -406,6 +410,8 @@ void    Client::routine(int nbytes)
         {
             _request->fillBody(_body); // + faire des verifs et en fonction mettre a jour la variable de routine
             _client_status = WAITING_FOR_RES;
+            getactualTimestamp();
+            std::cout << "Request received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << std::endl;
             this->_base->change_poll_event(this->_new_socket, pollout);
             return ;
         }
@@ -509,7 +515,7 @@ bool    Client::receive_data(void){
     else if (nbytes < 0)
     {
         getactualTimestamp();
-        std::cout << "Client " << *this << " encountered error while recv" << std::endl; // See for exception and hgetandling of recv error
+        std::cout << "Client " << this->_new_socket << " encountered error while recv" << std::endl; // See for exception and hgetandling of recv error
         return false;
     }
     /*else
@@ -741,6 +747,7 @@ bool    Client::send_data(void)
     {
         if (!send_partial(this->_new_socket))
         {
+            getactualTimestamp();
             std::cout << "Only " << _bytes_sent << " bytes have been sent because of error" << std::endl;
             return false;
         }
@@ -769,7 +776,7 @@ bool    Client::send_partial(int socket){
     if (_bytes_sent == _bytes_to_send)
     {
         getactualTimestamp();
-        std::cout << "Response sent to client n : " << this->_new_socket << std::endl;
+        std::cout << "Response sent to client n : " << this->_new_socket << ", Status : \"" << this->_response->getStatusCode() << " \"" << std::endl;
         this->_client_status = WANT_TO_RECEIVE_REQ;
         this->_base->change_poll_event(this->_new_socket, pollin);
     }

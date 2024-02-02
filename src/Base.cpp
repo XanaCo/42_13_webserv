@@ -162,7 +162,7 @@ void    Base::add_to_poll_in(int socket)
     struct  pollfd  pfd;
 
     pfd.fd = socket;
-    pfd.events = POLLIN;
+    pfd.events = POLLIN | POLLERR | POLLHUP;
     pfd.revents = 0;
     this->_pfds.push_back(pfd);
     this->_sock_count++;
@@ -173,7 +173,7 @@ void    Base::add_to_poll_out(int socket)
     struct  pollfd  pfd;
 
     pfd.fd = socket;
-    pfd.events = POLLOUT;
+    pfd.events = POLLOUT | POLLERR;
     pfd.revents = 0;
     this->_pfds.push_back(pfd);
     this->_sock_count++;
@@ -310,10 +310,10 @@ void    Base::change_poll_event(int socket, int event){
     switch (event)
     {
         case pollout :
-            tmp->events = POLLOUT;
+            tmp->events = POLLOUT | POLLERR;
             break ;
         case pollin :
-            tmp->events = POLLIN;
+            tmp->events = POLLIN | POLLERR | POLLHUP;
             break ;
         default :
             break ;
@@ -471,6 +471,11 @@ void    Base::review_poll(void){
                 remove_from_clients(_pfds[i].fd);
                 remove_from_poll(_pfds[i].fd);
             }
+        }
+        if(_pfds[i].revents & POLLERR || _pfds[i].revents & POLLHUP)
+        {
+                remove_from_clients(_pfds[i].fd);
+                remove_from_poll(_pfds[i].fd);
         }
     }
 }

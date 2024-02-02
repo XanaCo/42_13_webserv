@@ -62,6 +62,25 @@ void    Request::fillArgs(std::string str)
     std::getline(ss, _version, '\0');
 }
 
+std::string    Request::display_method(void){
+
+    switch (this->_method)
+    {
+    case GET:
+        return "GET";
+        break;
+    case POST:
+        return "POST";
+        break;
+    case DELETE:
+        return "DELETE";
+        break;
+    default:
+        return "UNKNOWN";
+        break;
+    }
+}
+
 bool	Request::fillMethod(std::string& line)
 {
 	int	length = line.size();
