@@ -253,7 +253,7 @@ std::string formCookies(std::vector<std::string> cookies)
 {
 	std::string cook = "";
 
-	for (auto i = cookies.begin(); i != cookies.end(); i++)
+	for (std::vector<std::string>::iterator i = cookies.begin(); i != cookies.end(); i++)
 	{
 		cook += "Set-Cookie: " + *i + "\n";
 	}

@@ -140,7 +140,7 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
         {
             std::cout << "c'est quoi le pb avec <" << lines[i].substr(8, length) << ">\n";
             this->setCookies(splitString(lines[i].substr(8, length), ' '));
-            for (int k = 0; k < _cookies.size(); k++)
+            for (size_t k = 0; k < _cookies.size(); k++)
             {
                 removeLastChar(_cookies[k]);
                 // std::cout << _cookies[k]

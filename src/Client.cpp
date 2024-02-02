@@ -267,7 +267,7 @@ bool    Client::postRes()
         {
             this->openErrorPage();
         }
-        if (_request->getPath().find("/CGI/") != std::string::npos && _request->getReturnStatus() != 200)
+        if (_request->getPath().find("/CGI/") != std::string::npos && _request->getReturnStatus() == 200)
         {
             if (!_server->findCgiRessource(_request->getPath(), path))
             {
@@ -378,7 +378,7 @@ void    Client::routine(int nbytes)
             }
             else
             {
-                for (int i = 0; i < _request->getCookies().size(); i++)
+                for (size_t i = 0; i < _request->getCookies().size(); i++)
                     std::cout << "COOKIES fill header <" << _request->getCookies()[i] << ">";
                 std::cout << "\n";
                 _response->setCookies(formCookies(_request->getCookies()));
