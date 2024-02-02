@@ -36,17 +36,19 @@ header("protocol: HTTP/1.1 200");
 header("");
 
 // Output HTML content
-echo "<html>";
-echo "<head>";
-echo "<title>Devination Class Result</title>";
+echo "<html>\n";
+echo "<head>\n";
+echo "<title>Devination Class Result</title>\n";
 echo '<link rel="stylesheet" href="../../../css/style.css" />';
-echo '<link rel="icon" type="image/png" href="../../../img/LOGO_cursor.png" />';
-echo "</head>";
-echo "<body>";
-echo "<h1>Your Fortune</h1>";
-echo "<p>You asked: <strong>$question</strong></p>";
-echo "<p>The magical answer is: <strong>$fortune</strong></p>";
-echo "</body>";
-echo "</html>";
+echo "\n";
+echo '<link rel="icon" type="image/png" href="../../../img/LOGO_cursor.png"/>';
+echo "\n";
+echo "</head>\n";
+echo "<body>\n";
+echo "<h1>Your Fortune</h1>\n";
+echo "<p>You asked: <strong>$question</strong></p>\n";
+echo "<p>The magical answer is: <strong>$fortune</strong></p>\n";
+echo "</body>\n";
+echo "</html>\n";
 
 ?>

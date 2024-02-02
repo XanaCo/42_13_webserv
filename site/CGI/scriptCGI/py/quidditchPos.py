@@ -41,7 +41,8 @@ print("</head>")
 print("<body>")
 print('<h1>Quidditch selection result</h1>')
 print('<p>' + user_data.get('name') + ', you are a <strong>' + qualities.get(user_data.get('quality')) + '</strong>.</p>')
-print("</body></html>")
+print("</body>")
+print("</html>")
 
 # security
 if __name__ == "__main__":
