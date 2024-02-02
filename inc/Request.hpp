@@ -24,6 +24,7 @@ class Request
 
         //          checkup
         int         checkHttpVersion();
+        std::string display_method(void);
 
         //          set
         void        setMethod(int method);
