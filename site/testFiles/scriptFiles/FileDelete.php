@@ -1,7 +1,7 @@
 <?php
 
 if ($_SERVER["REQUEST_METHOD"] == "DELETE" && isset($_GET["file"])) {
-    $downloadDirectory = '../fileFolder/';
+    $downloadDirectory = '../../fileFolder/';
     $filePath = $downloadDirectory . $_GET["file"];
 
 	if (file_exists($filePath)) {
