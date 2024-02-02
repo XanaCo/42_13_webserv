@@ -199,7 +199,7 @@ bool    Client::getRes()
             openErrorPage();
             _response->setContentType("Content-Type: text/html");
         }
-        if (_request->getPath().find("/CGI/scriptCGI/") != std::string::npos)
+        else if (_request->getPath().find("/CGI/scriptCGI/") != std::string::npos)
         {
             if (!(_request->getMethod() & GET) && !(_request->getMethod() & POST))
             {
@@ -267,7 +267,7 @@ bool    Client::postRes()
         {
             this->openErrorPage();
         }
-        if (_request->getPath().find("/CGI/") != std::string::npos && _request->getReturnStatus() == 200)
+        else if (_request->getPath().find("/CGI/") != std::string::npos)
         {
             if (!_server->findCgiRessource(_request->getPath(), path))
             {
@@ -280,7 +280,12 @@ bool    Client::postRes()
             _request->setPath(path);
             Cgi cgi(*_server, *_request, *_response);
             if (!cgi.executeScript())
+            {
+                closeFile(&_fdRessource);
+                // _client_status = WAITING_FOR_RES;
+                // _request->setReturnStatus(500);
                 return false;
+            }
             _fdRessource = _response->getCgiFdRessource() ;
         }
         else
