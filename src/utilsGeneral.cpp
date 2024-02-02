@@ -86,104 +86,110 @@ void deEncodingHexa(std::string& chaine)
 
 // std::string getFirstNameDir(const std::string& path)
 // {
-//     size_t lastSep = path.find('/');
-    
-//     if (lastSep != std::string::npos && path[1])
-//     {
-//         if (lastSep == 0)
-//             return path;
-//         return path.substr(0, lastSep);
-//     }
-//     else
-//         return ".";
+//	 size_t lastSep = path.find('/');
+		
+//	 if (lastSep != std::string::npos && path[1])
+//	 {
+//		 if (lastSep == 0)
+//			 return path;
+//		 return path.substr(0, lastSep);
+//	 }
+//	 else
+//		 return ".";
 // }
 
 std::string getNameDir(const std::string& path)
 {
-    size_t lastSep = path.find_last_of('/');
-    
-    if (lastSep != std::string::npos && path[1])
-    {
-        if (lastSep == 0)
-            return path;
-        return path.substr(0, lastSep);
-    }
-    else
-        return "/";
+	size_t lastSep = path.find_last_of('/');
+		
+	if (lastSep != std::string::npos && path[1])
+	{
+		if (lastSep == 0)
+			return path;
+		return path.substr(0, lastSep);
+	}
+	else
+		return "/";
 }
 
 std::string getNameFile(const std::string& path)
 {
-    size_t lastSep = path.find_last_of('/');
+	size_t lastSep = path.find_last_of('/');
 
-    // Si aucun séparateur n'est trouvé, le chemin est probablement juste le nom de fichier
-    if (lastSep == std::string::npos)
-        return path;
-    return (path.substr(lastSep + 1));
+	// Si aucun séparateur n'est trouvé, le chemin est probablement juste le nom de fichier
+	if (lastSep == std::string::npos)
+		return path;
+	return (path.substr(lastSep + 1));
 }
 
 void	removeBackSlashR(std::string& str)
 {
-    std::string::size_type r_pos = str.find('\r');
-    while (r_pos != std::string::npos)
-    {
-        str.erase(r_pos, 1);
-        r_pos = str.find('\r', r_pos);
-    }
+	std::string::size_type r_pos = str.find('\r');
+	while (r_pos != std::string::npos)
+	{
+		str.erase(r_pos, 1);
+		r_pos = str.find('\r', r_pos);
+	}
 }
 
-void    closeFile(int* fd)
+void	closeFile(int* fd)
 {
-    if (*fd > 2)
-    {
-        close(*fd);
-        *fd = 0;
-    }
+	if (*fd > 2)
+	{
+		close(*fd);
+		*fd = 0;
+	}
 }
 
 bool isHtmlComplete(const std::string& html)
 {
-    int c = 0;
+	int c = 0;
 
-    for (std::size_t i = 0; i < html.size(); ++i)
-    {
-        if (html[i] == '<')
-            ++c;
-        else if (html[i] == '>')
-        {
-            --c;
-            if (c < 0)
-                return false;
-        }
-    }
-    return c == 0;
+	for (std::size_t i = 0; i < html.size(); ++i)
+	{
+		if (html[i] == '<')
+			++c;
+		else if (html[i] == '>')
+		{
+			--c;
+			if (c < 0)
+				return false;
+		}
+	}
+	return c == 0;
 }
 
 int identifyFile(const std::string& str) // voir si on retourne une erreur en cas de ni .php ni py
 {
-    if (str.length() >= 3)
+	if (str.length() >= 3)
 	{
-        if (str.compare(str.length() - 3, 3, ".py") == 0)
+		if (str.compare(str.length() - 3, 3, ".py") == 0)
 		{
-            return PY;
-        }
-    }
-    return PHP;
+			return PY;
+		}
+	}
+	return PHP;
 }
 
 int hexStrToInt(const std::string& hexStr)
 {
-    std::istringstream iss(hexStr);
-    int num;
-    iss >> std::hex >> num;
-    return num;
+	std::istringstream iss(hexStr);
+	int num;
+	iss >> std::hex >> num;
+	return num;
 }
 
-void    getactualTimestamp(void){
+void getactualTimestamp(void){
 
-    std::time_t actualTime = std::time(0);
-    std::tm *localTime = std::localtime(&actualTime);
+	std::time_t actualTime = std::time(0);
+	std::tm *localTime = std::localtime(&actualTime);
 
-    std::cout << localTime->tm_hour << ":" << localTime->tm_min << ":" << localTime->tm_sec << " ";
-    return ;
+	std::cout << localTime->tm_hour << ":" << localTime->tm_min << ":" << localTime->tm_sec << " ";
+	return ;
+}
+
+void timeoutHandler(int sign) {
+
+	if (sign == SIGALRM)
+		exit(E_INTERNAL_SERVER);
 }

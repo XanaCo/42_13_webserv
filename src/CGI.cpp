@@ -140,12 +140,6 @@ int		Cgi::getTypeScript() const {
 //	METHODS
 // ************************************************************************** //
 
-void timeoutHandler(int sign) {
-
-	if (sign == SIGALRM)
-		exit(E_INTERNAL_SERVER);
-}
-
 bool Cgi::executeScript() {
 
 	int wstatus;
