@@ -18,10 +18,9 @@ public:
 	Cgi(ServerInfo &server, Request &req, Response &resp);
 	~Cgi();
 
-	// Cgi(Cgi const &copy);
-	// Cgi	&operator=(Cgi const &other);
 	int setMethod(int method);
 	int setEnvironment(ServerInfo *server, Request *req);
+
 	int getPipeOut();
 	int getPipeIn();
 	ServerInfo *getCGIServer() const;
@@ -31,10 +30,9 @@ public:
 	std::map<std::string, std::string> &getenvpMap();
 	std::string &getCGIMethod();
 	char **getCGIenvpToExec() const;
-	//std::map<std::string, std::string> getCGIEnv() const;
 	int getTypeScript() const;
 
-	void executeScript();
+	bool executeScript();
 
 private:
 
@@ -49,10 +47,8 @@ private:
 	std::map<std::string, std::string> _envpMap;
 	std::string _method;
 	
-	char **_argvToExec;
 	char **_envpToExec;
 	int _typeScript;
-	//int _timestart;
 
 };
 
