@@ -148,6 +148,8 @@ bool checkPathExists(std::string pathToCheck) {
 		return false;
 	if (!(filestat.st_mode & S_IFDIR))
 		return false;
+	if (!opendir(pathToCheck.c_str()))
+		return false;
 	return true;
 }
 
@@ -161,5 +163,26 @@ bool checkFileExists(std::string fileToCheck) {
 		return false;
 	if (!(filestat.st_mode & S_IFREG))
 		return false;
+	return true;
+}
+
+bool strToUInt(const std::string& str, unsigned int &number) {
+
+	double result = 0;
+	double sign = 1;
+
+	for (size_t i = 0; i < str.size(); ++i)
+	{
+		if (i == 0 && (str[i] == '+' || str[i] == '-'))
+			sign = (str[i] == '-') ? -1 : 1;
+		else if (isdigit(str[i]))
+			result = result * 10 + (str[i] - '0');
+		else
+			break;
+	}
+	if (result * sign > UINT_MAX || result * sign < 0)
+		return false;
+
+	number = (unsigned int)result * sign;
 	return true;
 }

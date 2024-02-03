@@ -20,18 +20,16 @@ class   Base{
         std::vector<Client *> _clients;
         std::vector<struct pollfd>  _pfds;
         int _sock_count;
+        std::map<std::string, std::string> _mime_types;
 
     public :
 
-        
         Base(void);
         Base(int argc, char **argv);
         Base(std::vector<ServerInfo> &  Servers);
         Base(const Base & rhs);
         ~Base(void);
         Base &  operator=(const Base & rhs);
-
-        std::map<std::string, std::string> _mime_types;
 
         void    init_mime_types(void);
 
@@ -54,7 +52,7 @@ class   Base{
         void    handle_new_connection(int serv_sock);
         void    change_poll_event(int socket, int event);
         void    receive_client_data(int client_sock); //Can be a client method
-        bool    send_all(int s, const char *buf, int *len);                                            
+        bool    send_all(int s, const char *buf, int *len);
 
         //Return sockaddr_in or sockaddr_in->addr
         void*   get_in_addr(struct sockaddr *sa);
@@ -68,6 +66,7 @@ class   Base{
         Client &   get_cli_from_sock(int client_sock);
         ServerInfo &   get_serv_from_sock(int client_sock);
         struct pollfd   *get_poll_from_sock(int client_sock);
+		std::map<std::string, std::string> &getMimeType(void);
 
         // Main loop after server creation
         void    start_servers(void);

@@ -170,8 +170,8 @@ std::string    Response::extract_extension(std::string path){
 void    Response::setMimeType(std::string path, Base *_base){
 
     std::string key = extract_extension(path);
-    std::map<std::string, std::string>::const_iterator search = _base->_mime_types.find(key);
-    if (search != _base->_mime_types.end())
+    std::map<std::string, std::string>::const_iterator search = _base->getMimeType().find(key);
+    if (search != _base->getMimeType().end())
         return (void)(_contentType = search->second);
     return (void)(_contentType = "content-Type: text/html\n");
 }

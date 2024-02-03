@@ -1,5 +1,6 @@
 
- # DefaultServer
+# DefaultServer
+
 server {
 	host					localhost; # 127.0.0.1 (IP of the server)
 	listen					8801; # Port on which the Server will listen
