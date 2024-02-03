@@ -432,7 +432,6 @@ struct pollfd    *Base::get_poll_from_sock(int client_sock){
 
 void    Base::start_servers(void) {
 
-
     if(!this->set_servers_sockets())
         return ;
     while (1)
@@ -451,6 +450,17 @@ void    Base::start_servers(void) {
 
 // function used to review the poll of fd
 
+bool    Base::client_is_timed_out(Client & client){
+
+    if (is_timedout(client.get_timestamp(), client.get_timeout()))
+    {
+        getactualTimestamp();
+        std::cout << "Client n : " << client.get_socket() << " has been timed out. Connexion Closed." << std::endl; 
+        return true;
+    }
+    return false;
+}
+
 void    Base::review_poll(void){
 
     for (int i = 0; i < this->_sock_count; i++)
@@ -461,7 +471,7 @@ void    Base::review_poll(void){
                 handle_new_connection(_pfds[i].fd);
             else
             {
-                if(!get_cli_from_sock(_pfds[i].fd).receive_data())
+                if(client_is_timed_out(get_cli_from_sock(_pfds[i].fd)) || !get_cli_from_sock(_pfds[i].fd).receive_data())
                 {
                     remove_from_clients(_pfds[i].fd);
                     remove_from_poll(_pfds[i].fd);
@@ -470,7 +480,7 @@ void    Base::review_poll(void){
         }
         if(_pfds[i].revents & POLLOUT)
         {
-            if (!get_cli_from_sock(_pfds[i].fd).send_data())
+            if (client_is_timed_out(get_cli_from_sock(_pfds[i].fd)) || !get_cli_from_sock(_pfds[i].fd).send_data())
             {
                 remove_from_clients(_pfds[i].fd);
                 remove_from_poll(_pfds[i].fd);
