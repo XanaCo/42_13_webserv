@@ -35,7 +35,11 @@ Client::Client(int socket, struct sockaddr_in *r_address, std::vector<ServerInfo
     _fdRessource = 0;
     _first_chunk = true;
     _serv_sock = serv_sock;
+    _keep_alive = true;
+    if (!(_timeout = base->get_serv_from_sock(serv_sock).getTimeout()))
+            _timeout = DEFAULT_TIMEOUT;
     _chunk_index_type = CHUNK_SIZE;
+    _timestamp = get_micro_time_stamp();
     return  ;
 }
 
@@ -163,7 +167,7 @@ void    Client::findServer()
 
 std::string     Client::generate_directory_listing(std::string& dir_path){
 
-    std::cout << "Je fais l 'auto index'" << std::endl;
+    //std::cout << "Je fais l 'auto index'" << std::endl;
     DIR *dir;
     struct dirent *ent;
     std::string content = "<html><head><title>Directory Listing</title>";
@@ -789,7 +793,7 @@ bool    Client::send_data(void)
 {
     if (this->_client_status == WAITING_FOR_RES)
         this->routine(0);
-    else
+    else if (this->_client_status == RES_READY_TO_BE_SENT || this->_client_status == SENDING_RES_HEADER)
     {
         if (!send_partial(this->_new_socket))
         {
@@ -797,6 +801,13 @@ bool    Client::send_data(void)
             std::cout << "Only " << _bytes_sent << " bytes have been sent because of error" << std::endl;
             return false;
         }
+    }
+    else if (this->_client_status == RES_SENT)
+    {
+        getactualTimestamp();
+        std::cout << "Response sent to client n : " << this->_new_socket << ", Status : \"" << this->_response->getStatusCode() << " \"" << std::endl;
+        this->_client_status = WANT_TO_RECEIVE_REQ;
+        this->_base->change_poll_event(this->_new_socket, pollin);
     }
     return true;
 }
@@ -821,12 +832,7 @@ bool    Client::send_partial(int socket){
     }
     _bytes_sent += sent;
     if (_bytes_sent == _bytes_to_send)
-    {
-        getactualTimestamp();
-        std::cout << "Response sent to client n : " << this->_new_socket << ", Status : \"" << this->_response->getStatusCode() << " \"" << std::endl;
-        this->_client_status = WANT_TO_RECEIVE_REQ;
-        this->_base->change_poll_event(this->_new_socket, pollin);
-    }
+        this->_client_status = RES_SENT;    
     return true;
 }
 
@@ -865,6 +871,9 @@ Request*            Client::getRequest(void) const {return _request;}
 Response*           Client::getResponse(void) const {return _response;}
 int                 Client::getFdRessource(void) const {return _fdRessource;}
 ServerInfo*         Client::getServer(void) const {return _server;}
+int                 Client::get_timeout(void) const {return this->_timeout;}
+unsigned long       Client::get_timestamp(void) const {return this->_timestamp;}
+bool                Client::get_keep_alive(void) const {return this->_keep_alive;}
 
 void    Client::set_socket(int sock) {this->_new_socket = sock;}
 void    Client::set_addr_struct(struct sockaddr_in addr) {this->_address = addr;}
@@ -874,6 +883,6 @@ void    Client::set_bytes_received(int nbytes) {this->_bytes_received = nbytes;}
 void    Client::set_req_end(bool end){this->_req_end = end;}
 void    Client::setFdRessource(int fd) {_fdRessource = fd;}
 void    Client::setServer(ServerInfo* server) {_server = server;}
-
-
-
+void    Client::set_timeout(int timeout) {_timeout = timeout;}
+void    Client::set_timestamp(unsigned long timestamp) {_timestamp = timestamp;}
+void    Client::set_keep_alive(bool keep_alive) {_keep_alive = keep_alive;}

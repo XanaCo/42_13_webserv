@@ -188,6 +188,23 @@ void getactualTimestamp(void){
 	return ;
 }
 
+unsigned long    get_micro_time_stamp(void){
+
+    struct timeval  tv;
+
+    gettimeofday(&tv, NULL);
+    return ((tv.tv_sec * 1000000) + tv.tv_usec);
+}
+
+bool            is_timedout(unsigned long start, int timeout){
+
+    unsigned long   now;
+
+    now = get_micro_time_stamp();
+    if ((now - start) / 1000000 >= timeout)
+        return true;
+    return false;
+}
 
 // ************************************************************************** //
 //	COOKIES

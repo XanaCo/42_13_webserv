@@ -46,6 +46,7 @@
 # include <sys/wait.h>
 # include <sys/stat.h>
 # include <sys/signal.h>
+# include <sys/time.h>
 // # include <signal.h>
 
 
@@ -124,6 +125,7 @@
 # define E_GATEWAY_TIMEOUT		504 // renvoye par un serveur proxi pour indiquer qu'il n'a pas recu de reponde de la part d'un serveur en amont
 # define E_HTTP_VERSION			505 // la version d'http precise en requette n'est pas traitee par le serveur
 
+# define DEFAULT_TIMEOUT        15;
 
 typedef enum e_headerRequest {
 	RQ_METHOD,
@@ -177,6 +179,8 @@ char						hexToChar(const std::string& hex);
 void						getactualTimestamp(void);
 int							hexStrToInt(const std::string& hexStr);
 void						timeoutHandler(int sign);
+unsigned long               get_micro_time_stamp(void);
+bool                        is_timedout(unsigned long start, int timeout);
 
 // Print and Debug utils
 void						printStringVector(std::vector<std::string> stringVector);
