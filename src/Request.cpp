@@ -6,6 +6,7 @@
 // ************************************************************************** //
 
 Request::Request() {}
+//Request::Request(Client * client) : _client(client) {}
 Request::Request(const Request& obj) {*this = obj;}
 Request::~Request() {}
 
@@ -148,6 +149,8 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
             size_t      limit = rest.find(':');
             this->setHost(rest.substr(0, limit));
             this->setPort(rest.substr(0, limit));
+            //this->_client->set_serv_with_name();
+
         }
         else if (length >= 11 && lines[i].substr(0, 11) == "User-Agent:")
             this->setUserAgent(lines[i].substr(12, length));

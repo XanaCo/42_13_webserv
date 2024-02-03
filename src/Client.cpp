@@ -16,7 +16,7 @@ Client::Client(void){
     return  ;
 }
 
-Client::Client(int socket, struct sockaddr_in *r_address, std::vector<ServerInfo> servers, Base  *base){
+Client::Client(int socket, struct sockaddr_in *r_address, std::vector<ServerInfo> servers, Base  *base, int serv_sock){
     if (PRINT)
         std::cout << CLIENT << "🐥 constructor called" << std::endl;
     _new_socket = socket;
@@ -34,6 +34,7 @@ Client::Client(int socket, struct sockaddr_in *r_address, std::vector<ServerInfo
     _server = NULL;
     _fdRessource = 0;
     _first_chunk = true;
+    _serv_sock = serv_sock;
     _chunk_index_type = CHUNK_SIZE;
     return  ;
 }
@@ -163,25 +164,31 @@ std::string     Client::generate_directory_listing(std::string& dir_path){
     std::cout << "Je fais l 'auto index'" << std::endl;
     DIR *dir;
     struct dirent *ent;
-    std::string content = "<html><head><title>Directory Listing</title></head><body>";
+    std::string content = "<html><head><title>Directory Listing</title>";
+    content += "<link rel=\"stylesheet\" href=\"css/listing.css\" /></head><body>";
     content += "<h1>Directory Listing of " + dir_path + "</h1><ul>";
-    if ((dir = opendir(dir_path.c_str())) != NULL) {
+    if ((dir = opendir(dir_path.c_str())) != NULL) 
+    {
         dir_path = dir_path.substr(4, dir_path.size());
         while ((ent = readdir(dir)) != NULL) {
             std::string file_or_dir(ent->d_name);
             
-            //if (file_or_dir == "." || file_or_dir == "..") {
-                //continue;
-            //}
-            if (!checkFileExists("/site" + dir_path + file_or_dir))
-                content += "<li> Directory : <a href='" + dir_path + "/" + file_or_dir + "/" + "'>" + file_or_dir + "</a></li>";
+            if (file_or_dir == ".")
+                continue;
+            if (ent->d_type == DT_DIR)
+            {
+                if (file_or_dir == "..")
+                    content += "<span class='up_icon'></span><a href='" + dir_path + "/" + file_or_dir + "/" + "'>" + file_or_dir + "</a><br>";
+                else
+                    content += "<span class='folder_icon'></span><a href='" + dir_path + "/" + file_or_dir + "/" + "'>" + file_or_dir + "</a><br>";
+            }
             else
-                content += "<li> File : <a href='" + dir_path + "/" + file_or_dir + "'>" + file_or_dir + "</a></li>";
+                content += "<span class='file_icon'></span><a href='" + dir_path + "/" + file_or_dir + "'>" + file_or_dir + "</a><br>";
         }
         closedir(dir);
-    } else {
+    } 
+    else 
         content += "<p>Error: Could not open directory.</p>";
-    }
     content += "</ul></body></html>";
     return content;
 }
@@ -490,6 +497,16 @@ bool    Client::alloc_req_resp(void){ // A proteger et a delete si on satisfait 
     this->_response = new Response;
     return true;
 }
+
+/*void    Client::set_serv_with_name(void){
+
+    for (size_t i = 0; i < _servers.size(); i++)
+    {
+        if (this->_request->getHost() == _servers[i].getServerName())
+            this->_server = &_servers[i];
+    }
+    return;
+}*/
 
 void    Client::reset_client(void){
 
