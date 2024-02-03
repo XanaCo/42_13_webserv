@@ -23,7 +23,7 @@
 # include <cerrno>
 # include <cctype>
 # include <algorithm>
-# include <limits>
+# include <climits>
 # include <utility>
 # include <ctime>		// clock() -> a supprimer avant de push
 
@@ -187,6 +187,7 @@ void 						printCharTab(char **charTab);
 
 // Parsing utils
 int							strToInt(const std::string& str);
+bool						strToUInt(const std::string& str, unsigned int &number);
 std::string					intToStr(const int number);
 std::vector<std::string>	splitString(const std::string& input, char delimiter);
 void						eraseComments(std::string &content);

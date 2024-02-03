@@ -1,5 +1,6 @@
 
- # DefaultServer
+# DefaultServer
+
 server {
 	host					localhost; # 127.0.0.1 (IP of the server)
 	listen					8801; # Port on which the Server will listen
@@ -40,7 +41,6 @@ server {
 
 	location	/testFiles/fileFolder { # Directory files
 		allow_methods GET POST DELETE; # Allowed methods
-		autoindex on; # Enables directory listing
 	}
 
 	location	/CGI { # Directory in our site (site/CGI)

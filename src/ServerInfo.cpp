@@ -167,7 +167,6 @@ Location *ServerInfo::getOneLocation(std::string Locname) {
 
 	for (size_t it = 0; it != this->_locations.size(); it++)
 	{
-		//std::cout << this->_locations[it].getLPathName() << std::endl;
 		if (this->_locations[it].getLPathName() == Locname)
 			return &this->_locations[it];
 	}
@@ -280,7 +279,8 @@ void ServerInfo::setIndex(std::string index) {
 
 void ServerInfo::setMaxClientBody(std::string max) {
 
-	this->_maxClientBody = strToInt(max);
+	if (!strToUInt(max, this->_maxClientBody))
+		throw ServerInfoError("Wrong Max Client Body format");
 }
 
 void ServerInfo::setTypeCgi(int typeCgi) {
@@ -292,6 +292,9 @@ size_t ServerInfo::setLocations(std::vector<std::string> &serverTab, size_t pos)
 
 	Location locati(serverTab[pos]);
 	size_t it;
+
+	if (getOneLocation(serverTab[pos]))
+		throw ServerInfoError("Double declaration in locations");
 
 	for (it = pos + 1; it < serverTab.size(); it++)
 	{
@@ -503,6 +506,10 @@ void ServerInfo::checkAllInfos() {
 		{
 			if (it % 2 == 0)
 			{
+				unsigned int error;
+				if (!strToUInt(this->getErrorPages()[it], error) || error < 100 || error > 600)
+					throw ServerInfo::ServerInfoError("Invalid error page code number");
+
 				if (isdigit(strToInt(this->getErrorPages()[it])))
 					throw ServerInfo::ServerInfoError("Invalid error page code format");
 			}

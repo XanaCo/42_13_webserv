@@ -251,6 +251,11 @@ ServerInfo &    Base::get_first_server(const ServerInfo & curr){
     return (_servers[0]);
 }
 
+std::map<std::string, std::string> &Base::getMimeType(void) {
+
+	return _mime_types;
+}
+
 void    Base::assign_socket_same_port(ServerInfo & curr, ServerInfo & same){
 
     curr.setSameListen(same.getSocket()); 
