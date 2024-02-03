@@ -60,7 +60,10 @@ class   Client{
         int                         _bytes_to_send;
         int                         _bytes_sent;
         bool                        _first_chunk;
+        bool                        _keep_alive;
+        int                         _timeout;
         int                         _chunk_index_type;
+        unsigned long               _timestamp;
         std::vector<ServerInfo>     _servers;
         Base *                      _base;
 
@@ -130,6 +133,9 @@ class   Client{
         Request*            getRequest(void) const;
         Response*           getResponse(void) const;
         int                 getFdRessource(void) const;
+        int                 get_timeout(void) const;
+        unsigned long       get_timestamp(void) const;
+        bool                get_keep_alive(void) const;
         ServerInfo*         getServer(void) const;
 
         //                  set
@@ -139,6 +145,9 @@ class   Client{
         void                set_status(int status);
         void                set_bytes_received(int nbytes);
         void                set_req_end(bool end);
+        void                set_timeout(int timeout);
+        void                set_timestamp(unsigned long timestamp);
+        void                set_keep_alive(bool keep_alive);
         void                setFdRessource(int fd);
         void                setServer(ServerInfo* server);
 };

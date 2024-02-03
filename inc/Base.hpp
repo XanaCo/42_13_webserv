@@ -73,6 +73,8 @@ class   Base{
         void    start_servers(void);
         void    review_poll(void);
 
+        bool    client_is_timed_out(Client & client);
+
 };
 
 #endif
