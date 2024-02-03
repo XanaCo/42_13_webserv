@@ -6,6 +6,7 @@
 // ************************************************************************** //
 
 Request::Request() {}
+//Request::Request(Client * client) : _client(client) {}
 Request::Request(const Request& obj) {*this = obj;}
 Request::~Request() {}
 
@@ -148,6 +149,8 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
             size_t      limit = rest.find(':');
             this->setHost(rest.substr(0, limit));
             this->setPort(rest.substr(0, limit));
+            //this->_client->set_serv_with_name();
+
         }
         else if (length >= 11 && lines[i].substr(0, 11) == "User-Agent:")
             this->setUserAgent(lines[i].substr(12, length));
@@ -157,7 +160,7 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
             this->setContentLength(atoi(lines[i].substr(16, length).c_str()));
         else if (length >= 6 && lines[i].substr(0, 7) == "Cookie:")
         {
-            std::cout << "c'est quoi le pb avec <" << lines[i].substr(8, length) << ">\n";
+            // std::cout << "c'est quoi le pb avec <" << lines[i].substr(8, length) << ">\n";
             this->setCookies(splitString(lines[i].substr(8, length), ' '));
             for (size_t k = 0; k < _cookies.size(); k++)
             {
@@ -219,11 +222,10 @@ void    Request::setContentLength(int contentLength) {_contentLength = contentLe
 void    Request::setCookies(std::vector<std::string> cookies) {_cookies = cookies;}
 void    Request::setConnection(std::string connection) {_connection = connection;}
 void    Request::setBody(std::string body) {_body = body;}
-// void    Request::setServer(ServerInfo* server) {_server = server;}
 void    Request::setReturnStatus(int returnStatus) {_returnStatus = returnStatus;}
 void    Request::setArgs(std::string args) {_args = args;}
 void    Request::setTransfertEncoding(std::string transfertEncoding) {_transfertEncoding = transfertEncoding;}
-
+// void    Request::setServer(ServerInfo* server) {_server = server;}
 
 int                         Request::getMethod(void) const {return (_method);}
 std::string                 Request::getPath(void) const {return (_path);}
@@ -236,9 +238,8 @@ int                         Request::getContentLength(void) const {return (_cont
 std::vector<std::string>    Request::getCookies(void) const {return (_cookies);}
 std::string                 Request::getConnection(void) const {return (_connection);}
 std::string                 Request::getBody(void) const {return (_body);}
-// ServerInfo*                 Request::getServer(void) {return (_server);}
 int                         Request::getReturnStatus(void) const {return (_returnStatus);}
 std::string                 Request::getArgs(void) const {return (_args);};
 std::string                 Request::getTransfertEncoding(void) const {return (_transfertEncoding);};
 bool                        Request::getChunkTransf(void) const {return _chunkTransf;};
-
+// ServerInfo*                 Request::getServer(void) {return (_server);}

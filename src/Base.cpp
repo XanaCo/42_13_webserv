@@ -150,9 +150,8 @@ void    Base::init_mime_types(void){
 
 void    Base::add_to_clients(int socket, struct sockaddr_in* address, std::vector<ServerInfo> servers, int serv_sock){
 
-    Client  *tmp = new  Client(socket, address, servers, this);
+    Client  *tmp = new  Client(socket, address, servers, this, serv_sock);
 
-    (void)serv_sock;
     // tmp->set_max_body_size(this->get_serv_from_sock(serv_sock).getMaxClientBody()); // a remetre plus tard
     this->_clients.push_back(tmp);
 }

@@ -65,12 +65,13 @@ class   Client{
         Base *                      _base;
 
         ServerInfo*                 _server;
+        int                         _serv_sock;
         int                         _fdRessource;
 
     public :
 
         Client(void);
-        Client(int socket, struct sockaddr_in *r_address, std::vector<ServerInfo> _servers, Base   *base);
+        Client(int socket, struct sockaddr_in *r_address, std::vector<ServerInfo> _servers, Base   *base, int serv_sock);
         Client(const Client & rhs);
         ~Client(void);
         Client &   operator=(const Client & rhs);
@@ -80,6 +81,8 @@ class   Client{
         //              Function to receive data from a client
         //
         std::string     generate_directory_listing(std::string& dir_path);
+
+        //void            set_serv_with_name(void);
         bool            alloc_req_resp(void);
         bool            receive_data(void);
         bool            checkHttpVersion(void);
@@ -104,7 +107,7 @@ class   Client{
         bool                deleteRes();
         bool                executeMethod();
         void                routine(int bytes);
-        ServerInfo*         findServer();
+        void                findServer();
 
         static std::vector<bool (Client::*)()>& methodFunctions() {
             static std::vector<bool (Client::*)()> methods;

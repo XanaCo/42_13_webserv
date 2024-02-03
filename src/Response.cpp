@@ -96,20 +96,23 @@ bool    Response::readRessource(int fd)
 
 
 // a jeter il me semble
-void    Response::postRessource(const std::string path, std::string content)
+void    Response::postRessource(int fd, std::string content)
 {
-    std::ofstream file(path.c_str());
-    file << content;
-    file.close();
+    write(fd, content.c_str(), content.size());
+    
+    // std::ofstream file(path.c_str());
+    // file << content;
+    // file.close();
 }
 
 // a jeter il me semble
-void Response::deleteRessource(const std::string path)
+void Response::deleteRessource(std::string path)
 {
-    if (unlink(path.c_str()) != 0)
-        std::cerr << "delete ressource : " << path  << " : erreur lors de la suppression du fichier"<< std::endl;
-    else
-        std::cout << "Le fichier " << path << " a été supprimé avec succès." << std::endl;
+    std::remove(path.c_str());
+    // if (unlink(path.c_str()) != 0)
+    //     std::cerr << "delete ressource : " << path  << " : erreur lors de la suppression du fichier"<< std::endl;
+    // else
+    //     std::cout << "Le fichier " << path << " a été supprimé avec succès." << std::endl;
 }
 
 // ************************************************************************** //

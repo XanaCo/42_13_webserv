@@ -16,7 +16,7 @@ Client::Client(void){
     return  ;
 }
 
-Client::Client(int socket, struct sockaddr_in *r_address, std::vector<ServerInfo> servers, Base  *base){
+Client::Client(int socket, struct sockaddr_in *r_address, std::vector<ServerInfo> servers, Base  *base, int serv_sock){
     if (PRINT)
         std::cout << CLIENT << "🐥 constructor called" << std::endl;
     _new_socket = socket;
@@ -34,6 +34,7 @@ Client::Client(int socket, struct sockaddr_in *r_address, std::vector<ServerInfo
     _server = NULL;
     _fdRessource = 0;
     _first_chunk = true;
+    _serv_sock = serv_sock;
     _chunk_index_type = CHUNK_SIZE;
     return  ;
 }
@@ -143,42 +144,53 @@ bool    Client::checkHttpVersion()
     return (true);
 }
 
-ServerInfo*    Client::findServer()
+void    Client::findServer()
 {
-    if (_servers.size() == 1)
-        return (&(_servers[0]));
+    // if (_servers.size() == 1)
+    //     return (&(_servers[0]));
     for (std::vector<ServerInfo>::iterator i = _servers.begin(); i != _servers.end(); i++)
     {
         if (i->getServerName() == _request->getHost())
-            return &(*i);
+        {
+            if (i->getPort() == _base->get_serv_from_sock(_serv_sock).getPort())
+                _server = &(*i);
+        }
     }
     if (_request->getPath().length() > 4 && _request->getPath().substr(4) == "www.")
         _request->setReturnStatus(301);
-    return &(_servers[0]);
-    // throw exception ?
+    _server = &_base->get_serv_from_sock(_serv_sock);
 }
 
 std::string     Client::generate_directory_listing(std::string& dir_path){
 
+    std::cout << "Je fais l 'auto index'" << std::endl;
     DIR *dir;
     struct dirent *ent;
-    std::string content = "<html><head><title>Directory Listing</title></head><body>";
+    std::string content = "<html><head><title>Directory Listing</title>";
+    content += "<link rel=\"stylesheet\" href=\"css/listing.css\" /></head><body>";
     content += "<h1>Directory Listing of " + dir_path + "</h1><ul>";
-    if ((dir = opendir(dir_path.c_str())) != NULL) {
+    if ((dir = opendir(dir_path.c_str())) != NULL) 
+    {
         dir_path = dir_path.substr(4, dir_path.size());
         while ((ent = readdir(dir)) != NULL) {
             std::string file_or_dir(ent->d_name);
             
-            //if (file_or_dir == "." || file_or_dir == "..") {
-                //continue;
-            //}
-
-            content += "<li><a href='" + dir_path + "/" + file_or_dir + "'>" + file_or_dir + "</a></li>";
+            if (file_or_dir == ".")
+                continue;
+            if (ent->d_type == DT_DIR)
+            {
+                if (file_or_dir == "..")
+                    content += "<span class='up_icon'></span><a href='" + dir_path + "/" + file_or_dir + "/" + "'>" + file_or_dir + "</a><br>";
+                else
+                    content += "<span class='folder_icon'></span><a href='" + dir_path + "/" + file_or_dir + "/" + "'>" + file_or_dir + "</a><br>";
+            }
+            else
+                content += "<span class='file_icon'></span><a href='" + dir_path + "/" + file_or_dir + "'>" + file_or_dir + "</a><br>";
         }
         closedir(dir);
-    } else {
+    } 
+    else 
         content += "<p>Error: Could not open directory.</p>";
-    }
     content += "</ul></body></html>";
     return content;
 }
@@ -290,16 +302,19 @@ bool    Client::postRes()
         else
         {
             // resoudre le path
-            if (!_server->findRessource(_request->getPath(), path))
+            if (!_server->findRessource_2(_request->getPath(), path))
             {
                 _request->setReturnStatus(404);
                 this->openErrorPage();
             }
-            _fdRessource = open(path.c_str(), O_RDONLY);
+            _fdRessource = open(path.c_str(), O_WRONLY | O_CREAT, 0644);
             if (_fdRessource > 2)
-                _response->postRessource(path, _request->getBody());   // penser a mettre a jour le status du retour
-            // else 
-            //     couille
+            {
+                _response->postRessource(_fdRessource, _request->getBody());   // penser a mettre a jour le status du retour
+                closeFile(&_fdRessource);
+                _fdRessource = open("./site/testFiles/postSuccefully.html", O_RDONLY);
+                // return (true);
+            }
         }
         if (_fdRessource < 0)
         {
@@ -331,19 +346,22 @@ bool    Client::deleteRes()
         else
         {
             // resoudre le path
-            if (!_server->findRessource(_request->getPath(), path))
+            if (!_server->findRessource_2(_request->getPath(), path))
             {
                 _request->setReturnStatus(404);
                 this->openErrorPage();
+                return (false);
             }
-            _fdRessource = open(path.c_str(), O_RDONLY);
+            else
+            {
+                _response->deleteRessource(path);
+                _fdRessource = open("./site/testFiles/postSuccefully.html", O_RDONLY);
+            }
             if (_fdRessource < 2)
             {
                 _request->setReturnStatus(500);
                 this->openErrorPage();
             }
-            _response->deleteRessource(path);
-            // open un fichier du success
         }
         if (_fdRessource < 2)
         {
@@ -394,7 +412,7 @@ void    Client::routine(int nbytes)
                 //     _request->setPath("/" + _servers[0].getRoot() + "/index.html");
                 if (this->_req_end == true)
                 {
-                    _server = this->findServer();
+                    this->findServer();
                     _client_status = WAITING_FOR_RES;
                     getactualTimestamp();
                     std::cout << "Request received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << std::endl;
@@ -415,7 +433,7 @@ void    Client::routine(int nbytes)
                 }
 
             }
-            _server = this->findServer();
+            this->findServer();
             if (_client_status != REQ_RECEIVED)
                 return ;
         }
@@ -487,6 +505,16 @@ bool    Client::alloc_req_resp(void){ // A proteger et a delete si on satisfait 
     this->_response = new Response;
     return true;
 }
+
+/*void    Client::set_serv_with_name(void){
+
+    for (size_t i = 0; i < _servers.size(); i++)
+    {
+        if (this->_request->getHost() == _servers[i].getServerName())
+            this->_server = &_servers[i];
+    }
+    return;
+}*/
 
 void    Client::reset_client(void){
 
@@ -732,6 +760,8 @@ std::string Client::make_temp_header(void)
             con << cont_len;
             to_send += "Content-Length: " + con.str() + "\n\n" + _response->getContent();
         }
+        else
+            to_send += "Content-Length: 0 \n\n";
         this->_client_status = SENDING_RES_HEADER;
         return (to_send);
 }
@@ -777,6 +807,7 @@ bool    Client::send_partial(int socket){
     if (this->_client_status == RES_READY_TO_BE_SENT)
     {
         _to_send = make_temp_header();
+        // std::cout << "RESPONSE : header : " << _to_send << std::endl;
         _bytes_to_send = _to_send.size();
     }
     if (_bytes_to_send - _bytes_sent > BUFFER_SIZE)
