@@ -439,7 +439,7 @@ void    Client::routine(int nbytes)
         }
         case REQ_RECEIVED:
         {
-            _request->fillBody(_body); // + faire des verifs et en fonction mettre a jour la variable de routine
+            _request->fillBody(_received); // + faire des verifs et en fonction mettre a jour la variable de routine
             _client_status = WAITING_FOR_RES;
             getactualTimestamp();
             std::cout << "Request received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << std::endl;
