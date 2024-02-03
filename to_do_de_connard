@@ -1,7 +1,6 @@
 
 Check le status code et le retour a chaque fois
 
-
 - GET		classique
 - POST		classique
 - DELETE	classique
@@ -27,15 +26,7 @@ Check le status code et le retour a chaque fois
 - GET		index par defaut
 - Chunk encoding request
 
-- Cookies
-- Session
-
-
-
-
-
-- Double affichage du script
-
-- affichage des cookeis
-
-- 
+- COOKIES and Session:
+	destiny and potion in script
+	print header in script a voir
+	Gestion de session
