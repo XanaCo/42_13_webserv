@@ -29,8 +29,10 @@ class Response
 
         // bool        readRessource(const std::string& path, std::string& content);
         bool        readRessource(int fd);
-        void        deleteRessource(const std::string path);
-        void        postRessource(const std::string path, std::string content);
+        void        deleteRessource(std::string path);
+        // void        postRessource(const std::string path, std::string content);
+        void        postRessource(int fd, std::string content);
+
         // bool        addBuffer(int fd);
         // void        openFileToSend(std::string& file);
         bool        craftAutoIndex(std::string path);

@@ -574,6 +574,24 @@ int ServerInfo::findRessource(std::string path, std::string& newPath) const
     return (0);
 }
 
+bool ServerInfo::findRessource_2(std::string path, std::string& newPath) const
+{
+    std::string nameDir = getNameDir(path);
+
+    std::vector<Location>::const_iterator end = _locations.end();
+
+    for (std::vector<Location>::const_iterator it = _locations.begin(); it != end; ++it)
+    {
+        if (nameDir == it->getLPathName())
+        {
+            newPath = _Root + nameDir + "/" + getNameFile(path); // Modifie par Alban, a remettre
+            return (true);
+        }
+    }
+
+    return (false);
+}
+
 // ************************************************************************** //
 //	EXCEPTIONS
 // ************************************************************************** //

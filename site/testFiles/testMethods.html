@@ -23,21 +23,63 @@
 			</h2>
 		</form>
 
-		<form action="/testFiles/fileFolder/test" method="post">
+		<form id="postForm">
 			<h2>
-				<a type="submit" title="POST"><span class="h2">POST</span></a>
+				<button type="button" onclick="sendPostRequest()">
+					<span class="h2">POST</span>
+				</button>
 			</h2>
 			<label for="corpsRequete">Corps de la requête POST :</label>
 			<textarea id="corpsRequete" name="corpsRequete"></textarea>
 			<br>
-			<input type="submit" value="Envoyer">
 		</form>
+	
+		<script>
+			function sendPostRequest() {
+				var xhr = new XMLHttpRequest();
+				var url = "/testFiles/fileFolder/test";
+				var corpsRequete = document.getElementById("corpsRequete").value;
+	
+				// Construire le corps de la requête POST
+				var requestBody = "corpsRequete=" + encodeURIComponent(corpsRequete);
+	
+				xhr.open("POST", url, true);
+				xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+				xhr.onreadystatechange = function () {
+					if (xhr.readyState == 4 && xhr.status == 200) {
+						// Gestion de la réponse si nécessaire
+						console.log(xhr.responseText);
+					}
+				};
+	
+				xhr.send(requestBody);
+			}
+		</script>
 
-		<form action="/testFiles/fileFolder/test" method="delete">
+		<form id="deleteForm">
 			<h2>
-				<a type="submit" title="DELETE"><span class="h2">DELETE</span></a>
+				<button type="button" onclick="sendDeleteRequest()">
+					<span class="h2">DELETE</span>
+				</button>
 			</h2>
 		</form>
+	
+		<script>
+			function sendDeleteRequest() {
+				var xhr = new XMLHttpRequest();
+				var url = "/testFiles/fileFolder/test";
+	
+				xhr.open("DELETE", url, true);
+				xhr.onreadystatechange = function () {
+					if (xhr.readyState == 4 && xhr.status == 200) {
+						// Gestion de la réponse si nécessaire
+						console.log(xhr.responseText);
+					}
+				};
+	
+				xhr.send();
+			}
+		</script>
 
     <footer>
         <p>© 2024 Le crabe, la pieuvre, le guepard. Tous droits réservés.</p>
