@@ -6,6 +6,7 @@
 // ************************************************************************** //
 
 Request::Request() {}
+//Request::Request(Client * client) : _client(client) {}
 Request::Request(const Request& obj) {*this = obj;}
 Request::~Request() {}
 
@@ -60,6 +61,25 @@ void    Request::fillArgs(std::string str)
     std::getline(ss, _path, ' '); //Modifie par Alban, a remettre en etat
     std::getline(ss, _args, ' '); //Modifie par Alban, a remettre en etat
     std::getline(ss, _version, '\0');
+}
+
+std::string    Request::display_method(void){
+
+    switch (this->_method)
+    {
+    case GET:
+        return "GET";
+        break;
+    case POST:
+        return "POST";
+        break;
+    case DELETE:
+        return "DELETE";
+        break;
+    default:
+        return "UNKNOWN";
+        break;
+    }
 }
 
 bool	Request::fillMethod(std::string& line)
@@ -129,6 +149,8 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
             size_t      limit = rest.find(':');
             this->setHost(rest.substr(0, limit));
             this->setPort(rest.substr(0, limit));
+            //this->_client->set_serv_with_name();
+
         }
         else if (length >= 11 && lines[i].substr(0, 11) == "User-Agent:")
             this->setUserAgent(lines[i].substr(12, length));

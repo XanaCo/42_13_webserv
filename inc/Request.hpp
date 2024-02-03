@@ -10,6 +10,8 @@ class Request
 {
     public:
         Request();
+
+        //Request(Client * client);
         Request(const Request& obj);
         ~Request();
 
@@ -24,6 +26,7 @@ class Request
 
         //          checkup
         int         checkHttpVersion();
+        std::string display_method(void);
 
         //          set
         void        setMethod(int method);
@@ -78,7 +81,7 @@ class Request
         std::string                 _args;
         std::string                 _transfertEncoding;
         bool                        _chunkTransf;
-
+        //Client  *                   _client;
         // ServerInfo*                 _server;
         // bool                        _headerCompleted;
         // bool                        _bodyCompleted;

@@ -16,7 +16,7 @@ Client::Client(void){
     return  ;
 }
 
-Client::Client(int socket, struct sockaddr_in *r_address, std::vector<ServerInfo> servers, Base  *base){
+Client::Client(int socket, struct sockaddr_in *r_address, std::vector<ServerInfo> servers, Base  *base, int serv_sock){
     if (PRINT)
         std::cout << CLIENT << "🐥 constructor called" << std::endl;
     _new_socket = socket;
@@ -34,6 +34,7 @@ Client::Client(int socket, struct sockaddr_in *r_address, std::vector<ServerInfo
     _server = NULL;
     _fdRessource = 0;
     _first_chunk = true;
+    _serv_sock = serv_sock;
     _chunk_index_type = CHUNK_SIZE;
     return  ;
 }
@@ -160,27 +161,36 @@ void    Client::findServer()
     _server = &_base->get_serv_from_sock(_serv_sock);
 }
 
-std::string     Client::generate_directory_listing(const std::string& dir_path){
+std::string     Client::generate_directory_listing(std::string& dir_path){
 
+    std::cout << "Je fais l 'auto index'" << std::endl;
     DIR *dir;
     struct dirent *ent;
-    std::string content = "<html><head><title>Directory Listing</title></head><body>";
+    std::string content = "<html><head><title>Directory Listing</title>";
+    content += "<link rel=\"stylesheet\" href=\"css/listing.css\" /></head><body>";
     content += "<h1>Directory Listing of " + dir_path + "</h1><ul>";
-
-    if ((dir = opendir(dir_path.c_str())) != NULL) {
+    if ((dir = opendir(dir_path.c_str())) != NULL) 
+    {
+        dir_path = dir_path.substr(4, dir_path.size());
         while ((ent = readdir(dir)) != NULL) {
             std::string file_or_dir(ent->d_name);
             
-            if (file_or_dir == "." || file_or_dir == "..") {
+            if (file_or_dir == ".")
                 continue;
+            if (ent->d_type == DT_DIR)
+            {
+                if (file_or_dir == "..")
+                    content += "<span class='up_icon'></span><a href='" + dir_path + "/" + file_or_dir + "/" + "'>" + file_or_dir + "</a><br>";
+                else
+                    content += "<span class='folder_icon'></span><a href='" + dir_path + "/" + file_or_dir + "/" + "'>" + file_or_dir + "</a><br>";
             }
-
-            content += "<li><a href='" + file_or_dir + "'>" + file_or_dir + "</a></li>";
+            else
+                content += "<span class='file_icon'></span><a href='" + dir_path + "/" + file_or_dir + "'>" + file_or_dir + "</a><br>";
         }
         closedir(dir);
-    } else {
+    } 
+    else 
         content += "<p>Error: Could not open directory.</p>";
-    }
     content += "</ul></body></html>";
     return content;
 }
@@ -385,6 +395,8 @@ void    Client::routine(int nbytes)
             if (!_request->fillHeader(_header)) // + faire des verifs et en fonction mettre a jour la variable de routine
             {
                 _client_status = WAITING_FOR_RES;
+                getactualTimestamp();
+                std::cout << "Request received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << std::endl;
                 this->_base->change_poll_event(this->_new_socket, pollout);
                 return ;
             }
@@ -402,6 +414,8 @@ void    Client::routine(int nbytes)
                 {
                     this->findServer();
                     _client_status = WAITING_FOR_RES;
+                    getactualTimestamp();
+                    std::cout << "Request received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << std::endl;
                     this->_base->change_poll_event(this->_new_socket, pollout);
                     return ;
                 }
@@ -427,6 +441,8 @@ void    Client::routine(int nbytes)
         {
             _request->fillBody(_body); // + faire des verifs et en fonction mettre a jour la variable de routine
             _client_status = WAITING_FOR_RES;
+            getactualTimestamp();
+            std::cout << "Request received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << std::endl;
             this->_base->change_poll_event(this->_new_socket, pollout);
             return ;
         }
@@ -490,6 +506,16 @@ bool    Client::alloc_req_resp(void){ // A proteger et a delete si on satisfait 
     return true;
 }
 
+/*void    Client::set_serv_with_name(void){
+
+    for (size_t i = 0; i < _servers.size(); i++)
+    {
+        if (this->_request->getHost() == _servers[i].getServerName())
+            this->_server = &_servers[i];
+    }
+    return;
+}*/
+
 void    Client::reset_client(void){
 
     this->_bytes_received = 0;
@@ -530,7 +556,7 @@ bool    Client::receive_data(void){
     else if (nbytes < 0)
     {
         getactualTimestamp();
-        std::cout << "Client " << *this << " encountered error while recv" << std::endl; // See for exception and hgetandling of recv error
+        std::cout << "Client " << this->_new_socket << " encountered error while recv" << std::endl; // See for exception and hgetandling of recv error
         return false;
     }
     /*else
@@ -767,6 +793,7 @@ bool    Client::send_data(void)
     {
         if (!send_partial(this->_new_socket))
         {
+            getactualTimestamp();
             std::cout << "Only " << _bytes_sent << " bytes have been sent because of error" << std::endl;
             return false;
         }
@@ -796,7 +823,7 @@ bool    Client::send_partial(int socket){
     if (_bytes_sent == _bytes_to_send)
     {
         getactualTimestamp();
-        std::cout << "Response sent to client n : " << this->_new_socket << std::endl;
+        std::cout << "Response sent to client n : " << this->_new_socket << ", Status : \"" << this->_response->getStatusCode() << " \"" << std::endl;
         this->_client_status = WANT_TO_RECEIVE_REQ;
         this->_base->change_poll_event(this->_new_socket, pollin);
     }
