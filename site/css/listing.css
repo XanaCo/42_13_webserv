@@ -15,21 +15,21 @@ html, body {
 }
 
 .file_icon {
-    background: url('./image.png');
+    background: url('../img/image.png');
     height: 16px;
     width: 16px;
     display: inline-block;
 }
 
 .folder_icon {
-    background: url('./folder.png');
+    background: url('../img/folder.png');
     height: 16px;
     width: 16px;
     display: inline-block;
 }
 
 .up_icon {
-    background: url('./up.png');
+    background: url('../img/up.png');
     height: 16px;
     width: 16px;
     display: inline-block;

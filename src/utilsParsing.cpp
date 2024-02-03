@@ -148,8 +148,6 @@ bool checkPathExists(std::string pathToCheck) {
 		return false;
 	if (!(filestat.st_mode & S_IFDIR))
 		return false;
-	if (!opendir(pathToCheck.c_str()))
-		return false;
 	return true;
 }
 

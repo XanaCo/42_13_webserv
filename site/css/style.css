@@ -13,6 +13,14 @@ h2 {
 	color: #797878;
 }
 
+h3 {
+	font-family: 'Avenir';
+	font-size: 0.75em;
+	text-align: center;
+	color: #000000;
+	text-align: center;
+}
+
 html, body {
 	font-family: 'Avenir';
 	background-color: #b6b6b6;
@@ -22,33 +30,25 @@ html, body {
 	cursor: url('../img/LOGO_cursor.png');
 }
 
-a {
-	display: inline-block;
-	padding: 7px 30px;
-	background-color: #fdfdfd;
-	color: #000000;
-	text-decoration: none;
-	border-radius: 7px;
-	transition: background-color 0.3s;
-}
-
-a:hover {
-	background-color: #8b8b86;
-}
-
+a,
 button {
-	display: inline-block;
-	padding: 7px 7px;
-	background-color: #fdfdfd;
-	color: #000000;
-	text-decoration: none;
-	border-radius: 10px;
-	cursor: pointer;
+    display: inline-block;
+	font-family: 'Courier New', Courier;
+	font-size: 1em;
+    padding: 7px 30px;
+    background-color: #fdfdfd;
+    color: #000000;
+    text-decoration: none;
+    border-radius: 7px;
+    transition: background-color 0.3s;
+    cursor: pointer;
+	border: none;
 }
 
+a:hover,
 button:hover {
-	background-color: #8b8b86;
-	color: #ffffff;
+    background-color: #8b8b86;
+    color: #ffffff;
 }
 
 footer {

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>TEST FILES</title>
+	<title>METHOD TESTING</title>
 	<link rel="stylesheet" href="../css/style.css" />
 	<link rel="icon" type="image/png" href="../img/LOGO_w.png" /> 
 </head>
@@ -11,38 +11,33 @@
 <body>
 
 	<header>
-		<h1>Test Files</h1>
+		<h1>Method Testing</h1>
 	</header>
 
-	<div>
-	<div id ="Test Methods">
+	<div id ="TestMethods">
 
-		<form action="/testFiles/fileFolder/test" method="get">
-			<h2>
-				<a href="/data" title="GET"><span class="h2">GET</span></a>
-			</h2>
-		</form>
-
+		
 		<form id="postForm">
+			<h3>
+				<label for="corpsRequete">Corps de la requête POST :</label>
+			</h3>
+			<textarea id="corpsRequete" name="corpsRequete"></textarea>
 			<h2>
 				<button type="button" onclick="sendPostRequest()">
 					<span class="h2">POST</span>
 				</button>
 			</h2>
-			<label for="corpsRequete">Corps de la requête POST :</label>
-			<textarea id="corpsRequete" name="corpsRequete"></textarea>
-			<br>
 		</form>
-	
+		
 		<script>
 			function sendPostRequest() {
 				var xhr = new XMLHttpRequest();
 				var url = "/testFiles/fileFolder/test";
 				var corpsRequete = document.getElementById("corpsRequete").value;
-	
+				
 				// Construire le corps de la requête POST
 				var requestBody = "corpsRequete=" + encodeURIComponent(corpsRequete);
-	
+				
 				xhr.open("POST", url, true);
 				xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 				xhr.onreadystatechange = function () {
@@ -51,10 +46,14 @@
 						console.log(xhr.responseText);
 					}
 				};
-	
+				
 				xhr.send(requestBody);
 			}
 		</script>
+	
+		<form action="/testFiles/fileFolder/test" method="get">
+				<a href="/testFiles/fileFolder/test" title="GET"><span class="h2">GET</span></a>
+		</form>
 
 		<form id="deleteForm">
 			<h2>
@@ -80,6 +79,10 @@
 				xhr.send();
 			}
 		</script>
+
+		<form action="/testFiles/fileFolder/test" method="get">
+			<a href="/nothing" title="GET"><span class="h2">UNKNOWN</span></a>
+		</form>
 
     <footer>
         <p>© 2024 Le crabe, la pieuvre, le guepard. Tous droits réservés.</p>
