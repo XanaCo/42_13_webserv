@@ -59,7 +59,7 @@ int Cgi::setEnvironment(ServerInfo *server, Request *req) {
 			return -1;		
 		this->_envpMap["REQUEST_METHOD"] = this->_method;
 			//PATH_INFO - request->URIPathInfo (extra info about the script directory location, others directories inside)
-		this->_envpMap["PATH_INFO"] = "";
+		this->_envpMap["PATH_INFO"] = _request->getPath();
 			//PATH_TRANSLATED - request->getPath() (path to the script to use) //reviser
 		this->_envpMap["PATH_TRANSLATED"] = this->_cgiLoc->getLPathName();
 			//SCRIPT_NAME - virtual path of the script //reviser

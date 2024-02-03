@@ -13,11 +13,17 @@ def main():
 		house = file.read()
 	with open(wizard_id + '_position', 'r') as file:
 		position = file.read()
+	# with open(wizard_id + '_destiny', 'r') as file:
+	# 	destiny = file.read()
+	# with open(wizard_id + '_potion', 'r') as file:
+	# 	potion = file.read()
+
 	# HTTP Header
 	print("protocol: HTTP/1.1 200")
 	print("content-type: text/html")
 	print("")
-	# html response
+
+	# HTML Response
 	print("<html>")
 	print("<head>")
 	print('<meta charset="UTF-8">')
@@ -27,19 +33,19 @@ def main():
 	print('<link rel="icon" type="image/png" href="../../../img/LOGO_cursor.png" />')
 	print("</head>")
 	print("<body>")
-	print('<h1>your school curriculum at Howgard</h1>')
-	print('<h1>House :</h1>')
-	print('<p>your house is ' + house + ' !</p>')
-	print('<h1>Quidditch position</h1>')
-	print('<h1>Destiny</h1>')
-	print('<h1>Favorite potion</h1>')
+	print('<h1>Your school curriculum at Hogwarts</h1>')
+	print('<h3>Wizard ID Session :</h3>')
+	print('<p>WID <strong>' + wizard_id + '</strong></p>')
+	print('<h3>House :</h3>')
+	print('<p>Your house is <strong>' + house + '</strong> !</p>')
+	print('<h3>Quidditch position</h3>')
+	print('<p>You are a <strong>' + position + '</strong> !</p>')
+	print('<h3>Destiny</h3>')
+	# print('<p>Your answer was <strong>' + destiny + '</strong></p>')
+	print('<h3>Favorite potion</h3>')
+	# print('<p>Your potion is <strong>' + potion + '</strong></p>')
 	print("</body>")
 	print("</html>")
-
-# with open(wizard_id + '_house', 'r') as file:
-#	 house = file.read()
-# with open(wizard_id + '_house', 'r') as file:
-#	 house = file.read()
 
 # security
 if __name__ == "__main__":
