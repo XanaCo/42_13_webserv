@@ -50,6 +50,7 @@ void    Request::resetValues()
     _connection = "";
     _body = "";
     _chunkTransf = false;
+    _keepAlive = true;
     _returnStatus = 200;
     _cookies.clear();
 }
@@ -167,7 +168,7 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
             this->setUserAgent(lines[i].substr(12, length));
         else if (length >= 13 && lines[i].substr(0, 13) == "Content-Type:")
             this->setContentType(lines[i].substr(14, length));
-        else if (length >= 15 && lines[i].substr(0, 15) == "Content-length:")
+        else if (length >= 15 && lines[i].substr(0, 15) == "Content-Length:")
             this->setContentLength(atoi(lines[i].substr(16, length).c_str()));
         else if (length >= 6 && lines[i].substr(0, 7) == "Cookie:")
         {
@@ -180,7 +181,11 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
             }
         }
         else if (length >= 11 && lines[i].substr(0, 11) == "Connection:")
+        {
             this->setConnection(lines[i].substr(12, length));
+            if (this->_connection == "close")
+                this->_keepAlive = false;
+        }
         else if (length >= 18 && lines[i].substr(0, 18) == "Transfer-Encoding:")
         {
             this->setTransfertEncoding(lines[i].substr(19, length));
@@ -236,6 +241,8 @@ void    Request::setBody(std::string body) {_body = body;}
 void    Request::setReturnStatus(int returnStatus) {_returnStatus = returnStatus;}
 void    Request::setArgs(std::string args) {_args = args;}
 void    Request::setTransfertEncoding(std::string transfertEncoding) {_transfertEncoding = transfertEncoding;}
+void    Request::setChunkTransf(bool value) {_chunkTransf = value;}
+void    Request::setKeepAlive(bool value) {_keepAlive = value;}
 // void    Request::setServer(ServerInfo* server) {_server = server;}
 
 int                         Request::getMethod(void) const {return (_method);}
@@ -253,4 +260,5 @@ int                         Request::getReturnStatus(void) const {return (_retur
 std::string                 Request::getArgs(void) const {return (_args);};
 std::string                 Request::getTransfertEncoding(void) const {return (_transfertEncoding);};
 bool                        Request::getChunkTransf(void) const {return _chunkTransf;};
+bool                        Request::getKeepAlive(void) const {return _keepAlive;};
 // ServerInfo*                 Request::getServer(void) {return (_server);}

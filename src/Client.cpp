@@ -35,7 +35,6 @@ Client::Client(int socket, struct sockaddr_in *r_address, std::vector<ServerInfo
     _fdRessource = 0;
     _first_chunk = true;
     _serv_sock = serv_sock;
-    _keep_alive = true;
     if (!(_timeout = base->get_serv_from_sock(serv_sock).getTimeout()))
             _timeout = DEFAULT_TIMEOUT;
     _chunk_index_type = CHUNK_SIZE;
@@ -398,6 +397,7 @@ void    Client::routine(int nbytes)
             _request->resetValues();
             if (!_request->fillHeader(_header)) // + faire des verifs et en fonction mettre a jour la variable de routine
             {
+                this->_timestamp = get_micro_time_stamp();
                 _client_status = WAITING_FOR_RES;
                 getactualTimestamp();
                 std::cout << "Request received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << std::endl;
@@ -413,6 +413,7 @@ void    Client::routine(int nbytes)
                 // std::cout << "COOKIES after form Cookies <" << _response->getCookies() << ">\n";
                 if (this->_req_end == true)
                 {
+                    this->_timestamp = get_micro_time_stamp();
                     this->findServer();
                     _client_status = WAITING_FOR_RES;
                     getactualTimestamp();
@@ -420,13 +421,15 @@ void    Client::routine(int nbytes)
                     this->_base->change_poll_event(this->_new_socket, pollout);
                     return ;
                 }
-                else if (!this->_req_end && nbytes < 1024)
+                else if (!this->_req_end && nbytes < BUFFER_SIZE)
                 {
+                    this->_timestamp = get_micro_time_stamp();
                     _client_status = REQ_RECEIVED;
                     _body.append(_received);
                 }
                 else
                 {
+                    this->_timestamp = get_micro_time_stamp();
                     if (this->_request->getChunkTransf())
                         receive_chunked_body_data((char *)_received.c_str(), nbytes);
                     else
@@ -440,6 +443,7 @@ void    Client::routine(int nbytes)
         }
         case REQ_RECEIVED:
         {
+            this->_timestamp = get_micro_time_stamp();
             _request->fillBody(_received); // + faire des verifs et en fonction mettre a jour la variable de routine
             _client_status = WAITING_FOR_RES;
             getactualTimestamp();
@@ -449,6 +453,7 @@ void    Client::routine(int nbytes)
         }
         case WAITING_FOR_RES:
         {
+            this->_timestamp = get_micro_time_stamp();
             if (this->executeMethod())
                 _client_status = RES_READY_TO_BE_SENT;
         }
@@ -540,6 +545,7 @@ bool    Client::receive_data(void){
 
     char   buffer[BUFFER_SIZE + 1];
 
+    this->_timestamp = get_micro_time_stamp();
     if (this->_client_status == WANT_TO_RECEIVE_REQ)
     {
         this->alloc_req_resp();
@@ -721,7 +727,7 @@ void    Client::receive_body_data(char *buffer, int nbytes){
         }
         else if (this->_body_bytes > this->_request->getContentLength())
         {
-            this->_request->setReturnStatus(400); // voir avec Pablo
+            this->_request->setReturnStatus(413); // voir avec Pablo
             this->_client_status = REQ_RECEIVED;
             this->routine(nbytes);
             return ;
@@ -803,7 +809,14 @@ bool    Client::send_data(void)
         getactualTimestamp();
         std::cout << "Response sent to client n : " << this->_new_socket << ", Status : \"" << this->_response->getStatusCode() << " \"" << std::endl;
         this->_client_status = WANT_TO_RECEIVE_REQ;
-        this->_base->change_poll_event(this->_new_socket, pollin);
+        if (!this->_request->getKeepAlive())
+        {
+            getactualTimestamp();
+            std::cout << "Connexion with Client : " << this->_new_socket << "has been closed" << std::endl;
+            return false;
+        }
+        else 
+            this->_base->change_poll_event(this->_new_socket, pollin);
     }
     return true;
 }
@@ -811,6 +824,7 @@ bool    Client::send_data(void)
 bool    Client::send_partial(int socket){
 
     int sent = 0;
+    this->_timestamp = get_micro_time_stamp();
     if (this->_client_status == RES_READY_TO_BE_SENT)
     {
         _to_send = make_temp_header();
@@ -869,7 +883,6 @@ int                 Client::getFdRessource(void) const {return _fdRessource;}
 ServerInfo*         Client::getServer(void) const {return _server;}
 int                 Client::get_timeout(void) const {return this->_timeout;}
 unsigned long       Client::get_timestamp(void) const {return this->_timestamp;}
-bool                Client::get_keep_alive(void) const {return this->_keep_alive;}
 
 void    Client::set_socket(int sock) {this->_new_socket = sock;}
 void    Client::set_addr_struct(struct sockaddr_in addr) {this->_address = addr;}
@@ -881,4 +894,3 @@ void    Client::setFdRessource(int fd) {_fdRessource = fd;}
 void    Client::setServer(ServerInfo* server) {_server = server;}
 void    Client::set_timeout(int timeout) {_timeout = timeout;}
 void    Client::set_timestamp(unsigned long timestamp) {_timestamp = timestamp;}
-void    Client::set_keep_alive(bool keep_alive) {_keep_alive = keep_alive;}

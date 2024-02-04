@@ -44,6 +44,7 @@ class Request
         void        setArgs(std::string args);
         void        setTransfertEncoding(std::string args);
         void        setChunkTransf(bool value);
+        void        setKeepAlive(bool value);
         void        updateCookie();
 
     
@@ -63,6 +64,7 @@ class Request
         std::string                 getArgs(void) const;
         std::string                 getTransfertEncoding(void) const;
         bool                        getChunkTransf(void) const;
+        bool                        getKeepAlive(void) const;
 
     private:
 
@@ -76,6 +78,7 @@ class Request
         int                         _contentLength;
         std::vector<std::string>    _cookies;
         std::string                 _connection;
+        bool                        _keepAlive;
         std::string                 _body;
         int                         _returnStatus;
         std::string                 _args;
