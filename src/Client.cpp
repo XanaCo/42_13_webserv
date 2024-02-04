@@ -406,14 +406,11 @@ void    Client::routine(int nbytes)
             }
             else
             {
-                for (size_t i = 0; i < _request->getCookies().size(); i++)
-                    std::cout << "COOKIES fill header <" << _request->getCookies()[i] << ">";
-                std::cout << "\n";
+                // for (size_t i = 0; i < _request->getCookies().size(); i++)
+                    // std::cout << "COOKIES fill header <" << _request->getCookies()[i] << ">";
+                // std::cout << "\n";
                 _response->setCookies(formCookies(_request->getCookies()));
-                std::cout << "COOKIES after form Cookies <" << _response->getCookies() << ">\n";
-                // la
-                // if (_request->getPath() == "/")
-                //     _request->setPath("/" + _servers[0].getRoot() + "/index.html");
+                // std::cout << "COOKIES after form Cookies <" << _response->getCookies() << ">\n";
                 if (this->_req_end == true)
                 {
                     this->findServer();
@@ -452,7 +449,6 @@ void    Client::routine(int nbytes)
         }
         case WAITING_FOR_RES:
         {
-            //std::cout << "Je suis en train de construire la reponse" << std::endl;
             if (this->executeMethod())
                 _client_status = RES_READY_TO_BE_SENT;
         }

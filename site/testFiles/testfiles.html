@@ -34,19 +34,24 @@
 					formData.append('file', file);
 	
 					var xhr = new XMLHttpRequest();
-					xhr.open('POST', '/testFiles/fileFolder/upload', true);
+					xhr.open('POST', '/testFiles/fileFolder/' + file.name, true);
 					xhr.onload = function () {
-						if (xhr.status === 200) {
+						if (xhr.status === 200)
+						{
 							// Le fichier a été correctement téléchargé
 							console.log('Fichier téléchargé avec succès.');
-						} else {
+						}
+						else
+						{
 							// Une erreur s'est produite lors du téléchargement du fichier
 							console.error('Erreur lors du téléchargement du fichier.');
 						}
 					};
 	
 					xhr.send(formData);
-				} else {
+				}
+				else
+				{
 					console.error('Veuillez sélectionner un fichier.');
 				}
 			}

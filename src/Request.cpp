@@ -101,8 +101,16 @@ bool	Request::fillMethod(std::string& line)
         fillArgs(line.substr(7, length));
     }
 	else
+    {
+        _returnStatus = E_INTERNAL_SERVER;
 		return (false);
+    }
     deEncodingHexa(_path);
+    // if (!this->checkHttpVersion())
+    // {
+    //     _returnStatus = E_HTTP_VERSION;
+	// 	return (false);
+    // }
 	return (true);
 }
 
@@ -110,10 +118,7 @@ void    Request::updateCookie()
 {
     if (_cookies.empty())
     {
-        // std::cout << "COOKIES : au secour !!!\n";
         _cookies.push_back("wizard_id=" + get_cookie());
-        // for (int i = 0; i < _cookies.size(); i++)
-        //     std::cout << "COOKIES apres ajout <" << _cookies[i] << ">";
         std::cout << "\n";
     }
 }
@@ -139,7 +144,13 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
     }
 
 	if (size)
-    	this->fillMethod(lines[0]);
+    {
+    	if (!this->fillMethod(lines[0]))
+        {
+            return (false);
+        }
+
+    }
     for (int i = 1; i < size; i++)
     {
 		length = lines[i].size();

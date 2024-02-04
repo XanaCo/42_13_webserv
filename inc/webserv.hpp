@@ -91,13 +91,13 @@
 // ************************************************************************** //
 
 // Informations
-# define I_CONTIUE				100 // continue to send your request
+# define I_CONTIUE				100 // continue
 # define I_SWITCHING_PROTOCOLS	101 // quand on accepte de changer de protocole
 
 // Succes
-# define S_OK					200 // requete comprise et traite par le server
-# define S_CREATED				201 // requete comprise traite et une ressource a ete cree en consequence
-# define S_NO_CONTENT			204 // requete comprise traite mais pas de contenu a retourner dans la reponse
+# define S_OK					200 // requete comprise et traitee par le server
+# define S_CREATED				201 // requete comprise, a ete traitee et une ressource a ete cree en consequence
+# define S_NO_CONTENT			204 // requete comprise, a ete traitee mais pas de contenu a retourner dans la reponse
 # define S_PARTIAL_CONTENT		206 // la ressource demandee ne peut pas etre fournie dans un format que le client accepte
 
 // Redirections
@@ -122,7 +122,7 @@
 # define E_NOT_IMPLEMENTED		501 // le serveur ne prends pas en charge la fonctionnalite requise
 # define E_BAD_GATEWAY			502 // renvoye par un serveur proxi pour indiquer qu'il a recu une reponse invalide d'un serveur en amont
 # define E_SERVICE_UNAVAILABLE	503 // le server n'est pas en mesure de traiter la demande du client pour le moment
-# define E_GATEWAY_TIMEOUT		504 // renvoye par un serveur proxi pour indiquer qu'il n'a pas recu de reponde de la part d'un serveur en amont
+# define E_GATEWAY_TIMEOUT		504 // renvoye par un serveur proxi pour indiquer qu'il n'a pas recu de reponse de la part d'un serveur en amont
 # define E_HTTP_VERSION			505 // la version d'http precise en requette n'est pas traitee par le serveur
 
 # define DEFAULT_TIMEOUT        15;
