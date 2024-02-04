@@ -7,7 +7,8 @@
 //	CONSTRUCTOR / DESTRUCTOR
 // ************************************************************************** //
 
-Client::Client(void){
+Client::Client(void)
+{
     if (PRINT)
         std::cout << CLIENT << "🐥 constructor called" << std::endl;
     _request = new Request;
