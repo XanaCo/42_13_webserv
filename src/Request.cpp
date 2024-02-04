@@ -169,6 +169,11 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
                 // std::cout << _cookies[k]
             }
         }
+        /*else if (length >= 11 && lines[i].substr(0, 11 ) == "Keep-Alive:")
+        {
+            if (lines[i].substr(12, lines[i].size()).find("timeout") != std::string::npos)
+
+        }*/
         else if (length >= 11 && lines[i].substr(0, 11) == "Connection:")
         {
             this->setConnection(lines[i].substr(12, length));

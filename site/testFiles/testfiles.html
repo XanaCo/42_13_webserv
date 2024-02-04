@@ -34,7 +34,7 @@
 					formData.append('file', file);
 	
 					var xhr = new XMLHttpRequest();
-					xhr.open('POST', '/testFiles/fileFolder/upload', true);
+					xhr.open('POST', '/testFiles/fileFolder/' + file.name, true);
 					xhr.onload = function () {
 						if (xhr.status === 200) {
 							// Le fichier a été correctement téléchargé

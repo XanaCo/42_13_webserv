@@ -402,10 +402,12 @@ void    Client::routine(int nbytes)
                 getactualTimestamp();
                 std::cout << "Request received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << std::endl;
                 this->_base->change_poll_event(this->_new_socket, pollout);
+                this->findServer();
                 return ;
             }
             else
             {
+                this->findServer();
                 for (size_t i = 0; i < _request->getCookies().size(); i++)
                     std::cout << "COOKIES fill header <" << _request->getCookies()[i] << ">";
                 std::cout << "\n";
@@ -414,6 +416,12 @@ void    Client::routine(int nbytes)
                 // la
                 // if (_request->getPath() == "/")
                 //     _request->setPath("/" + _servers[0].getRoot() + "/index.html");
+                if (this->_body_bytes > this->_request->getContentLength() || this->_body_bytes > this->_server->getMaxClientBody())
+                {
+                    std::cout << "C'est trop grand !" << std::endl;
+                    this->_request->setReturnStatus(413); // voir avec Pablo
+                    this->_req_end = true;
+                }
                 if (this->_req_end == true)
                 {
                     this->_timestamp = get_micro_time_stamp();
@@ -440,7 +448,7 @@ void    Client::routine(int nbytes)
                 }
 
             }
-            this->findServer();
+            //this->findServer();
             if (_client_status != REQ_RECEIVED)
                 return ;
         }
@@ -624,9 +632,10 @@ void    Client::receive_header_data(char *buffer, int nbytes){
         //std::cout << std::endl << "_received still got : " << std::endl << _received << std::endl;
         if (this->_received.size() > 0)
         {
+          
             this->_client_status = RECEIVED_REQ_HEADER;
             this->_body_bytes += _received.size();
-            this->routine(nbytes);
+                        this->routine(nbytes);
         }
         else
         {
@@ -728,8 +737,9 @@ void    Client::receive_body_data(char *buffer, int nbytes){
             //this->_base->change_poll_event(this->_new_socket, pollout);
             return ;
         }
-        else if (this->_body_bytes > this->_request->getContentLength())
+        else if (this->_body_bytes > this->_request->getContentLength() || this->_body_bytes > this->_server->getMaxClientBody())
         {
+            std::cout << "C'est trop grand !" << std::endl;
             this->_request->setReturnStatus(413); // voir avec Pablo
             this->_client_status = REQ_RECEIVED;
             this->routine(nbytes);
@@ -747,14 +757,9 @@ std::string Client::make_temp_header(void)
             to_send += _response->getProtocol();
         else
         to_send += "HTTP/1.1 ";
-        if (_response->getStatusCode() != "")
-            to_send += _response->getStatusCode() + "\n";
-        else
-        {
-            std::stringstream con2;
-            con2 << _request->getReturnStatus();
-            to_send += " " + con2.str() + "\n";
-        }
+        std::stringstream con2;
+        con2 << _request->getReturnStatus();
+        to_send += " " + con2.str() + "\n";
         if (_response->getContentType() != "")
             to_send += _response->getContentType();
         if (!_response->getCookies().empty())
@@ -810,7 +815,7 @@ bool    Client::send_data(void)
     else if (this->_client_status == RES_SENT)
     {
         getactualTimestamp();
-        std::cout << "Response sent to client n : " << this->_new_socket << ", Status : \"" << this->_response->getStatusCode() << " \"" << std::endl;
+        std::cout << "Response sent to client n : " << this->_new_socket << ", Status : \"" << this->_request->getReturnStatus() << " \"" << std::endl;
         this->_client_status = WANT_TO_RECEIVE_REQ;
         if (!this->_request->getKeepAlive())
         {
