@@ -472,7 +472,7 @@ std::string	ServerInfo::getNameFileS(std::string path, Location const & loc) con
 {
 	std::string	file_name = getNameFile(path);
 
-	if (file_name == "" || !checkFileExists("./site" + path))
+	if (file_name == "" || (!checkFileExists("./site" + path) && checkPathExists("./site" + path)))
 		return (loc.getLIndex());
 	return (file_name);
 }
@@ -571,6 +571,8 @@ int ServerInfo::findRessource(std::string path, std::string& newPath) const
 				newPath = _Root + nameDir;
 				return (2);
 			}
+            if (nameDir == "/")
+            	newPath = _Root + nameDir + getNameFileS(path, *it); // Modifie par Alban, a remettre
 			else
             	newPath = _Root + nameDir + "/" + getNameFileS(path, *it); // Modifie par Alban, a remettre
             return (1);
@@ -582,7 +584,7 @@ int ServerInfo::findRessource(std::string path, std::string& newPath) const
     return (0);
 }
 
-bool ServerInfo::findRessource_2(std::string path, std::string& newPath) const
+bool ServerInfo::findRessource_post(std::string path, std::string& newPath) const
 {
     std::string nameDir = getNameDir(path);
 
@@ -593,6 +595,26 @@ bool ServerInfo::findRessource_2(std::string path, std::string& newPath) const
         if (nameDir == it->getLPathName())
         {
             newPath = _Root + nameDir + "/" + getNameFile(path); // Modifie par Alban, a remettre
+            return (true);
+        }
+    }
+
+    return (false);
+}
+
+bool ServerInfo::findRessource_delete(std::string path, std::string& newPath) const
+{
+    std::string nameDir = getNameDir(path);
+
+    std::vector<Location>::const_iterator end = _locations.end();
+
+    for (std::vector<Location>::const_iterator it = _locations.begin(); it != end; ++it)
+    {
+        if (nameDir == it->getLPathName())
+        {
+            newPath = _Root + nameDir + "/" + getNameFile(path); // Modifie par Alban, a remettre
+            if (!checkFileExists(newPath))
+                return false;
             return (true);
         }
     }
