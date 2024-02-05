@@ -35,25 +35,21 @@
 				var url = "/testFiles/fileFolder/test";
 				var corpsRequete = document.getElementById("corpsRequete").value;
 				
-				// Construire le corps de la requête POST
-				var requestBody = "corpsRequete=" + encodeURIComponent(corpsRequete);
-				
 				xhr.open("POST", url, true);
 				xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 				xhr.onreadystatechange = function () {
 					if (xhr.readyState == 4 && xhr.status == 200) {
-						// Gestion de la réponse si nécessaire
 						console.log(xhr.responseText);
 					}
 				};
 				
-				xhr.send(requestBody);
+				xhr.send(corpsRequete);
 			}
 		</script>
 	
-		<form action="/testFiles/fileFolder/test" method="get">
+		<!-- <form action="/testFiles/fileFolder/test" method="get">
 				<a href="/testFiles/fileFolder/test" title="GET"><span class="h2">GET</span></a>
-		</form>
+		</form> -->
 
 		<form id="deleteForm">
 			<h2>
@@ -80,9 +76,9 @@
 			}
 		</script>
 
-		<form action="/testFiles/fileFolder/test" method="get">
+		<!-- <form action="/testFiles/fileFolder/test" method="get">
 			<a href="/nothing" title="GET"><span class="h2">UNKNOWN</span></a>
-		</form>
+		</form> -->
 
     <footer>
         <p>© 2024 Le crabe, la pieuvre, le guepard. Tous droits réservés.</p>

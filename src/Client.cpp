@@ -128,10 +128,10 @@ void    Client::openErrorPage()
         _response->setContent("");
         _client_status = RES_READY_TO_BE_SENT;  // peut etre pas / ouvrir une fichier peut etre
     }
-    else if (status == E_NOT_FOUND)
-        _fdRessource = open("site/errorPages/error404.html", O_RDONLY);
+    // else if (status == E_NOT_FOUND)
+    //     _fdRessource = open("site/errorPages/error404.html", O_RDONLY);// 
     else if (E_BAD_REQUEST <= status  && status < E_INTERNAL_SERVER)
-        _fdRessource = open("site/errorPages/error400.html", O_RDONLY);
+        _fdRessource = open("site/errorPages/error400.html", O_RDONLY);// _server->
     else
         _fdRessource = open("site/errorPages/error500.html", O_RDONLY);
 
@@ -171,7 +171,7 @@ std::string     Client::generate_directory_listing(std::string& dir_path){
     DIR *dir;
     struct dirent *ent;
     std::string content = "<html><head><title>Directory Listing</title>";
-    content += "<link rel=\"stylesheet\" href=\"css/listing.css\" /></head><body>";
+    content += "<link rel=\"stylesheet\" href=\"/css/listing.css\" /></head><body>";
     content += "<h1>Directory Listing of " + dir_path + "</h1><ul>";
     if ((dir = opendir(dir_path.c_str())) != NULL) 
     {
@@ -216,15 +216,16 @@ bool    Client::getRes()
         }
         else if (_request->getPath().find("/CGI/scriptCGI/") != std::string::npos)
         {
+            std::cout << "GET : je lance un CGI\n";
             if (!(_request->getMethod() & GET) && !(_request->getMethod() & POST))
             {
-                std::cerr << "Run : methode interdite avec les CGI" << std::endl;
+                std::cerr << "GET CGI : methode interdite avec les CGI" << std::endl;
                 // code d'erreur 400 a mettre a jour
                 openErrorPage();
             }
             if (!_server->findCgiRessource(_request->getPath(), path))
             {
-                std::cerr << "Run : on ne trouve pas la ressource CGI" << std::endl;
+                std::cerr << "GET CGI : on ne trouve pas la ressource CGI" << std::endl;
                 // code d'erreur 404 a mettre a jour
                 openErrorPage();
                 return (false);
@@ -236,13 +237,14 @@ bool    Client::getRes()
         }
         else
         {
-            // resoudre le path
+            std::cout << "GET : classique\n";
             returnFindRes = _server->findRessource(_request->getPath(), path);
             if (!returnFindRes)
             {
+                std::cout << "ERROR GET : je trouve pas la ressource\n";
                 _request->setReturnStatus(404);
                 openErrorPage();
-                _response->setContentType("Content-Type: text/html");
+                _response->setContentType("Content-Type: text/html\n");
             }
             else if (returnFindRes == 1)
             {
@@ -255,7 +257,7 @@ bool    Client::getRes()
         }
         if (_fdRessource < 0)
         {
-            std::cerr << "Open : on ne peut pas ouvrir le fichier" << std::endl;
+            std::cerr << "ERROR GET Open : on ne peut pas ouvrir le fichier" << std::endl;
             _request->setReturnStatus(500);
             openErrorPage();
         }
@@ -264,7 +266,7 @@ bool    Client::getRes()
         _response->setMimeType(_request->getPath(), _base);
     if (_fdRessource == DIR_LIST)
     {
-        
+        std::cout << "GET : j'affiche un dir\n";
         _response->setContent(generate_directory_listing(path));
         return (true);
     }
@@ -280,14 +282,15 @@ bool    Client::postRes()
         _response->resetValues();
         if (_request->getReturnStatus() != 200)
         {
+            std::cout << "POST : j'ouvre un fd de la loose\n";
             this->openErrorPage();
         }
         else if (_request->getPath().find("/CGI/") != std::string::npos)
         {
+            std::cout << "POST : je lance un CGI\n";
             if (!_server->findCgiRessource(_request->getPath(), path))
             {
-
-                std::cerr << "Run : on ne trouve pas la ressource CGI" << std::endl;
+                std::cout << "POST CGI : je trouve pas la ressource\n";
                 _request->setReturnStatus(404);
                 this->openErrorPage();
             }
@@ -305,9 +308,10 @@ bool    Client::postRes()
         }
         else
         {
-            // resoudre le path
+            std::cout << "POST : je lance un post classique\n";
             if (!_server->findRessource_2(_request->getPath(), path))
             {
+                std::cout << "POST : je trouve pas la ressource\n"; // wtf non ?
                 _request->setReturnStatus(404);
                 this->openErrorPage();
             }
@@ -349,6 +353,7 @@ bool    Client::deleteRes()
         }
         else
         {
+            std::cout << "DELETE : je lance un DELETE classique\n";
             // resoudre le path
             if (!_server->findRessource_2(_request->getPath(), path))
             {
@@ -401,19 +406,20 @@ void    Client::routine(int nbytes)
                 this->_timestamp = get_micro_time_stamp();
                 _client_status = WAITING_FOR_RES;
                 getactualTimestamp();
-                std::cout << "Request received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << std::endl;
+                std::cout << "KO : Request header received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << std::endl;
                 this->_base->change_poll_event(this->_new_socket, pollout);
                 this->findServer();
                 return ;
             }
             else
             {
+                std::cout << "Request header received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << std::endl;
                 this->findServer();
-                for (size_t i = 0; i < _request->getCookies().size(); i++)
-                    std::cout << "COOKIES fill header <" << _request->getCookies()[i] << ">";
-                std::cout << "\n";
+                // for (size_t i = 0; i < _request->getCookies().size(); i++)
+                //     std::cout << "COOKIES fill header <" << _request->getCookies()[i] << ">";
+                // std::cout << "\n";
                 _response->setCookies(formCookies(_request->getCookies()));
-                std::cout << "COOKIES after form Cookies <" << _response->getCookies() << ">\n";
+                // std::cout << "COOKIES after form Cookies <" << _response->getCookies() << ">\n";
                 // la
                 // if (_request->getPath() == "/")
                 //     _request->setPath("/" + _servers[0].getRoot() + "/index.html");
@@ -459,7 +465,7 @@ void    Client::routine(int nbytes)
             _request->fillBody(_received); // + faire des verifs et en fonction mettre a jour la variable de routine
             _client_status = WAITING_FOR_RES;
             getactualTimestamp();
-            std::cout << "Request received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << std::endl;
+            std::cout << "Request body received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << std::endl;
             this->_base->change_poll_event(this->_new_socket, pollout);
             return ;
         }
@@ -467,7 +473,10 @@ void    Client::routine(int nbytes)
         {
             this->_timestamp = get_micro_time_stamp();
             if (this->executeMethod())
+            {
+
                 _client_status = RES_READY_TO_BE_SENT;
+            }
         }
     }
 }

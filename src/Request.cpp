@@ -126,9 +126,9 @@ void    Request::updateCookie()
 
 bool Request::fillHeader(std::string& header)	// attention c'est pontentielement juste le header
 {
-    time_t  startTime;
-    time_t  endTime;
-    startTime = clock();
+    // time_t  startTime;
+    // time_t  endTime;
+    // startTime = clock();
 
     // clean le header avant
 
@@ -206,8 +206,8 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
         }
     }
     // changer la status pour receiving body ou alors si ca passe mal -> waiting for respond
-    endTime = clock();
-    std::cout << REQUEST << " fillContent method : exec time : " << endTime - startTime << std::endl;
+    // endTime = clock();
+    // std::cout << REQUEST << " fillContent method : exec time : " << endTime - startTime << std::endl;
     updateCookie();
     return (true);
 }

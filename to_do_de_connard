@@ -26,7 +26,7 @@ Check le status code et le retour a chaque fois
 - GET		index par defaut
 - Chunk encoding request
 
-- COOKIES and Session:
+- COOKIES and Session (ana)
 	destiny and potion cookies in script py
 	print protocol and content type in script a enlever?
 	enregistrer les cookies dans un dossier dedie?
@@ -37,4 +37,12 @@ Check le status code et le retour a chaque fois
 	Unknown or not allowed method?
 
 - FILES
-	Download Page
+	Download Page html get directory testfiles/filefolder
+
+
+- ERROR errorPages	(ana)
+	bon html
+
+-FIXER CHUNCK Transfer (alban)
+
+-FIXER DELETE avec path ressource (alban)
