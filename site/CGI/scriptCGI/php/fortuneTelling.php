@@ -3,6 +3,8 @@
 
 // Read the ingredients in the ENV data from the request body
 $postData = getenv("CONTENT_BODY");
+$wizardID = getenv("WIZARD_ID");
+$wizardID = str_replace('wizard_id=', '', $wizardID);
 
 // Parse the raw data into an associative array
 parse_str($postData, $parsedData);
@@ -29,6 +31,10 @@ function generateFortune($question) {
 
 // Generate the fortune
 $fortune = generateFortune($question);
+
+// Write the result to an external file
+$fileName = $wizardID.'_destiny';
+file_put_contents($fileName, $fortune);
 
 // Print the CGI header
 header("content-type: text/html");

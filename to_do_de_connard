@@ -27,10 +27,8 @@ Check le status code et le retour a chaque fois
 - Chunk encoding request
 
 - COOKIES and Session (ana)
-	destiny and potion cookies in script py
 	print protocol and content type in script a enlever?
 	enregistrer les cookies dans un dossier dedie?
-	Gestion de session
 
 - METHOD TESTING:
 	Si pas de fichier testFiles/fileFolder/test, GET nous amene vers le dossier testFiles/fileFolder

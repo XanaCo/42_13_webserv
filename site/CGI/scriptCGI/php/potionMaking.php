@@ -3,6 +3,8 @@
 
 // Read the ingredients in the ENV data from the request body
 $postData = getenv("CONTENT_BODY");
+$wizardID = getenv("WIZARD_ID");
+$wizardID = str_replace('wizard_id=', '', $wizardID);
 
 // Parse the raw data into an associative array
 parse_str($postData, $parsedData);
@@ -98,6 +100,10 @@ function generatePotionName($ingredients, $ingredientNames, $potionRecipes, $pre
 
 // Generate the potion name
 $potionName = generatePotionName($selectedIngredients, $ingredientNames, $potionRecipes, $predefinedPotionNames);
+
+// Write the result to an external file
+$fileName = $wizardID.'_potion';
+file_put_contents($fileName, $potionName);
 
 // Print the CGI header
 header("protocol: HTTP/1.1 200");
