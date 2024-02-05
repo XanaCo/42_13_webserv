@@ -53,6 +53,26 @@
 			<a href="https://theuselessweb.com/" title="Redirection"><span class="h2">The Useless Web</span></a>
 		</h2>
 
+		<button onclick="sendRequest()">Redirection</button>
+
+		<script>
+			function sendRequest()
+			{
+				var xhr = new XMLHttpRequest();
+				var url = "http://localhost:8801/www.wikipedia.org/";
+		
+				xhr.open("GET", url, true);
+				xhr.onreadystatechange = function () {
+					if (xhr.readyState == 4 && xhr.status == 200) {
+						// Gestion de la réponse si nécessaire
+						console.log(xhr.responseText);
+					}
+				};
+		
+				xhr.send();
+			}
+		</script>
+
 	<footer>
 		<p>© 2024 Le crabe, la pieuvre, le guepard. Tous droits réservés.</p>
 	</footer>

@@ -160,8 +160,12 @@ void    Client::findServer()
                 _server = &(*i);
         }
     }
-    if (_request->getPath().length() > 4 && _request->getPath().substr(4) == "www.")
+    if (_request->getPath().length() > 4 && _request->getPath().substr(0, 4) == "http" || \
+    _request->getPath().length() > 4 && _request->getPath().substr(0, 4) == "/www")
+    {
         _request->setReturnStatus(301);
+        openErrorPage();
+    }
     _server = &_base->get_serv_from_sock(_serv_sock);
 }
 
@@ -211,8 +215,8 @@ bool    Client::getRes()
         _response->resetValues();
         if (_request->getReturnStatus() != 200)
         {
-            openErrorPage();
             _response->setContentType("Content-Type: text/html");
+            openErrorPage();
         }
         else if (_request->getPath().find("/CGI/scriptCGI/") != std::string::npos)
         {
