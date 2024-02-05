@@ -104,8 +104,10 @@ std::string getNameDir(const std::string& path)
 		
 	if (lastSep != std::string::npos && path[1])
 	{
-		if (lastSep == 0)
-			return path;
+		if (lastSep == 0 && path.find(".") != std::string::npos)
+			return "/";
+        else if (lastSep == 0)
+            return path;
 		return path.substr(0, lastSep);
 	}
 	else
@@ -286,4 +288,14 @@ void timeoutHandler(int sign) {
 
 	if (sign == SIGALRM)
 		exit(E_INTERNAL_SERVER);
+}
+
+bool isSocketNonBlocking(int sockfd) {
+    int flags = fcntl(sockfd, F_GETFL, 0);
+    if (flags == -1) {
+        std::cerr << "Error getting flags for socket" << std::endl;
+        return false; // or handle error appropriately
+    }
+
+    return (flags & O_NONBLOCK) != 0;
 }

@@ -118,6 +118,7 @@ bool    Client::parseCgiExit()
 
 void    Client::openErrorPage()
 {
+	std::vector<std::string> stockedPages = _server->getErrorPages();
     int status = _request->getReturnStatus();
 
     if (status == R_MOVED_PERMANENTLY)
@@ -128,13 +129,20 @@ void    Client::openErrorPage()
         _response->setContent("");
         _client_status = RES_READY_TO_BE_SENT;  // peut etre pas / ouvrir une fichier peut etre
     }
-    // else if (status == E_NOT_FOUND)
-    //     _fdRessource = open("site/errorPages/error404.html", O_RDONLY);// 
-    else if (E_BAD_REQUEST <= status  && status < E_INTERNAL_SERVER)
-        _fdRessource = open("site/errorPages/error400.html", O_RDONLY);// _server->
-    else
-        _fdRessource = open("site/errorPages/error500.html", O_RDONLY);
-
+	else
+	{
+		for (size_t it = 0; it < stockedPages.size(); it++)
+		{
+			if (it % 2 == 0 && status == atoi(stockedPages[it].c_str()))
+				return (void)(_fdRessource = open(("site/" + stockedPages[it + 1]).c_str(), O_RDONLY));
+			else if (status == E_NOT_FOUND)
+				return (void)(_fdRessource = open("site/errorPages/error404.html", O_RDONLY));
+			else if (E_BAD_REQUEST <= status && status < E_INTERNAL_SERVER)
+				return (void)(_fdRessource = open("site/errorPages/error400.html", O_RDONLY));
+			else
+				return (void)(_fdRessource = open("site/errorPages/error500.html", O_RDONLY));
+		}
+	}
 }
 
 bool    Client::checkHttpVersion()
@@ -237,6 +245,7 @@ bool    Client::getRes()
             _request->setPath(path);
             Cgi cgi(*_server, *_request, *_response);
             cgi.executeScript();
+
             _fdRessource = _response->getCgiFdRessource();
         }
         else
@@ -252,6 +261,13 @@ bool    Client::getRes()
             }
             else if (returnFindRes == 1)
             {
+                if (!checkFileExists(path))
+                {
+                    _request->setReturnStatus(404);
+                    openErrorPage();
+                    _response->setContentType("Content-Type: text/html\n");
+                    return false;
+                }
                 _fdRessource = open(path.c_str(), O_RDONLY);
             }
             else
@@ -313,7 +329,7 @@ bool    Client::postRes()
         else
         {
             std::cout << "POST : je lance un post classique\n";
-            if (!_server->findRessource_2(_request->getPath(), path))
+            if (!_server->findRessource_post(_request->getPath(), path))
             {
                 std::cout << "POST : je trouve pas la ressource\n"; // wtf non ?
                 _request->setReturnStatus(404);
@@ -359,7 +375,7 @@ bool    Client::deleteRes()
         {
             std::cout << "DELETE : je lance un DELETE classique\n";
             // resoudre le path
-            if (!_server->findRessource_2(_request->getPath(), path))
+            if (!_server->findRessource_delete(_request->getPath(), path))
             {
                 _request->setReturnStatus(404);
                 this->openErrorPage();
@@ -577,7 +593,7 @@ bool    Client::receive_data(void){
         this->reset_client();
     }
     memset(buffer, 0, BUFFER_SIZE);
-    int nbytes = recv(this->_new_socket, buffer, BUFFER_SIZE, 0);
+    int nbytes = recv(this->_new_socket, buffer, BUFFER_SIZE, MSG_DONTWAIT);
     if (nbytes == 0)
     {
         getactualTimestamp();
@@ -854,9 +870,9 @@ bool    Client::send_partial(int socket){
         _bytes_to_send = _to_send.size();
     }
     if (_bytes_to_send - _bytes_sent > BUFFER_SIZE)
-        sent = send(socket, _to_send.c_str() + _bytes_sent, BUFFER_SIZE, 0);
+        sent = send(socket, _to_send.c_str() + _bytes_sent, BUFFER_SIZE, MSG_DONTWAIT);
     else
-        sent = send(socket, _to_send.c_str() + _bytes_sent, _bytes_to_send - _bytes_sent, 0);
+        sent = send(socket, _to_send.c_str() + _bytes_sent, _bytes_to_send - _bytes_sent, MSG_DONTWAIT);
     if (sent == -1)
     {
         this->_client_status = ERROR_WHILE_SENDING;
