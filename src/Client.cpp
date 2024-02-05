@@ -233,6 +233,7 @@ bool    Client::getRes()
             _request->setPath(path);
             Cgi cgi(*_server, *_request, *_response);
             cgi.executeScript();
+
             _fdRessource = _response->getCgiFdRessource();
         }
         else
@@ -248,6 +249,13 @@ bool    Client::getRes()
             }
             else if (returnFindRes == 1)
             {
+                if (!checkFileExists(path))
+                {
+                    _request->setReturnStatus(404);
+                    openErrorPage();
+                    _response->setContentType("Content-Type: text/html\n");
+                    return false;
+                }
                 _fdRessource = open(path.c_str(), O_RDONLY);
             }
             else
@@ -309,7 +317,7 @@ bool    Client::postRes()
         else
         {
             std::cout << "POST : je lance un post classique\n";
-            if (!_server->findRessource_2(_request->getPath(), path))
+            if (!_server->findRessource_post(_request->getPath(), path))
             {
                 std::cout << "POST : je trouve pas la ressource\n"; // wtf non ?
                 _request->setReturnStatus(404);
@@ -355,7 +363,7 @@ bool    Client::deleteRes()
         {
             std::cout << "DELETE : je lance un DELETE classique\n";
             // resoudre le path
-            if (!_server->findRessource_2(_request->getPath(), path))
+            if (!_server->findRessource_delete(_request->getPath(), path))
             {
                 _request->setReturnStatus(404);
                 this->openErrorPage();

@@ -104,8 +104,10 @@ std::string getNameDir(const std::string& path)
 		
 	if (lastSep != std::string::npos && path[1])
 	{
-		if (lastSep == 0)
-			return path;
+		if (lastSep == 0 && path.find(".") != std::string::npos)
+			return "/";
+        else if (lastSep == 0)
+            return path;
 		return path.substr(0, lastSep);
 	}
 	else
