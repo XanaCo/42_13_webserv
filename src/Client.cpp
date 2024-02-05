@@ -589,7 +589,7 @@ bool    Client::receive_data(void){
         this->reset_client();
     }
     memset(buffer, 0, BUFFER_SIZE);
-    int nbytes = recv(this->_new_socket, buffer, BUFFER_SIZE, 0);
+    int nbytes = recv(this->_new_socket, buffer, BUFFER_SIZE, MSG_DONTWAIT);
     if (nbytes == 0)
     {
         getactualTimestamp();
@@ -866,9 +866,9 @@ bool    Client::send_partial(int socket){
         _bytes_to_send = _to_send.size();
     }
     if (_bytes_to_send - _bytes_sent > BUFFER_SIZE)
-        sent = send(socket, _to_send.c_str() + _bytes_sent, BUFFER_SIZE, 0);
+        sent = send(socket, _to_send.c_str() + _bytes_sent, BUFFER_SIZE, MSG_DONTWAIT);
     else
-        sent = send(socket, _to_send.c_str() + _bytes_sent, _bytes_to_send - _bytes_sent, 0);
+        sent = send(socket, _to_send.c_str() + _bytes_sent, _bytes_to_send - _bytes_sent, MSG_DONTWAIT);
     if (sent == -1)
     {
         this->_client_status = ERROR_WHILE_SENDING;

@@ -289,3 +289,13 @@ void timeoutHandler(int sign) {
 	if (sign == SIGALRM)
 		exit(E_INTERNAL_SERVER);
 }
+
+bool isSocketNonBlocking(int sockfd) {
+    int flags = fcntl(sockfd, F_GETFL, 0);
+    if (flags == -1) {
+        std::cerr << "Error getting flags for socket" << std::endl;
+        return false; // or handle error appropriately
+    }
+
+    return (flags & O_NONBLOCK) != 0;
+}

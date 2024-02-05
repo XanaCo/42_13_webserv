@@ -297,6 +297,7 @@ void    Base::handle_new_connection(int serv_sock)
         std::cout << "Error accepting connection" << std::endl; //See with Ana for exception
     else
     {
+        std::cout << isSocketNonBlocking(new_fd) << std::endl;
         this->add_to_poll_in(new_fd);
         getactualTimestamp();
         std::cout << "New connection from " << inet_ntop(remoteaddr.ss_family, get_in_addr((struct sockaddr*)&remoteaddr), remoteIP, INET6_ADDRSTRLEN) << " on socket n " << new_fd << std::endl; 

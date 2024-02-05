@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>TEST FILES</title>
-	<link rel="stylesheet" href="../css/style.css" />
-	<link rel="icon" type="image/png" href="../img/LOGO_w.png" /> 
+	<link rel="stylesheet" href="/css/style.css" />
+	<link rel="icon" type="image/png" href="/img/LOGO_w.png" /> 
 </head>
 
 <body>
@@ -15,6 +15,12 @@
 	</header>
 
 	<body>
+
+		<h1>Download de fichier</h1>
+
+        <h2>
+			<a href="/testFiles/fileFolder/" title="Telecharger"><span class="h2">Telecharger</span></a>
+		</h2>
 
 		<h1>Upload de fichier</h1>
 	
@@ -56,6 +62,48 @@
 				}
 			}
 		</script>
+
+        <h1>Delete de fichier</h1>
+	
+		<form id="deleteForm" enctype="multipart/form-data">
+			<label for="fileInput">Choisir un fichier:</label>
+			<input type="text" id="deleteInput" name="deleteInput" accept=".txt, .pdf, .doc, .docx">
+			<button type="button" onclick="deleteFile()">Supprimer</button>
+		</form>
+
+        <script>
+			function deleteFile() {
+				var fileInput = document.getElementById('fileInput');
+				var file = fileInput.files[0];
+	
+				if (file) {
+					var formData = new FormData();
+					formData.append('file', file);
+	
+					var xhr = new XMLHttpRequest();
+					xhr.open('DELETE', '/testFiles/fileFolder/' + file.name, true);
+					xhr.onload = function () {
+						if (xhr.status === 200)
+						{
+							// Le fichier a été correctement téléchargé
+							console.log('Fichier téléchargé avec succès.');
+						}
+						else
+						{
+							// Une erreur s'est produite lors du téléchargement du fichier
+							console.error('Erreur lors du téléchargement du fichier.');
+						}
+					};
+	
+					xhr.send(formData);
+				}
+				else
+				{
+					console.error('Veuillez sélectionner un fichier.');
+				}
+			}
+		</script>
+
 
     <footer>
         <p>© 2024 Le crabe, la pieuvre, le guepard. Tous droits réservés.</p>
