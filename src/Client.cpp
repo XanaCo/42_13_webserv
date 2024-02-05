@@ -118,6 +118,7 @@ bool    Client::parseCgiExit()
 
 void    Client::openErrorPage()
 {
+	std::vector<std::string> stockedPages = _server->getErrorPages();
     int status = _request->getReturnStatus();
 
     if (status == R_MOVED_PERMANENTLY)
@@ -128,13 +129,20 @@ void    Client::openErrorPage()
         _response->setContent("");
         _client_status = RES_READY_TO_BE_SENT;  // peut etre pas / ouvrir une fichier peut etre
     }
-    // else if (status == E_NOT_FOUND)
-    //     _fdRessource = open("site/errorPages/error404.html", O_RDONLY);// 
-    else if (E_BAD_REQUEST <= status  && status < E_INTERNAL_SERVER)
-        _fdRessource = open("site/errorPages/error400.html", O_RDONLY);// _server->
-    else
-        _fdRessource = open("site/errorPages/error500.html", O_RDONLY);
-
+	else
+	{
+		for (size_t it = 0; it < stockedPages.size(); it++)
+		{
+			if (it % 2 == 0 && status == atoi(stockedPages[it].c_str()))
+				return (void)(_fdRessource = open(("site/" + stockedPages[it + 1]).c_str(), O_RDONLY));
+			else if (status == E_NOT_FOUND)
+				return (void)(_fdRessource = open("site/errorPages/error404.html", O_RDONLY));
+			else if (E_BAD_REQUEST <= status && status < E_INTERNAL_SERVER)
+				return (void)(_fdRessource = open("site/errorPages/error400.html", O_RDONLY));
+			else
+				return (void)(_fdRessource = open("site/errorPages/error500.html", O_RDONLY));
+		}
+	}
 }
 
 bool    Client::checkHttpVersion()

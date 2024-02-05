@@ -39,10 +39,6 @@ Check le status code et le retour a chaque fois
 - FILES
 	Download Page html get directory testfiles/filefolder
 
-
-- ERROR errorPages	(ana)
-	bon html
-
 -FIXER CHUNCK Transfer (alban)
 
 -FIXER DELETE avec path ressource (alban)
