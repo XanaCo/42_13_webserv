@@ -28,7 +28,7 @@ class Response
         void    resetValues(void);
 
         // bool        readRessource(const std::string& path, std::string& content);
-        bool        readRessource(int fd);
+        int        readRessource(int fd);
         void        deleteRessource(std::string path);
         // void        postRessource(const std::string path, std::string content);
         void        postRessource(int fd, std::string content);

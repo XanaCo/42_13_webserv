@@ -47,7 +47,7 @@ bool    Response::craftAutoIndex(std::string path){
     return true;
 }
 
-bool    Response::readRessource(int fd)
+int    Response::readRessource(int fd)
 {
     if (fd < 3)
         return (true);
@@ -57,13 +57,12 @@ bool    Response::readRessource(int fd)
 
     if (nbBytesReaded < 0)
     {
-        // close(fd);
-        return (true); // a changer
+        return (2);
     }
     _content.append(buffer, nbBytesReaded);
     if (nbBytesReaded < BUFFER_SIZE)
-        return (true);
-    return (false);
+        return (1);
+    return (0);
 }
 
 // a conserver pour ameliorer l'ouverture d'un fichier de reponse

@@ -437,7 +437,6 @@ void    Base::start_servers(void) {
     while (1)
     {
        int  poll_count = poll(this->_pfds.data(), this->_pfds.size(), -1); 
-       //std::cout << "poll is called" << std::endl;
        if (poll_count == -1)
        {
            getactualTimestamp();

@@ -360,17 +360,26 @@ bool    Client::postRes()
                 _response->postRessource(_fdRessource, _request->getBody());   // penser a mettre a jour le status du retour
                 closeFile(&_fdRessource);
                 return true;
-                // return (true);
             }
         }
         if (_fdRessource < 0)
         {
-            std::cerr << "Open error: can't open file" << std::endl;
             _request->setReturnStatus(500);
+        	_response->setContentType("Content-Type: text/html\n");
             this->openErrorPage();
         }
     }
-    if (_response->readRessource(_fdRessource))
+	int returnReadRes = _response->readRessource(_fdRessource);
+	if (returnReadRes == 2)
+	{
+		closeFile(&_fdRessource);
+        _request->setReturnStatus(500);
+        _response->setContentType("Content-Type: text/html\n");
+        this->openErrorPage();
+		_response->setContent("");
+		return (false);
+	}
+    else if (returnReadRes)
     {
         if (_request->getPath().find("/CGI/") != std::string::npos)
             this->parseCgiExit();
@@ -473,7 +482,6 @@ void    Client::routine(int nbytes)
                 //     _request->setPath("/" + _servers[0].getRoot() + "/index.html");
                 if ((this->_request->getContentLength() && this->_body_bytes > this->_request->getContentLength()) || (this->_body_bytes > (int)this->_server->getMaxClientBody()))
                 {
-                    std::cout << "C'est trop grand !" << std::endl;
                     this->_request->setReturnStatus(413); // voir avec Pablo
                     this->_req_end = true;
                 }
@@ -627,7 +635,7 @@ bool    Client::receive_data(void){
         std::cout << "Client " << this->get_socket() << " closed connection" << std::endl; // Handle a client closing
         return false;
     }
-    else if (nbytes < 0)
+    else if (nbytes < -1)
     {
         getactualTimestamp();
         std::cout << "Client " << this->_new_socket << " encountered error while recv" << std::endl; // See for exception and hgetandling of recv error
@@ -801,7 +809,6 @@ void    Client::receive_body_data(char *buffer, int nbytes){
         }
         else if (this->_body_bytes > this->_request->getContentLength())
         {
-            std::cout << "C'est trop grand !" << std::endl;
             this->_request->setReturnStatus(413); // voir avec Pablo
             //this->_client_status = REQ_RECEIVED;
             this->routine(nbytes);
@@ -874,7 +881,6 @@ bool    Client::send_data(void)
             getactualTimestamp();
             if (_bytes_sent < _bytes_to_send)
                 std::cout << "Only " << _bytes_sent << " bytes out of " << _bytes_to_send << " have been sent to Client : " << this->_new_socket << " because of error. Connexion removed." << std::endl;
-            std::cout << RED << errno << END_COLOR << std::endl;
             return false;
         }
     }
@@ -909,6 +915,13 @@ bool    Client::send_partial(int socket){
         sent = send(socket, _to_send.c_str() + _bytes_sent, BUFFER_SIZE, MSG_DONTWAIT);
     else
         sent = send(socket, _to_send.c_str() + _bytes_sent, _bytes_to_send - _bytes_sent, MSG_DONTWAIT);
+    if (sent == 0)
+	{
+		if (_bytes_sent == _bytes_to_send)
+			return (this->_client_status = RES_SENT, true);
+		else
+			return false;
+	}
     if (sent == -1)
     {
         this->_client_status = ERROR_WHILE_SENDING;
