@@ -212,7 +212,6 @@ bool    ServerInfo::setListenSocket(std::string l_port){
         if (listener < 0)
             continue; //Set an error/exception about socket setting
         //fcntl(listener, F_SETFL, O_NONBLOCK); // Check return value to throw error/exception
-        std::cout << isSocketNonBlocking(listener) << std::endl;
         setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &test, sizeof(int)); // Check return value to throw exception
         if (bind(listener, p->ai_addr, p->ai_addrlen) < 0)
         {
