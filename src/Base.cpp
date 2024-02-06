@@ -201,7 +201,7 @@ void    Base::remove_from_clients(int socket){
         if (socket == _clients[i]->get_socket())
         {
             //std::cout << "Client n " << socket << " trying to be erased" << std::endl;
-            if (_clients[i]->getFdRessource() > 2)
+            if (_clients[i]->getFdRessource() > 2 && _clients[i]->getFdRessource() != DIR_LIST)
                 close(_clients[i]->getFdRessource());
             delete _clients[i];
             _clients.erase(_clients.begin() + i);

@@ -290,3 +290,16 @@ void timeoutHandler(int sign) {
 	if (sign == SIGALRM)
 		exit(E_INTERNAL_SERVER);
 }
+
+bool isValidHex(const std::string& str) {
+    
+	if (str.empty()) {
+        return false; 
+    }
+    for (size_t i = 0; i < str.size(); ++i) {
+        if (!std::isxdigit(str[i])) {
+            return false;
+        }
+    }
+    return true;
+}
