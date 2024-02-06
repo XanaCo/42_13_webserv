@@ -32,23 +32,31 @@ html, body {
 
 a,
 button {
-    display: inline-block;
+	display: inline-block;
 	font-family: 'Courier New', Courier;
 	font-size: 1em;
-    padding: 7px 30px;
-    background-color: #fdfdfd;
-    color: #000000;
-    text-decoration: none;
-    border-radius: 7px;
-    transition: background-color 0.3s;
-    cursor: pointer;
+	padding: 7px 30px;
+	background-color: #fdfdfd;
+	color: #000000;
+	text-decoration: none;
+	border-radius: 7px;
+	transition: background-color 0.3s;
+	cursor: pointer;
 	border: none;
 }
 
 a:hover,
 button:hover {
-    background-color: #8b8b86;
-    color: #ffffff;
+	background-color: #8b8b86;
+	color: #ffffff;
+}
+
+section {
+	margin-bottom: 39px;
+	padding: 30px;
+	border: 2px solid #797878;
+	border-radius: 10px;
+	
 }
 
 footer {

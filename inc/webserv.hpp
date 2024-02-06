@@ -182,7 +182,6 @@ int							hexStrToInt(const std::string& hexStr);
 void						timeoutHandler(int sign);
 unsigned long               get_micro_time_stamp(void);
 bool                        is_timedout(unsigned long start, int timeout);
-bool                        isSocketNonBlocking(int sockfd);
 
 // Print and Debug utils
 void						printStringVector(std::vector<std::string> stringVector);
