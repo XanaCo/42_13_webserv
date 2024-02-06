@@ -67,7 +67,6 @@
 				xhr.open("DELETE", url, true);
 				xhr.onreadystatechange = function () {
 					if (xhr.readyState == 4 && xhr.status == 200) {
-						// Gestion de la réponse si nécessaire
 						console.log(xhr.responseText);
 					}
 				};
@@ -76,9 +75,9 @@
 			}
 		</script>
 
-		<!-- <form action="/testFiles/fileFolder/test" method="get">
-			<a href="/nothing" title="GET"><span class="h2">UNKNOWN</span></a>
-		</form> -->
+		<form action="/testFiles/fileFolder/test" method="put">
+			<input type="submit" value="Unknow method">
+		</form>
 
     <footer>
         <p>© 2024 Le crabe, la pieuvre, le guepard. Tous droits réservés.</p>

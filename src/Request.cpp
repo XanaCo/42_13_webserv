@@ -103,7 +103,8 @@ bool	Request::fillMethod(std::string& line)
     }
 	else
     {
-        _returnStatus = E_INTERNAL_SERVER;
+        this->setMethod(GET);
+        _returnStatus = 405;
 		return (false);
     }
     deEncodingHexa(_path);
