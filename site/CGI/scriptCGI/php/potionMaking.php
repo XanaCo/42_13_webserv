@@ -102,7 +102,8 @@ function generatePotionName($ingredients, $ingredientNames, $potionRecipes, $pre
 $potionName = generatePotionName($selectedIngredients, $ingredientNames, $potionRecipes, $predefinedPotionNames);
 
 // Write the result to an external file
-$fileName = $wizardID.'_potion';
+$directory = 'site/CGI/cookies/';
+$fileName = $directory.$wizardID.'_potion';
 file_put_contents($fileName, $potionName);
 
 // Print the CGI header

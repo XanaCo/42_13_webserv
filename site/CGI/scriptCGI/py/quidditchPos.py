@@ -21,7 +21,7 @@ qualities = {
 # main function
 def main():
 
-	with open(wizard_id + '_position', 'w') as file:
+	with open('site/CGI/cookies/' + wizard_id + '_position', 'w') as file:
 		file.write(qualities.get(user_data.get('quality')))
 
 # HTTP Header

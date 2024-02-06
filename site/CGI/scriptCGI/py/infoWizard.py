@@ -17,10 +17,10 @@ def read_file(file_path):
 		return None
 
 def main():
-	house_file_path = wizard_id + '_house'
-	position_file_path = wizard_id + '_position'
-	destiny_file_path = wizard_id + '_destiny'
-	potion_file_path = wizard_id + '_potion'
+	house_file_path = 'site/CGI/cookies/' + wizard_id + '_house'
+	position_file_path = 'site/CGI/cookies/' + wizard_id + '_position'
+	destiny_file_path = 'site/CGI/cookies/' + wizard_id + '_destiny'
+	potion_file_path = 'site/CGI/cookies/' + wizard_id + '_potion'
 
 	house = read_file(house_file_path)
 	position = read_file(position_file_path)

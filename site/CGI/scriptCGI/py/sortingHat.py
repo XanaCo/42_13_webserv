@@ -23,7 +23,7 @@ def main():
 
 # register data
 	sys.stderr.write("voici mon wizard id :" + wizard_id + "\n")
-	with open(wizard_id + '_house', 'w') as file:
+	with open('site/CGI/cookies/' + wizard_id + '_house', 'w') as file:
 		file.write(creatures.get(user_data.get('creature')))
 
 # HTTP Header
