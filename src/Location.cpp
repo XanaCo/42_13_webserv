@@ -11,7 +11,7 @@ Location::Location(std::string const &path) {
 	this->_pathRoot = "";
 	this->_uploadDir = "";
 	this->_index = "";
-	this->_return = std::pair<int, std::string>(404, "/");
+	this->_return = std::pair<int, std::string>(301, "");
 	this->_autoindex = false;
 	this->_allowedMethods = 0;
 
@@ -167,12 +167,10 @@ void Location::setLReturn(std::string Rerror, std::string Rpath) {
 
 	int error = strToInt(Rerror);
 
-	if (error < 100 || error > 504)
-		throw ServerInfo::ServerInfoError("Invalid return error code in location");
-	if (*(Rpath.begin()) != '/')
-		throw ServerInfo::ServerInfoError("Invalid return path in location");
-	if (!checkPathExists(Rpath))
-		throw ServerInfo::ServerInfoError("Invalid return path in location");
+	if (error != 301)
+		throw ServerInfo::ServerInfoError("Invalid return error code in location redirection");
+	if (Rpath.compare(0, 8, "https://"))
+		throw ServerInfo::ServerInfoError("Invalid return path in location redirection");
 
 	this->_return = std::pair<int, std::string>(error, Rpath);
 }
@@ -223,9 +221,8 @@ void Location::checkLocationInfo() {
 	}
 	if (this->_return.first < 100 || this->_return.first > 504)
 		throw ServerInfo::ServerInfoError("Wrong location code error format");
-	if (!this->_return.second.empty() && this->_return.second.compare("/"))
-	{
-		if (!checkPathExists(this->_return.second))
-			throw ServerInfo::ServerInfoError("Wrong location return path format");
-	}
+
+	if (!this->_return.second.empty() && this->_return.second.compare(0, 8, "https://"))
+		throw ServerInfo::ServerInfoError("Wrong location return path format");
+
 }

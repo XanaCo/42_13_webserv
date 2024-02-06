@@ -81,7 +81,7 @@ private:
 	in_addr_t					_Host; // uint_32
 	std::string					_Root; // root path
 	std::string					_index; // path to index.html
-	unsigned int				_maxClientBody;
+	unsigned int				_maxClientBody; // Max Body size
 	std::vector<Location>		_locations; // Location INSTANCES with classified info
 	std::vector<std::string>	_errorPages; // 500 - path to error
 	std::string					_listen; // PORT in string type

@@ -89,7 +89,7 @@ void FileParser::parseFile() {
 	splitServers();
 	stockServerInfo();
 
-	std::cout << GREEN << " Server Configuration OK" << END_COLOR << std::endl;
+	std::cout << GREEN << "Server Configuration OK" << END_COLOR << std::endl;
 
 }
 

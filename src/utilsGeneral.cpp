@@ -203,7 +203,7 @@ bool            is_timedout(unsigned long start, int timeout){
     unsigned long   now;
 
     now = get_micro_time_stamp();
-    if ((now - start) / 1000000 >= timeout)
+    if ((now - start) / 1000000 >= (unsigned long)timeout)
         return true;
     return false;
 }

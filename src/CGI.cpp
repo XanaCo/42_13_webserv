@@ -47,29 +47,20 @@ int Cgi::setMethod(int method) {
 
 int Cgi::setEnvironment(ServerInfo *server, Request *req) {
 
-	//general:
 		this->_envpMap["SERVER_SOFTWARE"] = "Webserv/1.0";
 		this->_envpMap["SERVER_NAME"] = server->getServerName();
 		this->_envpMap["GATEWAY_INTERFACE"] = "CGI/1.0";
-
-	//request specific:
 		this->_envpMap["SERVER_PROTOCOL"] = "HTTP/1.1";
 		this->_envpMap["SERVER_PORT"] = server->getListen();
 		if (setMethod(req->getMethod()))
-			return -1;		
+			return -1;
 		this->_envpMap["REQUEST_METHOD"] = this->_method;
-			//PATH_INFO - request->URIPathInfo (extra info about the script directory location, others directories inside)
 		this->_envpMap["PATH_INFO"] = _request->getPath();
-			//PATH_TRANSLATED - request->getPath() (path to the script to use) //reviser
 		this->_envpMap["PATH_TRANSLATED"] = this->_cgiLoc->getLPathName();
-			//SCRIPT_NAME - virtual path of the script //reviser
 		this->_envpMap["SCRIPT_NAME"] = req->getPath();
 		this->_envpMap["QUERY_STRING"] = req->getArgs();
 		this->_envpMap["REMOTE_HOST"] = req->getHost();
-			//REMOTE_ADDR - request->_ClientAddress (IP address of the client)
 		this->_envpMap["REMOTE_ADDR"] = "";
-		// debat pour garder cette variable juste en dessous
-		// this->_envpMap["AUTH_TYPE"] = "Basic";
 		this->_envpMap["CONTENT_TYPE"] = req->getContentType();
 		this->_envpMap["CONTENT_LENGTH"] = intToStr(req->getContentLength());
 		this->_envpMap["CONTENT_BODY"] = req->getBody();
@@ -77,8 +68,6 @@ int Cgi::setEnvironment(ServerInfo *server, Request *req) {
 		
 		this->_envpMap["REDIRECT_STATUS"] = "1";
 		this->_envpMap["WIZARD_ID"] = _request->getCookies()[0];
-	//client specific
-		//HTTP_COOKIE
 
 	this->_envpToExec = mapToCharTab(this->_envpMap);
 	if (!this->_envpToExec)

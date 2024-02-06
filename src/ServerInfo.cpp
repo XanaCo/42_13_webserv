@@ -389,7 +389,7 @@ size_t ServerInfo::setLocations(std::vector<std::string> &serverTab, size_t pos)
 			it += 2;
 			if (it < serverTab.size() && semiColonEnding(serverTab[it]))
 			{
-				if (locati.getLReturn() != std::pair<int, std::string>(404, "/"))
+				if (locati.getLReturn() != std::pair<int, std::string>(301, ""))
 					throw ServerInfoError("Location must have only one return directive");
 				locati.setLReturn(serverTab[it - 1], serverTab[it]);
 			}
