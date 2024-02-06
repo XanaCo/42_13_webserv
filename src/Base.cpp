@@ -472,7 +472,7 @@ void    Base::review_poll(void){
                 handle_new_connection(_pfds[i].fd);
             else
             {
-                if(client_is_timed_out(get_cli_from_sock(_pfds[i].fd)) || !get_cli_from_sock(_pfds[i].fd).receive_data())
+                if(/*client_is_timed_out(get_cli_from_sock(_pfds[i].fd)) ||*/ !get_cli_from_sock(_pfds[i].fd).receive_data())
                 {
                     remove_from_clients(_pfds[i].fd);
                     remove_from_poll(_pfds[i].fd);
@@ -481,7 +481,7 @@ void    Base::review_poll(void){
         }
         if(_pfds[i].revents & POLLOUT)
         {
-            if (client_is_timed_out(get_cli_from_sock(_pfds[i].fd)) || !get_cli_from_sock(_pfds[i].fd).send_data())
+            if (/*client_is_timed_out(get_cli_from_sock(_pfds[i].fd)) ||*/ !get_cli_from_sock(_pfds[i].fd).send_data())
             {
                 remove_from_clients(_pfds[i].fd);
                 remove_from_poll(_pfds[i].fd);

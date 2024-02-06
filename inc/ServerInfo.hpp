@@ -56,9 +56,9 @@ public:
 	void checkAllInfos();
 
 	bool	findCgiRessource(std::string path, std::string& newPath);
-	int		findRessource(std::string path, std::string& newPath) const;
-    bool    findRessource_post(std::string path, std::string& newPath) const;
-    bool    findRessource_delete(std::string path, std::string& newPath) const;
+	int		findRessource(std::string path, std::string& newPath, int method) const;
+	int    findRessource_post(std::string path, std::string& newPath, int method) const;
+	int    findRessource_delete(std::string path, std::string& newPath, int method) const;
 
 	class ServerInfoError : public std::exception {
 	
