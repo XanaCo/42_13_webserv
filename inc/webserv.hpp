@@ -116,6 +116,7 @@
 # define E_GONE					410 // la ressource demandee etait presente autrefois mais n'existe plus
 # define E_BODY_SIZE			413 // la taille du body de la requete depasse la taille maximale acceptee
 # define E_TOO_MANY_REQUESTS	429 // le client a envoye trop de requetes dans un court lapse de temps
+# define E_PATH_OVERFLOW		431 // le path est d'une taille trop grande
 
 // Server errors
 # define E_INTERNAL_SERVER		500 // une condition inattendue s'est produite du cote serveur
