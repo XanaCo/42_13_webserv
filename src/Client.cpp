@@ -356,7 +356,7 @@ bool    Client::postRes()
             {
                 _response->postRessource(_fdRessource, _request->getBody());   // penser a mettre a jour le status du retour
                 closeFile(&_fdRessource);
-                _fdRessource = open("./site/testFiles/postSuccefully.html", O_RDONLY);
+                return true;
                 // return (true);
             }
         }
@@ -405,13 +405,13 @@ bool    Client::deleteRes()
             else
             {
                 _response->deleteRessource(path);
-                _fdRessource = open("./site/testFiles/postSuccefully.html", O_RDONLY);
+                return true;
             }
-            if (_fdRessource < 2)
-            {
-                _request->setReturnStatus(500);
-                this->openErrorPage();
-            }
+            // if (_fdRessource < 2)
+            // {
+            //     _request->setReturnStatus(500);
+            //     this->openErrorPage();
+            // }
         }
         if (_fdRessource < 2)
         {
@@ -509,7 +509,7 @@ void    Client::routine(int nbytes)
             _request->fillBody(_received); // + faire des verifs et en fonction mettre a jour la variable de routine
             _client_status = WAITING_FOR_RES;
             //getactualTimestamp();
-            //std::cout << RED << "Request body received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << END_COLOR << std::endl;
+            std::cout << MAGENTA << "Request received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << END_COLOR << std::endl;
             this->_base->change_poll_event(this->_new_socket, pollout);
             return ;
         }
