@@ -21,10 +21,10 @@
 
 	<section id="uploadSection">
 		<h1>Upload a file</h1>
-		<form id="uploadForm" enctype="multipart/form-data">
+		<form id="uploadForm" enctype="text/plain">
 			<h2>
 				<label for="fileInput">I want to upload </label>
-				<input type="file" id="fileInput" name="fileInput" accept=".pdf, .doc, .docx">
+				<input type="file" id="fileInput" name="fileInput" accept=".png, .jpeg, .jpg, .pdf, .mp4">
 			</h2>
 			<button type="button" onclick="uploadFile()">UPLOAD</button>
 		</form>
@@ -35,7 +35,7 @@
 		<form id="deleteForm" enctype="multipart/form-data">
 			<h2>
 				<label for="deleteInput">I want to delete </label>
-				<input type="text" id="deleteInput" name="deleteInput" accept=".png, .pdf, .doc, .docx">
+				<input type="text" id="deleteInput" name="deleteInput" accept=".png, .jpeg, .jpg, .pdf, .mp4">
 			</h2>
 			<button type="button" onclick="deleteFile()">DELETE</button>
 		</form>
