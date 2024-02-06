@@ -389,7 +389,7 @@ size_t ServerInfo::setLocations(std::vector<std::string> &serverTab, size_t pos)
 			it += 2;
 			if (it < serverTab.size() && semiColonEnding(serverTab[it]))
 			{
-				if (locati.getLReturn() != std::pair<int, std::string>(404, "/"))
+				if (locati.getLReturn() != std::pair<int, std::string>(301, ""))
 					throw ServerInfoError("Location must have only one return directive");
 				locati.setLReturn(serverTab[it - 1], serverTab[it]);
 			}
@@ -564,13 +564,9 @@ int ServerInfo::findRessource(std::string path, std::string& newPath, int method
         if (nameDir == it->getLPathName())
         {
 			if (!(it->getLAllowed() & method))
-			{
 				return (3);
-			}
-			if (it->getLReturn().second != "/")
-			{
+			if (it->getLReturn().second != "")
 				return (4);
-			}
 			// ajouter le retour 405 puis return 2
             //newPath = _Root + getNameFile(path);
             if (it->getLAutoindex() && getNameFileS(path, *it) == "")

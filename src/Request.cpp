@@ -170,7 +170,7 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
         else if (length >= 13 && lines[i].substr(0, 13) == "Content-Type:")
             this->setContentType(lines[i].substr(14, length));
         else if (length >= 15 && lines[i].substr(0, 15) == "Content-Length:")
-            this->setContentLength(atoi(lines[i].substr(16, length).c_str()));
+            this->setContentLength(strToInt(lines[i].substr(16, length)));
         else if (length >= 6 && lines[i].substr(0, 7) == "Cookie:")
         {
             // std::cout << "c'est quoi le pb avec <" << lines[i].substr(8, length) << ">\n";

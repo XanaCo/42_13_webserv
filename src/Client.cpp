@@ -2,7 +2,6 @@
 #include "../inc/Base.hpp"
 #define DIR_LIST    2000000000
 
-
 // ************************************************************************** //
 //	CONSTRUCTOR / DESTRUCTOR
 // ************************************************************************** //
@@ -116,9 +115,9 @@ bool    Client::parseCgiExit()
     return (false);
 }
 
-void    Client::openErrorPage()
+void	Client::openErrorPage()
 {
-    int status = _request->getReturnStatus();
+	int status = _request->getReturnStatus();
 
     if (status == R_MOVED_PERMANENTLY)
     {
@@ -133,10 +132,11 @@ void    Client::openErrorPage()
     }
 	else
 	{
-	    std::vector<std::string> stockedPages = _server->getErrorPages();
+		std::vector<std::string> stockedPages = _server->getErrorPages();
+
 		for (size_t it = 0; it < stockedPages.size(); it++)
 		{
-			if (it % 2 == 0 && status == atoi(stockedPages[it].c_str()))
+			if (it % 2 == 0 && status == strToInt(stockedPages[it]))
 				return (void)(_fdRessource = open(("site/" + stockedPages[it + 1]).c_str(), O_RDONLY));
 			else if (status == E_NOT_FOUND)
 				return (void)(_fdRessource = open("site/errorPages/error404.html", O_RDONLY));
@@ -171,7 +171,7 @@ void    Client::findServer()
                 _server = &(*i);
         }
     }
-    size_t size = _request->getPath().length();
+    // size_t size = _request->getPath().length();
     // if (size > 4 && _request->getPath().substr(0, 5) == "/http" || \
     // _request->getPath().length() > 4 && _request->getPath().substr(0, 4) == "/www")
     // {
@@ -468,7 +468,7 @@ void    Client::routine(int nbytes)
                 // la
                 // if (_request->getPath() == "/")
                 //     _request->setPath("/" + _servers[0].getRoot() + "/index.html");
-                if ((this->_request->getContentLength() && this->_body_bytes > this->_request->getContentLength()) || this->_body_bytes > this->_server->getMaxClientBody())
+                if ((this->_request->getContentLength() && this->_body_bytes > this->_request->getContentLength()) || (this->_body_bytes > (int)this->_server->getMaxClientBody()))
                 {
                     std::cout << "C'est trop grand !" << std::endl;
                     this->_request->setReturnStatus(413); // voir avec Pablo
@@ -783,7 +783,7 @@ void    Client::receive_body_data(char *buffer, int nbytes){
         //this->_base->change_poll_event(this->_new_socket, pollout);
         return ;
     }
-    if (this->_body_bytes > this->_server->getMaxClientBody())
+    if (this->_body_bytes > (int)this->_server->getMaxClientBody())
         this->_request->setReturnStatus(413);
     if (this->_request->getContentLength() > 0)
     {

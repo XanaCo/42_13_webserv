@@ -5,8 +5,8 @@
 NAME		= webserv
 
 # Compiler
-CPP			= g++
-FLAGS		= -MMD -MP -std=c++98 -g3
+CPP			= c++
+FLAGS		= -Wall -Wextra -Werror -MMD -MP -std=c++98 -g3
 EXTRAF		= -Wshadow #-Wno-shadow
 
 # Paths
