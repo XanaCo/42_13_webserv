@@ -85,6 +85,7 @@
 # define END_COLOR "\033[0m"
 
 # define PRINT false // changer a 1 pour voir les constructors/destructors des instances
+#define DIR_LIST    2000000000
 
 // ************************************************************************** //
 //  RETURN STATUS
@@ -182,6 +183,7 @@ int							hexStrToInt(const std::string& hexStr);
 void						timeoutHandler(int sign);
 unsigned long               get_micro_time_stamp(void);
 bool                        is_timedout(unsigned long start, int timeout);
+bool 						isValidHex(const std::string& str);
 
 // Print and Debug utils
 void						printStringVector(std::vector<std::string> stringVector);

@@ -1,6 +1,6 @@
 #include "../inc/Client.hpp"
 #include "../inc/Base.hpp"
-#define DIR_LIST    2000000000
+
 
 // ************************************************************************** //
 //	CONSTRUCTOR / DESTRUCTOR
@@ -727,6 +727,8 @@ void    Client::receive_chunked_body_data(char *buffer, int nbytes){
     {
         if (this->_chunk_index_type == CHUNK_SIZE)
         {
+            if (!isValidHex(chunk_vec[i]))
+                return (void)(this->_request->setReturnStatus(400));
             chunk_size = hexStrToInt(chunk_vec[i]);
             if (i + 1 < chunk_vec.size())
                 this->_chunk_index_type = CHUNK_DATA;
