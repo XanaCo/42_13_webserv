@@ -126,7 +126,7 @@ void	Client::openErrorPage()
         std::cout << _request->getPath() << std::endl;
         // recup la bonne location
         // 
-        _response->setLocation("Location: " + _request->getPath().substr(1, _request->getPath().size()) +"\n");
+        _response->setLocation("Location: " + _request->getPath() +"\n");
         _response->setContent("");
         _client_status = RES_READY_TO_BE_SENT;  // peut etre pas / ouvrir une fichier peut etre
     }
@@ -222,7 +222,7 @@ bool    Client::getRes()
     std::string path;
     int         returnFindRes;
 
-    if (_fdRessource < 3)
+    if (_fdRessource < 3 && _request->getReturnStatus() != 301)
     {
         std::string contentType;
         _response->resetValues();
@@ -284,7 +284,10 @@ bool    Client::getRes()
             else if (returnFindRes & 4)
             {
                 _request->setReturnStatus(301);
-                _request->setPath("https://www.wikipedia.org/");
+                _request->setPath("Location: " +_server->getOneLocation(getNameDir(_request->getPath()))->getLReturn().second + "\n");
+                // _request->setPath("Location: https://www.wikipedia.org/\n");
+                // _statusCode = ;
+                return (true);
             }
             else
             {
@@ -818,7 +821,7 @@ std::string Client::make_temp_header(void)
         con2 << _request->getReturnStatus();
         to_send += " " + con2.str() + "\n";
         // if (_response->getLocation() != "")
-        to_send += _response->getLocation();
+        to_send += _request->getPath();
         // if (_response->getContentType() != "")
         to_send += _response->getContentType();
         if (!_response->getCookies().empty())
@@ -835,6 +838,7 @@ std::string Client::make_temp_header(void)
         else
             to_send += "Content-Length: 0 \n\n";
         this->_client_status = SENDING_RES_HEADER;
+        // std::cout << to_send;
         return (to_send);
 }
 

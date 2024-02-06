@@ -49,6 +49,9 @@ bool    Response::craftAutoIndex(std::string path){
 
 bool    Response::readRessource(int fd)
 {
+    if (fd < 3)
+        return (true);
+
     char    buffer[BUFFER_SIZE];
     int     nbBytesReaded = read(fd, buffer, BUFFER_SIZE);
 
