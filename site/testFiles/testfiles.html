@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>TEST FILES</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>FILES</title>
 	<link rel="stylesheet" href="/css/style.css" />
 	<link rel="icon" type="image/png" href="/img/LOGO_w.png" /> 
 </head>
@@ -11,68 +11,73 @@
 <body>
 
 	<header>
-		<h1>Test Files</h1>
+		<h2>File Testing</h2>
 	</header>
 
-	<body>
+	<section id="downloadSection">
+		<h1>Download a file</h1>
+		<a href="/testFiles/fileFolder/" title="Telecharger"><span class="h2">DOWNLOAD</span></a>
+	</section>
 
-		<h1>Download de fichier</h1>
-
-        <h2>
-			<a href="/testFiles/fileFolder/" title="Telecharger"><span class="h2">Telecharger</span></a>
-		</h2>
-
-		<h1>Upload de fichier</h1>
-	
+	<section id="uploadSection">
+		<h1>Upload a file</h1>
 		<form id="uploadForm" enctype="multipart/form-data">
-			<label for="fileInput">Choisir un fichier:</label>
-			<input type="file" id="fileInput" name="fileInput" accept=".txt, .pdf, .doc, .docx">
-			<button type="button" onclick="uploadFile()">Envoyer</button>
+			<h2>
+				<label for="fileInput">I want to upload </label>
+				<input type="file" id="fileInput" name="fileInput" accept="., .pdf, .doc, .docx">
+			</h2>
+			<button type="button" onclick="uploadFile()">UPLOAD</button>
 		</form>
-	
-		<script>
-			function uploadFile() {
-				var fileInput = document.getElementById('fileInput');
-				var file = fileInput.files[0];
-	
-				if (file) {
-					var formData = new FormData();
-					formData.append('file', file);
-	
-					var xhr = new XMLHttpRequest();
-					xhr.open('POST', '/testFiles/fileFolder/' + file.name, true);
-					xhr.onload = function () {
-						if (xhr.status === 200)
-						{
-							// Le fichier a été correctement téléchargé
-							console.log('Fichier téléchargé avec succès.');
-						}
-						else
-						{
-							// Une erreur s'est produite lors du téléchargement du fichier
-							console.error('Erreur lors du téléchargement du fichier.');
-						}
-					};
-	
-					xhr.send(formData);
-				}
-				else
-				{
-					console.error('Veuillez sélectionner un fichier.');
-				}
-			}
-		</script>
+	</section>
 
-        <h1>Delete de fichier</h1>
-	
+	<section id="deleteSection">	
+ 		<h1>Delete a file</h1>
 		<form id="deleteForm" enctype="multipart/form-data">
-			<label for="fileInput">Choisir un fichier:</label>
-			<input type="text" id="deleteInput" name="deleteInput" accept=".txt, .pdf, .doc, .docx">
-			<button type="button" onclick="deleteFile()">Supprimer</button>
+			<h2>
+				<label for="fileInput">I want to delete </label>
+				<input type="text" id="deleteInput" name="deleteInput" accept=".png, .pdf, .doc, .docx">
+			</h2>
+			<button type="button" onclick="deleteFile()">DELETE</button>
 		</form>
+	</section>
+	
+	<footer>
+		<p>© 2024 Le crabe, la pieuvre, le guepard. Tous droits réservés.</p>
+	</footer>
+		
+	<script>
+		function uploadFile() {
+			var fileInput = document.getElementById('fileInput');
+			var file = fileInput.files[0];
 
-        <script>
-			function deleteFile() {
+			if (file) {
+				var formData = new FormData();
+				formData.append('file', file);
+
+				var xhr = new XMLHttpRequest();
+				xhr.open('POST', '/testFiles/fileFolder/' + file.name, true);
+				xhr.onload = function () {
+					if (xhr.status === 200)
+					{
+						// Le fichier a été correctement téléchargé
+						console.log('Fichier téléchargé avec succès.');
+					}
+					else
+					{
+						// Une erreur s'est produite lors du téléchargement du fichier
+						console.error('Erreur lors du téléchargement du fichier.');
+					}
+				};
+
+				xhr.send(formData);
+			}
+			else
+			{
+				console.error('Veuillez sélectionner un fichier.');
+			}
+		}
+	
+		function deleteFile() {
 				var fileInput = document.getElementById('fileInput');
 				var file = fileInput.files[0];
 	
@@ -102,12 +107,7 @@
 					console.error('Veuillez sélectionner un fichier.');
 				}
 			}
-		</script>
-
-
-    <footer>
-        <p>© 2024 Le crabe, la pieuvre, le guepard. Tous droits réservés.</p>
-    </footer>
+	</script>
 
 </body>
 </html>
