@@ -330,11 +330,20 @@ void	FileParser::stockServerInfo() {
 //	EXCEPTIONS
 // ************************************************************************** //
 
-FileParser::FileParserError::FileParserError(std::string errorMsg) throw() : _errorMsg("Webserv Error : " + errorMsg) {}
+FileParser::FileParserError::FileParserError(std::string errorMsg) throw() : _errorMsg(RED + ("Webserv Error : " + errorMsg) + END_COLOR) {}
 
 FileParser::FileParserError::~FileParserError() throw() {}
 
 const char *FileParser::FileParserError::what() const throw() {
 
 	return (_errorMsg.c_str());
+}
+
+FileParser::SignalExit::SignalExit(std::string signalMsg) throw() : _signalMsg(GREEN + ("\n" + signalMsg) + END_COLOR) {}
+
+FileParser::SignalExit::~SignalExit() throw() {}
+
+const char *FileParser::SignalExit::what() const throw() {
+
+	return (_signalMsg.c_str());
 }

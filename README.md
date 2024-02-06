@@ -68,7 +68,7 @@ Une fois que la pull request est approuvee (par tous les membres, ou selon un po
 
 - [x] Arguments : Config file or Config file path
 - [x] Pas exécuter un autre serveur web
-- [ ] Le serveur ne doit jamais bloquer et le client doit être correctement renvoyé si nécessaire
+- [x] Le serveur ne doit jamais bloquer et le client doit être correctement renvoyé si nécessaire
 - [ ] Il doit être non bloquant et n’utiliser qu’un seul ```poll()``` (ou équivalent) pour toutes les opérations entrées/sorties entre le client et le serveur (listen inclus)
 - [ ] ```poll()``` (ou équivalent) doit vérifier la lecture et l’écriture en même temps
 - [ ] Vous ne devriez jamais faire une opération de lecture ou une opération d’écriture sans passer par ```poll()``` (ou équivalent)
@@ -76,17 +76,17 @@ Une fois que la pull request est approuvee (par tous les membres, ou selon un po
 - [ ] Vous n’avez pas besoin d’utiliser ```poll()``` (ou équivalent) avant de lire notre fichier de configuration
 - [ ] PAS AUTHORISE D'UTILISER ```read/recv``` ou ```write/send``` avec n’importe quel FD sans utiliser ```poll()``` (ou équivalent)
 - [ ] Authorise d'utiliser chaque macro et définir comme ```FD_SET, FD_CLR, FD_ISSET, FD_ZERO```
-- [ ] Une requête à notre serveur ne devrait jamais se bloquer pour indéfiniment
-- [ ] Compatibilite avec le navigateur web de notre choix
+- [x] Une requête à notre serveur ne devrait jamais se bloquer pour indéfiniment
+- [x] Compatibilite avec le navigateur web de notre choix
 - [ ] ```NGINX``` est conforme à ```HTTP 1.1``` et peut être utilisé pour comparer les en-têtes et les comportements de réponse
-- [ ] Codes d’état de réponse **HTTP** exacts
-- [ ] Pages d’erreur par défaut
-- [ ] Pas de fork pour autre chose que **CGI**
-- [ ] Site web entierement statique
-- [ ] On peut telecharger des fichiers
-- [ ] Metodes ```GET, POST, DELETE```
-- [ ] Stress Tests
-- [ ] Le serveur doit ecouter sur plusieurs ports
+- [x] Codes d’état de réponse **HTTP** exacts
+- [x] Pages d’erreur par défaut
+- [x] Pas de fork pour autre chose que **CGI**
+- [x] Site web entierement statique
+- [x] On peut telecharger des fichiers
+- [x] Metodes ```GET, POST, DELETE```
+- [x] Stress Tests
+- [x] Le serveur doit ecouter sur plusieurs ports
 - [ ] Sur MACOS, on peut utiliser ```fcntl()``` seulement : ```fcntl(fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC)```. Toute autre flag est interdit
 
 ### Mandatory
@@ -95,35 +95,31 @@ Read **RFC** and do some test with telnet and **NGINX**
 
 - [x] Choisir le port et l’host de chaque *serveur*
 - [x] Setup ```server_names``` ou pas
-- [ ] Premier serveur pour un ```host:port``` sera le serveur par défaut pour cet ```host:port```
-- [ ] Setup des pages d’erreur par défaut
+- [x] Premier serveur pour un ```host:port``` sera le serveur par défaut pour cet ```host:port```
+- [x] Setup des pages d’erreur par défaut
 - [x] Limiter la taille du body des clients
 - Setup des routes avec une ou plusieurs des règles/configurations suivantes (pas de regexp): 
 	- [x] Définir une liste de méthodes **HTTP** acceptées pour la route
-	- [ ] Définir une redirection **HTTP**
+	- [x] Définir une redirection **HTTP**
 	- [x] Définir un répertoire ou un fichier à partir duquel le fichier doit être recherché (par exemple si l’url /kapouet est rootée sur /tmp/www, l’url /kapouet/pouic/toto/pouet est /tmp/www/pouic/toto/pouet).
 	- [x] Activer ou désactiver le listing des répertoires
-	- [ ] Set un fichier par défaut comme réponse si la requête est un répertoire
-	- [ ] Exécuter **CGI** en fonction de certaines extensions de fichier
-	- [ ] Faites-le fonctionner avec les méthodes ```POST``` et ```GET```
+	- [x] Set un fichier par défaut comme réponse si la requête est un répertoire
+	- [x] Exécuter **CGI** en fonction de certaines extensions de fichier
+	- [x] Faites-le fonctionner avec les méthodes ```POST``` et ```GET```
 	- [x] Rendre la route capable d’accepter les fichiers téléchargés et configurer où cela doit être enregistré.
-	- [ ] Le **CGI** utilise directement le chemin complet comme ```PATH_INFO```
+	- [x] Le **CGI** utilise directement le chemin complet comme ```PATH_INFO```
 	- [ ] Pour les requêtes fragmentées, notre serveur doit la dé-fragmenter et le **CGI** attendra ```EOF``` comme fin du body
 	- [ ] Si aucun ```content_length``` n’est renvoyé par le **CGI**, ```EOF``` signifiera la fin des données renvoyées
-	- [ ] Webserv doit appeler le **CGI** avec le fichier demandé comme premier argument
-	- [ ] Le **CGI** doit être exécuté dans le bon répertoire pour l’accès au fichier de chemin relatif
-	- [ ] Notre serveur devrait fonctionner avec un seul **CGI** (php-CGI, Python, etc.)
-	- [ ] Fournir les fichiers de config et des fichiers de base  par défaut pour tester et démontrer que chaque fonctionnalité fonctionne
+	- [x] Webserv doit appeler le **CGI** avec le fichier demandé comme premier argument
+	- [x] Le **CGI** doit être exécuté dans le bon répertoire pour l’accès au fichier de chemin relatif
+	- [x] Notre serveur devrait fonctionner avec un seul **CGI** (php-CGI, Python, etc.)
+	- [x] Fournir les fichiers de config et des fichiers de base  par défaut pour tester et démontrer que chaque fonctionnalité fonctionne
 	- [ ] Comparer le comportement de notre programme avec celui de NGINX (verifier le fonctionement de ```server_name```)
-	- [ ] Le serveur ne mort jamais
+	- [x] Le serveur ne mort jamais
 
 ### Bonus
 
-- [ ] Support cookies et gestion de session
-- [ ] Gèrer plusieurs **CGI**
+- [x] Support cookies et gestion de session
+- [x] Gèrer plusieurs **CGI**
 
-
-## TO-DO
-
-- [ ] Pas mal de choses
 

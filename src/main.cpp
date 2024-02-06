@@ -26,20 +26,20 @@ int	main(int argc, char **argv)
 	}
 	try 
 	{
-		signal(SIGINT, signalHandler); // Clean exit, no leaks
-		signal(SIGQUIT, signalHandler); // Clean exit, no leaks
-		signal(SIGPIPE, signalHandler); // Ignore
+		signal(SIGINT, signalHandler);
+		signal(SIGQUIT, signalHandler);
+		signal(SIGPIPE, signalHandler);
 		
 		std::string filePath = (argc == 2? argv[1] : "configFiles/default.conf" );
 
 		FileParser infos(filePath);
 		infos.parseFile();
 		
-		std::vector<ServerInfo> Servers = infos.getAllServers(); //classified Servers
+		std::vector<ServerInfo> Servers = infos.getAllServers();
 		//printServersInfo(Servers);
 
-		Base    start(Servers);
-        start.start_servers();
+		Base start(Servers);
+		start.start_servers();
  	}
 	catch (std::exception &e)
 	{

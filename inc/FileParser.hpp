@@ -40,14 +40,25 @@ public:
 		private:
 			std::string _errorMsg;
 	};
-	class SignalExit : public std::exception {};
+
+	class SignalExit : public std::exception {
+			
+		public:
+			SignalExit(std::string signalMsg) throw();
+			~SignalExit() throw();
+
+			virtual const char *what() const throw();
+		
+		private:
+			std::string _signalMsg;
+	};
 
 private:
 	FileParser();
 	FileParser(FileParser const &copy);
 	FileParser	&operator=(FileParser const &other);
 
-	std::vector<ServerInfo>		_allServers; // classified info
+	std::vector<ServerInfo>		_allServers;
 	std::string const			_filePath;
 	std::vector<std::string>	_rawFile;
 	std::vector<std::string>	_rawServer;

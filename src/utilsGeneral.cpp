@@ -10,7 +10,7 @@ void	signalHandler(int signal) {
 	if (signal == SIGPIPE)
 		return;
 	else
-		throw FileParser::SignalExit();
+		throw FileParser::SignalExit("You exited webserv, see you soon!");
 }
 
 // ************************************************************************** //
