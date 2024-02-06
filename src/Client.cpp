@@ -236,7 +236,7 @@ bool    Client::getRes()
             }
             if (!_server->findCgiRessource(_request->getPath(), path))
             {
-                // std::cerr << "GET CGI : on ne trouve pas la ressource CGI" << std::endl;
+                //std::cerr << "GET CGI : on ne trouve pas la ressource CGI" << std::endl;
                 // code d'erreur 404 a mettre a jour
                 openErrorPage();
                 return (false);
@@ -279,7 +279,7 @@ bool    Client::getRes()
         }
         if (_fdRessource < 0)
         {
-            std::cerr << "ERROR GET Open : on ne peut pas ouvrir le fichier" << std::endl;
+            //std::cerr << "ERROR GET Open : on ne peut pas ouvrir le fichier" << std::endl;
             _request->setReturnStatus(500);
             openErrorPage();
         }
@@ -444,7 +444,7 @@ void    Client::routine(int nbytes)
             }
             else
             {
-                std::cout << "Request header received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << std::endl;
+                //std::cout << "Request header received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << std::endl;
                 this->findServer();
                 // for (size_t i = 0; i < _request->getCookies().size(); i++)
                 //     std::cout << "COOKIES fill header <" << _request->getCookies()[i] << ">";
@@ -454,7 +454,7 @@ void    Client::routine(int nbytes)
                 // la
                 // if (_request->getPath() == "/")
                 //     _request->setPath("/" + _servers[0].getRoot() + "/index.html");
-                if (this->_body_bytes > this->_request->getContentLength() || this->_body_bytes > this->_server->getMaxClientBody())
+                if ((this->_request->getContentLength() && this->_body_bytes > this->_request->getContentLength()) || this->_body_bytes > this->_server->getMaxClientBody())
                 {
                     std::cout << "C'est trop grand !" << std::endl;
                     this->_request->setReturnStatus(413); // voir avec Pablo
@@ -466,7 +466,7 @@ void    Client::routine(int nbytes)
                     this->findServer();
                     _client_status = WAITING_FOR_RES;
                     getactualTimestamp();
-                    std::cout << "Request received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << std::endl;
+                    std::cout << MAGENTA << "Request received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << "\"" << END_COLOR << std::endl;
                     this->_base->change_poll_event(this->_new_socket, pollout);
                     return ;
                 }
@@ -481,8 +481,7 @@ void    Client::routine(int nbytes)
                     this->_timestamp = get_micro_time_stamp();
                     if (this->_request->getChunkTransf())
                         receive_chunked_body_data((char *)_received.c_str(), nbytes);
-                    else
-                        _client_status = RECEIVING_REQ_BODY;
+                    _client_status = RECEIVING_REQ_BODY;
                 }
 
             }
@@ -495,8 +494,8 @@ void    Client::routine(int nbytes)
             this->_timestamp = get_micro_time_stamp();
             _request->fillBody(_received); // + faire des verifs et en fonction mettre a jour la variable de routine
             _client_status = WAITING_FOR_RES;
-            getactualTimestamp();
-            std::cout << "Request body received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << std::endl;
+            //getactualTimestamp();
+            //std::cout << RED << "Request body received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << END_COLOR << std::endl;
             this->_base->change_poll_event(this->_new_socket, pollout);
             return ;
         }
@@ -676,7 +675,7 @@ void    Client::receive_header_data(char *buffer, int nbytes){
           
             this->_client_status = RECEIVED_REQ_HEADER;
             this->_body_bytes += _received.size();
-                        this->routine(nbytes);
+            this->routine(nbytes);
         }
         else
         {
@@ -735,7 +734,7 @@ void    Client::receive_chunked_body_data(char *buffer, int nbytes){
             }
             else if (chunk_vec[i].size() != chunk_size && i == (chunk_vec.size() - 1))
             {
-                if (nbytes == 1024)
+                if (nbytes == BUFFER_SIZE)
                     return ;
                 else
                 {
@@ -753,6 +752,7 @@ void    Client::receive_chunked_body_data(char *buffer, int nbytes){
         this->_first_chunk = true;
         this->_client_status = REQ_RECEIVED;
         _chunk_pool.clear();
+        this->routine(nbytes);
     }
     return ;
 }
@@ -769,6 +769,8 @@ void    Client::receive_body_data(char *buffer, int nbytes){
         //this->_base->change_poll_event(this->_new_socket, pollout);
         return ;
     }
+    if (this->_body_bytes > this->_server->getMaxClientBody())
+        this->_request->setReturnStatus(413);
     if (this->_request->getContentLength() > 0)
     {
         if (this->_body_bytes == this->_request->getContentLength())
@@ -778,11 +780,11 @@ void    Client::receive_body_data(char *buffer, int nbytes){
             //this->_base->change_poll_event(this->_new_socket, pollout);
             return ;
         }
-        else if (this->_body_bytes > this->_request->getContentLength() || this->_body_bytes > this->_server->getMaxClientBody())
+        else if (this->_body_bytes > this->_request->getContentLength())
         {
             std::cout << "C'est trop grand !" << std::endl;
             this->_request->setReturnStatus(413); // voir avec Pablo
-            this->_client_status = REQ_RECEIVED;
+            //this->_client_status = REQ_RECEIVED;
             this->routine(nbytes);
             return ;
         }
@@ -849,19 +851,21 @@ bool    Client::send_data(void)
         if (!send_partial(this->_new_socket))
         {
             getactualTimestamp();
-            std::cout << "Only " << _bytes_sent << " bytes have been sent because of error" << std::endl;
+            if (_bytes_sent < _bytes_to_send)
+                std::cout << "Only " << _bytes_sent << " bytes out of " << _bytes_to_send << " have been sent to Client : " << this->_new_socket << " because of error. Connexion removed." << std::endl;
+            std::cout << RED << errno << END_COLOR << std::endl;
             return false;
         }
     }
     else if (this->_client_status == RES_SENT)
     {
         getactualTimestamp();
-        std::cout << "Response sent to client n : " << this->_new_socket << ", Status : \"" << this->_request->getReturnStatus() << " \"" << std::endl;
+        std::cout << MAGENTA << "Response sent to client n : " << this->_new_socket << ", Status : \"" << this->_request->getReturnStatus() << "\"" << END_COLOR << std::endl;
         this->_client_status = WANT_TO_RECEIVE_REQ;
         if (!this->_request->getKeepAlive())
         {
             getactualTimestamp();
-            std::cout << "Connexion with Client : " << this->_new_socket << "has been closed" << std::endl;
+            std::cout << MAGENTA << "Connexion with Client : " << this->_new_socket << " has been closed" << END_COLOR << std::endl;
             return false;
         }
         else 

@@ -13,7 +13,7 @@ Check le status code et le retour a chaque fois
 
 - Unknow method (HEAD / PUT)
 
-- GET		CGI
+- 		CGI
 - POST		CGI
 
 - Directory

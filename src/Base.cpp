@@ -271,12 +271,12 @@ bool    Base::set_servers_sockets(void){
             if (!_servers[i].setListenSocket(_servers[i].getListen()))
                 return false;
             add_to_poll_in(_servers[i].getSocket());
-            std::cout << "Server named : " << _servers[i].getServerName() << " listening on port " << _servers[i].getListen() << " and socket n " << _servers[i].getSocket() << std::endl;
+            std::cout << BLUE << "Server named : " << _servers[i].getServerName() << " listening on port " << _servers[i].getListen() << " and socket n " << _servers[i].getSocket() << END_COLOR << std::endl << std::endl;
         }
         else
         {
             assign_socket_same_port(_servers[i], get_first_server(_servers[i]));
-            std::cout << "Server named : " << _servers[i].getServerName() << " listening on port " << _servers[i].getListen() << " and socket n " << _servers[i].getSocket() << std::endl;
+            std::cout << BLUE << "Server named : " << _servers[i].getServerName() << " listening on port " << _servers[i].getListen() << " and socket n " << _servers[i].getSocket() << END_COLOR << std::endl << std::endl;
         }
     }
     return true;
@@ -297,10 +297,9 @@ void    Base::handle_new_connection(int serv_sock)
         std::cout << "Error accepting connection" << std::endl; //See with Ana for exception
     else
     {
-        std::cout << isSocketNonBlocking(new_fd) << std::endl;
         this->add_to_poll_in(new_fd);
         getactualTimestamp();
-        std::cout << "New connection from " << inet_ntop(remoteaddr.ss_family, get_in_addr((struct sockaddr*)&remoteaddr), remoteIP, INET6_ADDRSTRLEN) << " on socket n " << new_fd << std::endl; 
+        std::cout << YELLOW << "New connection from " << inet_ntop(remoteaddr.ss_family, get_in_addr((struct sockaddr*)&remoteaddr), remoteIP, INET6_ADDRSTRLEN) << " on socket n " << new_fd << END_COLOR << std::endl; 
         this->add_to_clients(new_fd, (struct sockaddr_in*)this->get_in_sockaddr((struct sockaddr*)&remoteaddr), this->_servers, serv_sock); //Add the adress to clients and maybe see the same for server but i think ana did it
         //std::cout << get_cli_from_sock(new_fd) << std::endl;
     }
