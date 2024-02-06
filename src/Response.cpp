@@ -183,7 +183,6 @@ void    Response::setMimeType(std::string path, Base *_base){
 //	LA GET-SET
 // ************************************************************************** //
 
-// void    Response::setReturnStatus(int returnStatus) {_returnStatus = returnStatus;}
 void    Response::setContent(std::string content) {_content = content;}
 void    Response::setContentType(std::string contentType) {_contentType = contentType;}
 void    Response::setContentLength(int contentLength) {_contentLength = contentLength;}
@@ -204,7 +203,6 @@ int             Response::getCgiFd(void) const {return (_cgiFd);}
 std::string     Response::getCgiOutput(void) const {return (_cgiOutput);}
 long            Response::getCgiBytesWritten(void) const {return (_cgiBytesWritten);}
 int             Response::getCgiFdRessource(void) const {return (_cgiFdRessource);}
-// int             Response::getReturnStatus() const {return (_returnStatus);}
 std::string     Response::getContent() const {return (_content);}
 int             Response::getContentLength() const {return (_contentLength);}
 std::string     Response::getContentType() const {return (_contentType);}

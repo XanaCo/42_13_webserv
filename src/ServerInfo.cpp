@@ -567,6 +567,10 @@ int ServerInfo::findRessource(std::string path, std::string& newPath, int method
 			{
 				return (3);
 			}
+			if (it->getLReturn().second != "/")
+			{
+				return (4);
+			}
 			// ajouter le retour 405 puis return 2
             //newPath = _Root + getNameFile(path);
             if (it->getLAutoindex() && getNameFileS(path, *it) == "")

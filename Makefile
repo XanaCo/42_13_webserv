@@ -63,7 +63,7 @@ ${BIN_PATH}%.o: ${SRC_PATH}%.cpp
 
 ${NAME} : ${OBJ}
 	@ ${CPP} -o ${NAME} -g ${FLAGS} ${EXTRAF} ${OBJ}
-	# @ clear
+	@ clear
 	@ toilet -f pagga.tlf --gay "Enjoy ${NAME} !"
 
 ${DB} : ${OBJ}

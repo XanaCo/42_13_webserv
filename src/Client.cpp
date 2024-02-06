@@ -124,7 +124,10 @@ void    Client::openErrorPage()
     {
         _response->setProtocol("protocol: HTTP/1.1 301");
         _response->setContentType("");          // peut etre pas
-        _response->setLocation("Location: " + _request->getPath());
+        std::cout << _request->getPath() << std::endl;
+        // recup la bonne location
+        // 
+        _response->setLocation("Location: " + _request->getPath().substr(1, _request->getPath().size()) +"\n");
         _response->setContent("");
         _client_status = RES_READY_TO_BE_SENT;  // peut etre pas / ouvrir une fichier peut etre
     }
@@ -168,12 +171,14 @@ void    Client::findServer()
                 _server = &(*i);
         }
     }
-    if (_request->getPath().length() > 4 && _request->getPath().substr(0, 4) == "http" || \
-    _request->getPath().length() > 4 && _request->getPath().substr(0, 4) == "/www")
-    {
-        _request->setReturnStatus(301);
-        openErrorPage();
-    }
+    size_t size = _request->getPath().length();
+    // if (size > 4 && _request->getPath().substr(0, 5) == "/http" || \
+    // _request->getPath().length() > 4 && _request->getPath().substr(0, 4) == "/www")
+    // {
+    //     _request->setPath(_request->getPath().substr(1, size));
+    //     _request->setReturnStatus(301);
+    //     openErrorPage();
+    // }
     _server = &_base->get_serv_from_sock(_serv_sock);
 }
 
@@ -225,6 +230,10 @@ bool    Client::getRes()
         {
             _response->setContentType("Content-Type: text/html\n");
             openErrorPage();
+            if (_request->getReturnStatus() == 301)
+            {
+                return (true);
+            }
         }
         else if (_request->getPath().find("/CGI/scriptCGI/") != std::string::npos)
         {
@@ -271,6 +280,11 @@ bool    Client::getRes()
             {
                 _request->setReturnStatus(405);
                 openErrorPage();
+            }
+            else if (returnFindRes & 4)
+            {
+                _request->setReturnStatus(301);
+                _request->setPath("https://www.wikipedia.org/");
             }
             else
             {
@@ -803,12 +817,13 @@ std::string Client::make_temp_header(void)
         std::stringstream con2;
         con2 << _request->getReturnStatus();
         to_send += " " + con2.str() + "\n";
-        if (_response->getContentType() != "")
-            to_send += _response->getContentType();
+        // if (_response->getLocation() != "")
+        to_send += _response->getLocation();
+        // if (_response->getContentType() != "")
+        to_send += _response->getContentType();
         if (!_response->getCookies().empty())
         {
             to_send += _response->getCookies();
-            // std::cout << "COOKIES : to send : <" << _response->getCookies() << ">\n";
         }
         if (_response->getContent() != "")
         {
