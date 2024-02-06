@@ -186,6 +186,7 @@ void getactualTimestamp(void){
 	std::time_t actualTime = std::time(0);
 	std::tm *localTime = std::localtime(&actualTime);
 
+	std::cout << localTime->tm_mday << "/" << (localTime->tm_mon + 1) << "/" << (1900 + localTime->tm_year) << "  ";
 	std::cout << localTime->tm_hour << ":" << localTime->tm_min << ":" << localTime->tm_sec << " ";
 	return ;
 }

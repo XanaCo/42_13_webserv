@@ -19,94 +19,77 @@
 		<a href="/testFiles/fileFolder/" title="Telecharger"><span class="h2">DOWNLOAD</span></a>
 	</section>
 
+	
 	<section id="uploadSection">
 		<h1>Upload a file</h1>
-		<form id="uploadForm" enctype="text/plain">
-			<h2>
-				<label for="fileInput">I want to upload </label>
-				<input type="file" id="fileInput" name="fileInput" accept=".png, .jpeg, .jpg, .pdf, .mp4">
-			</h2>
-			<button type="button" onclick="uploadFile()">UPLOAD</button>
-		</form>
+		<h2>
+		<input type="file" id="fileInput" accept=".png, .jpeg, .jpg, .pdf, .mp4">
+		</h2>
+		<button onclick="uploadFile()">Upload</button>
 	</section>
 
-	<section id="deleteSection">	
- 		<h1>Delete a file</h1>
-		<form id="deleteForm" enctype="multipart/form-data">
-			<h2>
-				<label for="deleteInput">I want to delete </label>
-				<input type="text" id="deleteInput" name="deleteInput" accept=".png, .jpeg, .jpg, .pdf, .mp4">
-			</h2>
-			<button type="button" onclick="deleteFile()">DELETE</button>
-		</form>
+	<section id="deleteSection">
+		<h1>Delete a file</h1>
+		<h2>
+			<input type="text" id="deleteInput" placeholder="Enter file ID or name">
+		</h2>
+		<button onclick="deleteFile()">Delete</button>
 	</section>
 	
+
 	<footer>
 		<p>© 2024 Le crabe, la pieuvre, le guepard. Tous droits réservés.</p>
 	</footer>
 		
 	<script>
+		
 		function uploadFile() {
-			var fileInput = document.getElementById('fileInput');
-			var file = fileInput.files[0];
-
-			if (file) {
-				var formData = new FormData();
-				formData.append('file', file);
-
-				var xhr = new XMLHttpRequest();
-				xhr.open('POST', '/testFiles/fileFolder/' + file.name, true);
-				xhr.onload = function () {
-					if (xhr.status === 200)
-					{
-						// Le fichier a été correctement téléchargé
-						console.log('Fichier téléchargé avec succès.');
-					}
-					else
-					{
-						// Une erreur s'est produite lors du téléchargement du fichier
-						console.error('Erreur lors du téléchargement du fichier.');
-					}
-				};
-
-				xhr.send(formData);
-			}
-			else
-			{
-				console.error('Veuillez sélectionner un fichier.');
-			}
+		const fileInput = document.getElementById('fileInput');
+		const file = fileInput.files[0];
+		if (file) {
+			fetch('/testFiles/fileFolder/' + file.name, {
+				method: 'POST',
+				headers: {
+					'Content-Type': file.type || 'application/octet-stream'
+				},
+				body: file
+			})
+			.then(response => response.text())
+			.then(result => {
+				console.log('Success:', result);
+			})
+			.catch(error => {
+				console.error('Error:', error);
+			});
 		}
+	}
 	
-		function deleteFile() {
-				var fileInput2 = document.getElementById('deleteInput');
-				var file2 = fileInput2.files[0];
-	
-				if (file2) {
-					var formData2 = new FormData();
-					formData2.append('file', file2);
-	
-					var xhr = new XMLHttpRequest();
-					xhr.open('DELETE', '/testFiles/fileFolder/' + file2.name, true);
-					xhr.onload = function () {
-						if (xhr.status === 200)
-						{
-							// Le fichier a été correctement téléchargé
-							console.log('Fichier téléchargé avec succès.');
-						}
-						else
-						{
-							// Une erreur s'est produite lors du téléchargement du fichier
-							console.error('Erreur lors du téléchargement du fichier.');
-						}
-					};
-	
-					xhr.send(formData2);
-				}
-				else
-				{
-					console.error('Veuillez sélectionner un fichier.');
-				}
+	function deleteFile() {
+    const fileIdInput = document.getElementById('deleteInput');
+    const fileId = fileIdInput.value;
+    if (fileId) {
+        fetch('/testFiles/fileFolder/' + fileId, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if(response.ok) {
+                return response.text();
 			}
+            throw new Error('Failed to delete the file');
+        })
+        .then(result => {
+            console.log('Success:', result);
+            alert('File deleted successfully');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error deleting file: ' + error.message);
+        });
+	
+    } else {
+        alert('Please enter a file ID or name to delete.');
+    }
+}	
 	</script>
 
 </body>
