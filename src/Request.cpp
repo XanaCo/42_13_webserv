@@ -139,7 +139,7 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
     std::vector<std::string> lines = splitString(header, '\n');	// voir si on doit pas creer notre propre split
     int size = lines.size();
 	int	length = lines[0].size();
-    if (length > 70)
+    if (length > 140)
     {
         _returnStatus = 431;
         return (false);
