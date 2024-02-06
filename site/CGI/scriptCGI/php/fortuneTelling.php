@@ -33,7 +33,8 @@ function generateFortune($question) {
 $fortune = generateFortune($question);
 
 // Write the result to an external file
-$fileName = $wizardID.'_destiny';
+$directory = 'site/CGI/cookies/';
+$fileName = $directory.$wizardID.'_destiny';
 file_put_contents($fileName, $fortune);
 
 // Print the CGI header
