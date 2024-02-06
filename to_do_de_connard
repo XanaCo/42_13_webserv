@@ -26,13 +26,11 @@ Check le status code et le retour a chaque fois
 - GET		index par defaut
 - Chunk encoding request
 
-- COOKIES and Session (ana)
-	print protocol and content type in script a enlever?
-	enregistrer les cookies dans un dossier dedie?
 
 - METHOD TESTING:
 	Si pas de fichier testFiles/fileFolder/test, GET nous amene vers le dossier testFiles/fileFolder
 	Unknown or not allowed method?
+	Si pas de corps de requete
 
 - FILES
 	Download Page html get directory testfiles/filefolder
