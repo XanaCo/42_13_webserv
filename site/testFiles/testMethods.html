@@ -16,7 +16,6 @@
 
 	<div id ="TestMethods">
 
-		
 		<form id="postForm">
 			<h3>
 				<label for="corpsRequete">Corps de la requête POST :</label>
@@ -28,28 +27,6 @@
 				</button>
 			</h2>
 		</form>
-		
-		<script>
-			function sendPostRequest() {
-				var xhr = new XMLHttpRequest();
-				var url = "/testFiles/fileFolder/test";
-				var corpsRequete = document.getElementById("corpsRequete").value;
-				
-				xhr.open("POST", url, true);
-				xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-				xhr.onreadystatechange = function () {
-					if (xhr.readyState == 4 && xhr.status == 200) {
-						console.log(xhr.responseText);
-					}
-				};
-				
-				xhr.send(corpsRequete);
-			}
-		</script>
-	
-		<!-- <form action="/testFiles/fileFolder/test" method="get">
-				<a href="/testFiles/fileFolder/test" title="GET"><span class="h2">GET</span></a>
-		</form> -->
 
 		<form id="deleteForm">
 			<h2>
@@ -59,6 +36,11 @@
 			</h2>
 		</form>
 	
+<<<<<<< HEAD
+		<!-- <form action="/testFiles/fileFolder/test" method="get">
+			<a href="/nothing" title="unknown_method"><span class="h2">UNKNOWN</span></a>
+		</form> -->
+=======
 		<script>
 			function sendDeleteRequest() {
 				var xhr = new XMLHttpRequest();
@@ -67,7 +49,6 @@
 				xhr.open("DELETE", url, true);
 				xhr.onreadystatechange = function () {
 					if (xhr.readyState == 4 && xhr.status == 200) {
-						// Gestion de la réponse si nécessaire
 						console.log(xhr.responseText);
 					}
 				};
@@ -76,13 +57,48 @@
 			}
 		</script>
 
-		<!-- <form action="/testFiles/fileFolder/test" method="get">
-			<a href="/nothing" title="GET"><span class="h2">UNKNOWN</span></a>
-		</form> -->
+		<form action="/testFiles/fileFolder/test" method="put">
+			<input type="submit" value="Unknow method">
+		</form>
+>>>>>>> refs/remotes/origin/vstable
 
-    <footer>
-        <p>© 2024 Le crabe, la pieuvre, le guepard. Tous droits réservés.</p>
-    </footer>
+	</div>
+
+	<footer>
+		<p>© 2024 Le crabe, la pieuvre, le guepard. Tous droits réservés.</p>
+	</footer>
+
+	<script>
+		function sendPostRequest() {
+			var xhr = new XMLHttpRequest();
+			var url = "/testFiles/fileFolder/test";
+			var corpsRequete = document.getElementById("corpsRequete").value;
+			
+			xhr.open("POST", url, true);
+			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState == 4 && xhr.status == 200) {
+					console.log(xhr.responseText);
+				}
+			};
+			
+			xhr.send(corpsRequete);
+		}
+
+		function sendDeleteRequest() {
+			var xhr = new XMLHttpRequest();
+			var url = "/testFiles/fileFolder/test";
+
+			xhr.open("DELETE", url, true);
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState == 4 && xhr.status == 200) {
+					console.log(xhr.responseText);
+				}
+			};
+	
+			xhr.send();
+		}
+	</script>
 
 </body>
 </html>

@@ -553,7 +553,7 @@ bool	ServerInfo::findCgiRessource(std::string path, std::string& newPath)
 	return (false); // voir pour afficher une page d'erreur html
 }
 
-int ServerInfo::findRessource(std::string path, std::string& newPath) const
+int ServerInfo::findRessource(std::string path, std::string& newPath, int method) const
 {
     std::string nameDir = getNameDir(path);
 
@@ -563,6 +563,10 @@ int ServerInfo::findRessource(std::string path, std::string& newPath) const
     {
         if (nameDir == it->getLPathName())
         {
+			if (!(it->getLAllowed() & method))
+			{
+				return (3);
+			}
 			// ajouter le retour 405 puis return 2
             //newPath = _Root + getNameFile(path);
             if (it->getLAutoindex() && getNameFileS(path, *it) == "")
@@ -584,7 +588,7 @@ int ServerInfo::findRessource(std::string path, std::string& newPath) const
     return (0);
 }
 
-bool ServerInfo::findRessource_post(std::string path, std::string& newPath) const
+int ServerInfo::findRessource_post(std::string path, std::string& newPath, int method) const
 {
     std::string nameDir = getNameDir(path);
 
@@ -594,15 +598,19 @@ bool ServerInfo::findRessource_post(std::string path, std::string& newPath) cons
     {
         if (nameDir == it->getLPathName())
         {
+			if (!(it->getLAllowed() & method))
+			{
+				return (3);
+			}
             newPath = _Root + nameDir + "/" + getNameFile(path); // Modifie par Alban, a remettre
-            return (true);
+            return (1);
         }
     }
 
-    return (false);
+    return (0);
 }
 
-bool ServerInfo::findRessource_delete(std::string path, std::string& newPath) const
+int ServerInfo::findRessource_delete(std::string path, std::string& newPath, int method) const
 {
     std::string nameDir = getNameDir(path);
 
@@ -612,14 +620,18 @@ bool ServerInfo::findRessource_delete(std::string path, std::string& newPath) co
     {
         if (nameDir == it->getLPathName())
         {
+			if (!(it->getLAllowed() & method))
+			{
+				return (3);
+			}
             newPath = _Root + nameDir + "/" + getNameFile(path); // Modifie par Alban, a remettre
             if (!checkFileExists(newPath))
-                return false;
-            return (true);
+                return (0);
+            return (1);
         }
     }
 
-    return (false);
+    return (0);
 }
 
 // ************************************************************************** //
