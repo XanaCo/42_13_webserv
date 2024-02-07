@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   CGI.hpp                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ancolmen <ancolmen@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/07 11:27:53 by ancolmen          #+#    #+#             */
+/*   Updated: 2024/02/07 12:17:00 by ancolmen         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #pragma once
 
@@ -14,41 +25,38 @@ class Serverinfo;
 
 class Cgi {
 
-public:
-	Cgi(ServerInfo &server, Request &req, Response &resp);
-	~Cgi();
+	public:
+		Cgi(ServerInfo &server, Request &req, Response &resp);
+		~Cgi();
 
-	int setMethod(int method);
-	int setEnvironment(ServerInfo *server, Request *req);
+		int									setMethod(int method);
+		int									setEnvironment(ServerInfo *server, Request *req);
 
-	int getPipeOut();
-	int getPipeIn();
-	ServerInfo *getCGIServer() const;
-	Location *getCGILoc() const;
-	Request *getCGIRequest();
-	Response *getCGIResponse();
-	std::map<std::string, std::string> &getenvpMap();
-	std::string &getCGIMethod();
-	char **getCGIenvpToExec() const;
-	int getTypeScript() const;
+		int									getPipeOut();
+		int									getPipeIn();
 
-	bool executeScript();
+		ServerInfo							*getCGIServer() const;
+		Location							*getCGILoc() const;
+		Request								*getCGIRequest();
+		Response							*getCGIResponse();
+		std::map<std::string, std::string>	&getenvpMap();
+		std::string							&getCGIMethod();
+		char								**getCGIenvpToExec() const;
+		int									getTypeScript() const;
 
-private:
+		bool								executeScript();
 
-	int _pipeIn[2];
-	int _pipeOut[2];
-	
-	ServerInfo *_server;
-	Location *_cgiLoc;
-	Request *_request;
-	Response *_response;
-
-	std::map<std::string, std::string> _envpMap;
-	std::string _method;
-	
-	char **_envpToExec;
-	int _typeScript;
+	private:
+		int									_pipeIn[2];
+		int									_pipeOut[2];
+		ServerInfo							*_server;
+		Location							*_cgiLoc;
+		Request								*_request;
+		Response							*_response;
+		std::map<std::string, std::string>	_envpMap;
+		std::string							_method;
+		char								**_envpToExec;
+		int									_typeScript;
 
 };
 

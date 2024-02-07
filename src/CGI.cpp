@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   CGI.cpp                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ancolmen <ancolmen@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/07 11:24:15 by ancolmen          #+#    #+#             */
+/*   Updated: 2024/02/07 11:26:54 by ancolmen         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../inc/CGI.hpp"
 
@@ -20,9 +31,6 @@ Cgi::Cgi(ServerInfo &server, Request &req, Response &resp) {
 }
 
 Cgi::~Cgi() {
-
-	// if (this->_envpToExec)
-	// 	freeCharTab(this->_envpToExec);
 
 	if (PRINT)
 		std::cout << CGI << "🗑️  destructor called" << std::endl;

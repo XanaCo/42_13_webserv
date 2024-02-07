@@ -1,6 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Client.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ancolmen <ancolmen@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/07 11:42:42 by ancolmen          #+#    #+#             */
+/*   Updated: 2024/02/07 11:52:53 by ancolmen         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/Client.hpp"
 #include "../inc/Base.hpp"
-
 
 // ************************************************************************** //
 //	CONSTRUCTOR / DESTRUCTOR
@@ -13,11 +24,12 @@ Client::Client(void)
     _request = new Request;
     std::cout << "adresse de ma Request :" << _request << std::endl;
     _response = new Response;
-    return  ;
+    return ;
 }
 
 Client::Client(int socket, struct sockaddr_in *r_address, std::vector<ServerInfo> servers, Base  *base, int serv_sock){
-    if (PRINT)
+    
+	if (PRINT)
         std::cout << CLIENT << "🐥 constructor called" << std::endl;
     _new_socket = socket;
     _address = *r_address;
@@ -39,20 +51,22 @@ Client::Client(int socket, struct sockaddr_in *r_address, std::vector<ServerInfo
             _timeout = DEFAULT_TIMEOUT;
     _chunk_index_type = CHUNK_SIZE;
     _timestamp = get_micro_time_stamp();
-    return  ;
+    return ;
 }
 
 Client::Client(const Client & rhs){
+
     if (PRINT)
         std::cout << CLIENT << "constructor called" << std::endl;
     *this = rhs;
-    return  ;
+    return ;
 }
 
 Client::~Client(void){
 
-    delete _request;
-    delete _response;
+	delete _request;
+	delete _response;
+	
 	if (PRINT)
 		std::cout << CLIENT << "🗑️  destructor called" << std::endl;
 
@@ -64,6 +78,7 @@ Client::~Client(void){
 // ************************************************************************** //
 
 Client &    Client::operator=(const Client & rhs){
+
     if (this != &rhs)
     {
         this->_new_socket = rhs._new_socket;
@@ -85,6 +100,18 @@ std::ostream &  operator<<(std::ostream & o, Client const & rhs){
 //  v METHODS PABLO v
 // ************************************************************************** //
 
+std::vector<bool (Client::*)()>& Client::methodFunctions()
+{
+     static std::vector<bool (Client::*)()> methods;
+    if (methods.empty())
+    {
+        methods.push_back(&Client::getRes);
+        methods.push_back(&Client::postRes);
+        methods.push_back(&Client::deleteRes);
+    }
+    return methods;
+}
+
 bool    Client::parseCgiExit()
 {
     std::vector<std::string>    lines = splitString(_response->getContent(), '\n');
@@ -96,8 +123,6 @@ bool    Client::parseCgiExit()
 	
         if (length >= 13 && lines[i].substr(0, 13) == "content-type:")
             _response->setContentType(lines[i]+"\n");
-        // else if (length >= 12 && lines[i].substr(0, 12) == "status-code:")
-        //     _response->setContentType(lines[i]);
         else if (length >= 8 && lines[i].substr(0, 8) == "protocol:")
             _response->setProtocol(lines[i]);
         else if (length >= 6 && lines[i].substr(0, 6) == "<html>")
@@ -122,13 +147,11 @@ void	Client::openErrorPage()
     if (status == R_MOVED_PERMANENTLY)
     {
         _response->setProtocol("protocol: HTTP/1.1 301");
-        _response->setContentType("");          // peut etre pas
+        _response->setContentType("");
         std::cout << _request->getPath() << std::endl;
-        // recup la bonne location
-        // 
         _response->setLocation("Location: " + _request->getPath() +"\n");
         _response->setContent("");
-        _client_status = RES_READY_TO_BE_SENT;  // peut etre pas / ouvrir une fichier peut etre
+        _client_status = RES_READY_TO_BE_SENT;
     }
 	else
 	{
@@ -161,8 +184,6 @@ bool    Client::checkHttpVersion()
 
 void    Client::findServer()
 {
-    // if (_servers.size() == 1)
-    //     return (&(_servers[0]));
     for (std::vector<ServerInfo>::iterator i = _servers.begin(); i != _servers.end(); i++)
     {
         if (i->getServerName() == _request->getHost())
@@ -171,20 +192,11 @@ void    Client::findServer()
                 _server = &(*i);
         }
     }
-    // size_t size = _request->getPath().length();
-    // if (size > 4 && _request->getPath().substr(0, 5) == "/http" || \
-    // _request->getPath().length() > 4 && _request->getPath().substr(0, 4) == "/www")
-    // {
-    //     _request->setPath(_request->getPath().substr(1, size));
-    //     _request->setReturnStatus(301);
-    //     openErrorPage();
-    // }
     _server = &_base->get_serv_from_sock(_serv_sock);
 }
 
 std::string     Client::generate_directory_listing(std::string& dir_path){
 
-    //std::cout << "Je fais l 'auto index'" << std::endl;
     DIR *dir;
     struct dirent *ent;
     std::string content = "<html><head><title>Directory Listing</title>";
@@ -216,7 +228,6 @@ std::string     Client::generate_directory_listing(std::string& dir_path){
     return content;
 }
 
-
 bool    Client::getRes()
 {
     std::string path;
@@ -239,14 +250,10 @@ bool    Client::getRes()
         {
             if (!(_request->getMethod() & GET) && !(_request->getMethod() & POST))
             {
-                // std::cerr << "GET CGI : methode interdite avec les CGI" << std::endl;
-                // code d'erreur 400 a mettre a jour
                 openErrorPage();
             }
             if (!_server->findCgiRessource(_request->getPath(), path))
             {
-                //std::cerr << "GET CGI : on ne trouve pas la ressource CGI" << std::endl;
-                // code d'erreur 404 a mettre a jour
                 openErrorPage();
                 return (false);
             }
@@ -285,8 +292,6 @@ bool    Client::getRes()
             {
                 _request->setReturnStatus(301);
                 _request->setPath("Location: " +_server->getOneLocation(getNameDir(_request->getPath()))->getLReturn().second + "\n");
-                // _request->setPath("Location: https://www.wikipedia.org/\n");
-                // _statusCode = ;
                 return (true);
             }
             else
@@ -296,7 +301,6 @@ bool    Client::getRes()
         }
         if (_fdRessource < 0)
         {
-            //std::cerr << "ERROR GET Open : on ne peut pas ouvrir le fichier" << std::endl;
             _request->setReturnStatus(500);
             openErrorPage();
         }
@@ -329,14 +333,11 @@ bool    Client::postRes()
                 _request->setReturnStatus(404);
                 this->openErrorPage();
             }
-            //exec cgi
             _request->setPath(path);
             Cgi cgi(*_server, *_request, *_response);
             if (!cgi.executeScript())
             {
                 closeFile(&_fdRessource);
-                // _client_status = WAITING_FOR_RES;
-                // _request->setReturnStatus(500);
                 return false;
             }
             _fdRessource = _response->getCgiFdRessource() ;
@@ -357,7 +358,7 @@ bool    Client::postRes()
             _fdRessource = open(path.c_str(), O_WRONLY | O_CREAT, 0644);
             if (_fdRessource > 2)
             {
-                _response->postRessource(_fdRessource, _request->getBody());   // penser a mettre a jour le status du retour
+                _response->postRessource(_fdRessource, _request->getBody());
                 closeFile(&_fdRessource);
                 return true;
             }
@@ -401,7 +402,6 @@ bool    Client::deleteRes()
         }
         else
         {
-            // resoudre le path
             int returnFindRes = _server->findRessource_delete(_request->getPath(), path, _request->getMethod());
             if (!returnFindRes)
             {
@@ -419,11 +419,6 @@ bool    Client::deleteRes()
                 _response->deleteRessource(path);
                 return true;
             }
-            // if (_fdRessource < 2)
-            // {
-            //     _request->setReturnStatus(500);
-            //     this->openErrorPage();
-            // }
         }
         if (_fdRessource < 2)
         {
@@ -454,7 +449,7 @@ void    Client::routine(int nbytes)
         case RECEIVED_REQ_HEADER:
         {
             _request->resetValues();
-            if (!_request->fillHeader(_header)) // + faire des verifs et en fonction mettre a jour la variable de routine
+            if (!_request->fillHeader(_header))
             {
                 this->_timestamp = get_micro_time_stamp();
                 if (_req_end)
@@ -463,26 +458,16 @@ void    Client::routine(int nbytes)
                     std::cout << "Request received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << std::endl;
                     this->_base->change_poll_event(this->_new_socket, pollout);
                 }
-                //getactualTimestamp();
-                // std::cout << "KO : Request header received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << std::endl;
                 this->findServer();
                 return ;
             }
             else
             {
-                //std::cout << "Request header received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << std::endl;
                 this->findServer();
-                // for (size_t i = 0; i < _request->getCookies().size(); i++)
-                //     std::cout << "COOKIES fill header <" << _request->getCookies()[i] << ">";
-                // std::cout << "\n";
                 _response->setCookies(formCookies(_request->getCookies()));
-                // std::cout << "COOKIES after form Cookies <" << _response->getCookies() << ">\n";
-                // la
-                // if (_request->getPath() == "/")
-                //     _request->setPath("/" + _servers[0].getRoot() + "/index.html");
                 if ((this->_request->getContentLength() && this->_body_bytes > this->_request->getContentLength()) || (this->_body_bytes > (int)this->_server->getMaxClientBody()))
                 {
-                    this->_request->setReturnStatus(413); // voir avec Pablo
+                    this->_request->setReturnStatus(413);
                     this->_req_end = true;
                 }
                 if (this->_req_end == true)
@@ -510,16 +495,14 @@ void    Client::routine(int nbytes)
                 }
 
             }
-            //this->findServer();
             if (_client_status != REQ_RECEIVED)
                 return ;
         }
         case REQ_RECEIVED:
         {
             this->_timestamp = get_micro_time_stamp();
-            _request->fillBody(_received); // + faire des verifs et en fonction mettre a jour la variable de routine
+            _request->fillBody(_received);
             _client_status = WAITING_FOR_RES;
-            //getactualTimestamp();
             std::cout << MAGENTA << "Request received from client n : " << this->_new_socket << ", Method : \"" << this->_request->display_method() << "\", Url : \"" << this->_request->getPath() << " \"" << END_COLOR << std::endl;
             this->_base->change_poll_event(this->_new_socket, pollout);
             return ;
@@ -528,10 +511,7 @@ void    Client::routine(int nbytes)
         {
             this->_timestamp = get_micro_time_stamp();
             if (this->executeMethod())
-            {
-
                 _client_status = RES_READY_TO_BE_SENT;
-            }
         }
     }
 }
@@ -572,30 +552,14 @@ std::string    Client::display_status(void) const{
     }
 }
 
-// Work in progress
-
-bool    Client::alloc_req_resp(void){ // A proteger et a delete si on satisfait a la requete et la reponse, revoir au niveau de la creation du client, les destructeurs sont appeles en sortant du scope, peut etre allouer les clients... i don t know
+bool    Client::alloc_req_resp(void){
 
     if (this->_request || this->_response)
         return false;
-    /*if (this->_request || this->_response)
-        delete this->_request;
-    if (this->_response)
-        delete this->_response;*/
     this->_request = new Request;
     this->_response = new Response;
     return true;
 }
-
-/*void    Client::set_serv_with_name(void){
-
-    for (size_t i = 0; i < _servers.size(); i++)
-    {
-        if (this->_request->getHost() == _servers[i].getServerName())
-            this->_server = &_servers[i];
-    }
-    return;
-}*/
 
 void    Client::reset_client(void){
 
@@ -615,8 +579,6 @@ void    Client::reset_client(void){
     return ;
 }
 
-
-
 bool    Client::receive_data(void){
 
     char   buffer[BUFFER_SIZE + 1];
@@ -632,20 +594,15 @@ bool    Client::receive_data(void){
     if (nbytes == 0)
     {
         getactualTimestamp();
-        std::cout << "Client " << this->get_socket() << " closed connection" << std::endl; // Handle a client closing
+        std::cout << "Client " << this->get_socket() << " closed connection" << std::endl;
         return false;
     }
     else if (nbytes < -1)
     {
         getactualTimestamp();
-        std::cout << "Client " << this->_new_socket << " encountered error while recv" << std::endl; // See for exception and hgetandling of recv error
+        std::cout << "Client " << this->_new_socket << " encountered error while recv" << std::endl;
         return false;
     }
-    /*else
-    {
-        _received += buffer;
-        //std::cout << _received << std::endl;
-    }*/
     else 
     {
         if (this->_client_status == WANT_TO_RECEIVE_REQ || this->_client_status == RECEIVING_REQ_HEADER)
@@ -657,7 +614,6 @@ bool    Client::receive_data(void){
     }
     return true;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 //                                                                  //  
@@ -693,8 +649,6 @@ void    Client::receive_header_data(char *buffer, int nbytes){
     {
         _header = curated_header(found);
         _header_bytes = found + 4;
-        //std::cout << "Header : "<< _header << std::endl;
-        //std::cout << std::endl << "_received still got : " << std::endl << _received << std::endl;
         if (this->_received.size() > 0)
         {
           
@@ -707,11 +661,9 @@ void    Client::receive_header_data(char *buffer, int nbytes){
             this->_client_status = RECEIVED_REQ_HEADER;
             this->_req_end = true;
             this->routine(nbytes);
-            //this->_base->change_poll_event(this->_new_socket, pollout);
         }
         return ;
     }
-//    std::cout << this->_received << std::endl;
     return ;
 }
 
@@ -793,7 +745,6 @@ void    Client::receive_body_data(char *buffer, int nbytes){
     {
         this->_client_status = REQ_RECEIVED;
         this->routine(nbytes);
-        //this->_base->change_poll_event(this->_new_socket, pollout);
         return ;
     }
     if (this->_body_bytes > (int)this->_server->getMaxClientBody())
@@ -804,13 +755,11 @@ void    Client::receive_body_data(char *buffer, int nbytes){
         {
             this->_client_status = REQ_RECEIVED;
             this->routine(nbytes);
-            //this->_base->change_poll_event(this->_new_socket, pollout);
             return ;
         }
         else if (this->_body_bytes > this->_request->getContentLength())
         {
-            this->_request->setReturnStatus(413); // voir avec Pablo
-            //this->_client_status = REQ_RECEIVED;
+            this->_request->setReturnStatus(413);
             this->routine(nbytes);
             return ;
         }
@@ -829,9 +778,7 @@ std::string Client::make_temp_header(void)
         std::stringstream con2;
         con2 << _request->getReturnStatus();
         to_send += " " + con2.str() + "\n";
-        // if (_response->getLocation() != "")
         to_send += _request->getPath();
-        // if (_response->getContentType() != "")
         to_send += _response->getContentType();
         if (!_response->getCookies().empty())
         {
@@ -847,28 +794,8 @@ std::string Client::make_temp_header(void)
         else
             to_send += "Content-Length: 0 \n\n";
         this->_client_status = SENDING_RES_HEADER;
-        // std::cout << to_send;
         return (to_send);
 }
-
-/*bool    Client::send_data(void)
-{
-    if (this->_client_status == WAITING_FOR_RES)
-        this->routine();
-    else
-    {
-        std::string to_send = make_temp_header();
-        int len = strlen(to_send.c_str());
-        if (!send_all(this->_new_socket, to_send.c_str(), &len))
-        {
-            std::cout << "Only " << len << " bytes have been sent because of error" << std::endl;
-            return false;
-        }
-        this->_base->change_poll_event(this->_new_socket, pollin);
-    }
-    return true;
-}*/
-
 
 bool    Client::send_data(void)
 {
@@ -908,7 +835,6 @@ bool    Client::send_partial(int socket){
     if (this->_client_status == RES_READY_TO_BE_SENT)
     {
         _to_send = make_temp_header();
-        // std::cout << "RESPONSE : header : " << _to_send << std::endl;
         _bytes_to_send = _to_send.size();
     }
     if (_bytes_to_send - _bytes_sent > BUFFER_SIZE)
@@ -932,7 +858,6 @@ bool    Client::send_partial(int socket){
         this->_client_status = RES_SENT;    
     return true;
 }
-
 
 bool    Client::send_all(int s, const char *buf, int *len){
 

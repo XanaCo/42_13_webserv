@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ancolmen <ancolmen@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/07 11:25:02 by ancolmen          #+#    #+#             */
+/*   Updated: 2024/02/07 11:27:11 by ancolmen         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 /*
 AUTHORISED FUNCTIONS
-All that respects C++ 98.
+All that respects C++98.
 execve, dup, dup2, pipe, strerror, gai_strerror,
 errno, dup, dup2, fork, socketpair htons, htonl,
 ntohs, ntohl, select, poll, epoll (epoll_create,
@@ -21,7 +33,7 @@ int	main(int argc, char **argv)
 {
 	if (argc > 2)
 	{
-		std::cerr << "Webserv Error : Too many arguments" << std::endl;
+		std::cerr << RED << "Webserv Error : Too many arguments" << END_COLOR << std::endl;
 		return (EXIT_FAILURE); 
 	}
 	try 
@@ -36,7 +48,6 @@ int	main(int argc, char **argv)
 		infos.parseFile();
 		
 		std::vector<ServerInfo> Servers = infos.getAllServers();
-		//printServersInfo(Servers);
 
 		Base start(Servers);
 		start.start_servers();

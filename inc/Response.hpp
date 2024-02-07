@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Response.hpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ancolmen <ancolmen@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/07 12:31:44 by ancolmen          #+#    #+#             */
+/*   Updated: 2024/02/07 12:45:25 by ancolmen         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #pragma once
 
@@ -8,91 +19,74 @@
 
 # define RESPONSE "\033[1;37mResponse\033[0m"
 
-// # define BODY_SIZE_LIMIT 40960 -> doublon avec un element du parsing
-
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 1024
 # endif
 
 class Response
 {
-    public:
+	public:
+		Response();
+		Response(const Response &obj);
+		~Response();
 
-        Response();
-        Response(const Response& obj);
-        ~Response();
+		Response	&operator=(const Response &obj);
 
-        Response    &operator=(const Response& obj);
+		void		resetValues();
 
-        // void    redirection(void);
-        void    resetValues(void);
+		int			readRessource(int fd);
+		void		deleteRessource(std::string path);
+		void		postRessource(int fd, std::string content);
 
-        // bool        readRessource(const std::string& path, std::string& content);
-        int        readRessource(int fd);
-        void        deleteRessource(std::string path);
-        // void        postRessource(const std::string path, std::string content);
-        void        postRessource(int fd, std::string content);
+		bool		craftAutoIndex(std::string path);
+		void		setMimeType(std::string path, Base *_base);
+		std::string	extract_extension(std::string path);
 
-        // bool        addBuffer(int fd);
-        // void        openFileToSend(std::string& file);
-        bool        craftAutoIndex(std::string path);
-        void        setMimeType(std::string path, Base * _base);
-        std::string    extract_extension(std::string path);
+		void		setContent(std::string content);
+		void		setPort(uint16_t port);
+		void		setContentType(std::string contentType);
+		void		setContentLength(int contentLength);
+		void		setCgiPid(pid_t cgiPid);
+		void		setCgiFd(int cgiFd);
+		void		setCgiOutput(std::string cgiOutput);
+		void		setCgiBytesWritten(long cgiBytesWritten);
+		void		setCgiFdRessource(int cgiFdRessource);
+		void		setStatusCode(std::string statusCode);
+		void		setProtocol(std::string protocol);
+		void		setLocation(std::string protocol);
+		void		setCookies(std::string cookies);
 
-        bool    cgiRead();
-        bool    cgiWrite();
+		pid_t		getCgiPid() const;
+		int			getCgiFd() const;
+		std::string	getCgiOutput() const;
+		long		getCgiBytesWritten() const;
+		int			getCgiFdRessource() const;
+		std::string	getContent() const;
+		uint16_t	getPort() const;
+		int			getContentLength() const;
+		std::string	getContentType() const;
+		std::string	getStatusCode() const;
+		std::string	getProtocol() const;
+		std::string	getLocation() const;
+		std::string	getCookies() const;
 
-        // void    setReturnStatus(int returnStatus);
-        void    setContent(std::string content);
-        void    setPort(uint16_t port);
-        void    setContentType(std::string contentType);
-        void    setContentLength(int contentLength);
-        void    setCgiPid(pid_t cgiPid);
-        void    setCgiFd(int cgiFd);
-        void    setCgiOutput(std::string cgiOutput);
-        void    setCgiBytesWritten(long cgiBytesWritten);
-        void    setCgiFdRessource(int cgiFdRessource);
-        void    setStatusCode(std::string statusCode);
-        void    setProtocol(std::string protocol);
-        void    setLocation(std::string protocol);
-        void    setCookies(std::string cookies);
+	private:
+		uint16_t	_port;
+		int			_contentLength;
+		pid_t		_cgiPid;
+		int			_cgiFd;
+		std::string	_cgiOutput;
+		long		_cgiBytesWritten;
+		int			_cgiFdRessource;
 
-
-
-        pid_t           getCgiPid(void) const;
-        int             getCgiFd(void) const;
-        std::string     getCgiOutput(void) const;
-        long            getCgiBytesWritten(void) const;
-        int             getCgiFdRessource(void) const;
-        // int             getReturnStatus() const;
-        std::string     getContent() const;
-        uint16_t        getPort() const;
-        int             getContentLength() const;
-        std::string     getContentType() const;
-        std::string     getStatusCode() const;
-        std::string     getProtocol() const;
-        std::string     getLocation() const;
-        std::string     getCookies() const;
-
-
-    private:
-
-        uint16_t    _port;
-        int         _contentLength;
-        // int         _returnStatus;  // ne sert a rien ?
-        pid_t       _cgiPid;
-        int         _cgiFd;
-        std::string _cgiOutput;
-        long        _cgiBytesWritten;
-        int         _cgiFdRessource;
-
-        std::string _statusCode;
-        std::string _protocol;
-        std::string _contentType;
-        std::string _content;
-        std::string _location;
-        std::string _cookies;
+		std::string	_statusCode;
+		std::string	_protocol;
+		std::string	_contentType;
+		std::string	_content;
+		std::string	_location;
+		std::string	_cookies;
 };
-std::ostream& operator<<(std::ostream& os, const Response& obj);
+
+std::ostream		&operator<<(std::ostream &os, const Response &obj);
 
 #endif

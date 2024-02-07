@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   webserv.hpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ancolmen <ancolmen@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/07 11:25:34 by ancolmen          #+#    #+#             */
+/*   Updated: 2024/02/07 12:42:47 by ancolmen         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 // ************************************************************************** //
 //						A WEBSERV TO RULE THEM ALL
@@ -25,11 +36,7 @@
 # include <algorithm>
 # include <climits>
 # include <utility>
-# include <ctime>		// clock() -> a supprimer avant de push
-
-// # include <stdio.h>
-// # include <stdlib.h>
-
+# include <ctime>
 # include <unistd.h>
 # include <fcntl.h>
 # include <string.h>
@@ -42,21 +49,18 @@
 # include <poll.h>
 # include <sys/socket.h>
 # include <sys/epoll.h>
-// # include <sys/event.h>
 # include <sys/wait.h>
 # include <sys/stat.h>
 # include <sys/signal.h>
 # include <sys/time.h>
-// # include <signal.h>
-
 
 // ************************************************************************** //
 //  MACROS
 // ************************************************************************** //
 
-# define GET		1
-# define POST		2
-# define DELETE		4
+# define GET 1
+# define POST 2
+# define DELETE 4
 
 // ************************************************************************** //
 //  CLASSES
@@ -71,21 +75,20 @@
 # include "Response.hpp"
 # include "CGI.hpp"
 
-
 // ************************************************************************** //
 //  COLORS & PRINT
 // ************************************************************************** //
 
-# define WHITE "\033[97;1m"
-# define YELLOW "\033[33;1m"
-# define BLUE "\033[34;1m"
-# define MAGENTA "\033[95;1m"
-# define RED "\033[31;1m"
-# define GREEN "\033[32;1m"
-# define END_COLOR "\033[0m"
+# define WHITE					"\033[97;1m"
+# define YELLOW					"\033[33;1m"
+# define BLUE					"\033[34;1m"
+# define MAGENTA				"\033[95;1m"
+# define RED					"\033[31;1m"
+# define GREEN					"\033[32;1m"
+# define END_COLOR				"\033[0m"
 
-# define PRINT false // changer a 1 pour voir les constructors/destructors des instances
-#define DIR_LIST    2000000000
+# define PRINT					false
+# define DIR_LIST				2000000000
 
 // ************************************************************************** //
 //  RETURN STATUS
@@ -127,9 +130,10 @@
 # define E_GATEWAY_TIMEOUT		504 // renvoye par un serveur proxi pour indiquer qu'il n'a pas recu de reponse de la part d'un serveur en amont
 # define E_HTTP_VERSION			505 // la version d'http precise en requette n'est pas traitee par le serveur
 
-# define DEFAULT_TIMEOUT        15;
+# define DEFAULT_TIMEOUT		15;
 
 typedef enum e_headerRequest {
+
 	RQ_METHOD,
 	RQ_HOST,
 	RQ_USER_AGENT,
@@ -145,23 +149,28 @@ typedef enum e_headerRequest {
 	RQ_CACHECONTROL,
 	RQ_BODY_START,
 	RQ_OTHER_CONTENT
+
 }	t_headerRequest;
 
 typedef enum e_headerRq {
+
 	RP_CONNECTION,
 	RP_CACHECONTROL,
 	RP_DATE,
 	RP_CONTENT_TYPE,
 	RP_CONTENT_LENGTH,
-	RP_LOCATION,			// nouvelle URL de redirection
+	RP_LOCATION,
 	RP_COOKIES,
 	RP_SECURITY,
 	RP_COMPRESSIOM
+
 }	t_headerRq;
 
 typedef enum e_scriptType {
+	
 	PY,
 	PHP
+
 }	t_scriptType;
 
 // ************************************************************************** //
@@ -169,7 +178,7 @@ typedef enum e_scriptType {
 // ************************************************************************** //
 
 // Main program
-void						multiplexer(void);
+void						multiplexer();
 
 // General utils
 void						signalHandler(int signal);
@@ -177,11 +186,10 @@ bool						containsParentDirectory(const std::string& str);
 void						compressionOfSlashes(std::string& str);
 bool						isAlphaDigit(char c);
 char						hexToChar(const std::string& hex);
-// void						remplacerPercentEncoding(std::string& chaine);
-void						getactualTimestamp(void);
+void						getactualTimestamp();
 int							hexStrToInt(const std::string& hexStr);
 void						timeoutHandler(int sign);
-unsigned long               get_micro_time_stamp(void);
+unsigned long               get_micro_time_stamp();
 bool                        is_timedout(unsigned long start, int timeout);
 bool 						isValidHex(const std::string& str);
 

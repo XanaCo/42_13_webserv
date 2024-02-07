@@ -6,7 +6,7 @@ NAME		= webserv
 
 # Compiler
 CPP			= c++
-FLAGS		= -Wall -Wextra -Werror -MMD -MP -std=c++98 -g3
+FLAGS		= -Wall -Wextra -Werror -MMD -MP -std=c++98
 EXTRAF		= -Wshadow #-Wno-shadow
 
 # Paths
@@ -32,7 +32,6 @@ SRC			= main.cpp \
 			utilsPrint.cpp \
 			utilsGeneral.cpp \
 			CGI.cpp \
-			#multiplexer.cpp \
 
 OBJ			= ${addprefix ${BIN_PATH}, ${SRC:.cpp=.o}}
 
