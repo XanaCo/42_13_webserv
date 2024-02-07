@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ServerInfo.cpp                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/07 11:22:41 by atardif           #+#    #+#             */
+/*   Updated: 2024/02/07 11:22:44 by atardif          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../inc/ServerInfo.hpp"
 
@@ -210,9 +221,8 @@ bool    ServerInfo::setListenSocket(std::string l_port){
     {
         listener = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
         if (listener < 0)
-            continue; //Set an error/exception about socket setting
-        //fcntl(listener, F_SETFL, O_NONBLOCK); // Check return value to throw error/exception
-        setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &test, sizeof(int)); // Check return value to throw exception
+            continue;
+        setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &test, sizeof(int));
         if (bind(listener, p->ai_addr, p->ai_addrlen) < 0)
         {
             close(listener);
@@ -531,26 +541,23 @@ bool	ServerInfo::findCgiRessource(std::string path, std::string& newPath)
 	{
 		if (nameDir == _locations[i].getLPathName() + "/scriptCGI")
 		{
-			// size_t limit = path.find(".html");
 			newPath = "./" + _Root + "/CGI/scriptCGI/py/" + this->getNameFileC(path, _locations[i]) + ".py";
 			if (!access(newPath.c_str(), F_OK))
 			{
 				_typeCgi = PY;
-				//newPath = newPath.substr(1, newPath.length());
 				return (true);
 			}
 			newPath = "./" + _Root + "/CGI/scriptCGI/php/" + getNameFileC(path, _locations[i]) + ".php";
 			if (!access(newPath.c_str(), F_OK))
 			{
 				_typeCgi = PHP;
-				//newPath = newPath.substr(1, newPath.length());
 				return (true);
 
 			}
 		}
 	}
-	newPath = _Root + "/index.html"; // mettre une erreur
-	return (false); // voir pour afficher une page d'erreur html
+	newPath = _Root + "/index.html"; 
+	return (false); 
 }
 
 int ServerInfo::findRessource(std::string path, std::string& newPath, int method) const
@@ -565,10 +572,9 @@ int ServerInfo::findRessource(std::string path, std::string& newPath, int method
         {
 			if (!(it->getLAllowed() & method))
 				return (3);
+
 			if (it->getLReturn().second != "")
 				return (4);
-			// ajouter le retour 405 puis return 2
-            //newPath = _Root + getNameFile(path);
             if (it->getLAutoindex() && getNameFileS(path, *it) == "")
 
 			{
@@ -576,15 +582,13 @@ int ServerInfo::findRessource(std::string path, std::string& newPath, int method
 				return (2);
 			}
             if (nameDir == "/")
-            	newPath = _Root + nameDir + getNameFileS(path, *it); // Modifie par Alban, a remettre
+            	newPath = _Root + nameDir + getNameFileS(path, *it); 
 			else
-            	newPath = _Root + nameDir + "/" + getNameFileS(path, *it); // Modifie par Alban, a remettre
+            	newPath = _Root + nameDir + "/" + getNameFileS(path, *it); 
             return (1);
         }
     }
     newPath = _Root + "/" + _index;
-	// if (access(newPath, F_OK))
-	// 	;
     return (0);
 }
 
@@ -602,7 +606,7 @@ int ServerInfo::findRessource_post(std::string path, std::string& newPath, int m
 			{
 				return (3);
 			}
-            newPath = _Root + nameDir + "/" + getNameFile(path); // Modifie par Alban, a remettre
+            newPath = _Root + nameDir + "/" + getNameFile(path);
             return (1);
         }
     }
@@ -624,7 +628,7 @@ int ServerInfo::findRessource_delete(std::string path, std::string& newPath, int
 			{
 				return (3);
 			}
-            newPath = _Root + nameDir + "/" + getNameFile(path); // Modifie par Alban, a remettre
+            newPath = _Root + nameDir + "/" + getNameFile(path); 
             if (!checkFileExists(newPath))
                 return (0);
             return (1);
@@ -646,5 +650,3 @@ const char *ServerInfo::ServerInfoError::what() const throw() {
 
 	return (_errorMsg.c_str());
 }
-
-
