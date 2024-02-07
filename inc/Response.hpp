@@ -6,7 +6,7 @@
 /*   By: ancolmen <ancolmen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 12:31:44 by ancolmen          #+#    #+#             */
-/*   Updated: 2024/02/07 12:51:09 by ancolmen         ###   ########.fr       */
+/*   Updated: 2024/02/07 12:54:51 by ancolmen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ class Response
 
 		int			readRessource(int fd);
 		void		deleteRessource(std::string path);
-		void		postRessource(int fd, std::string content);
+		bool		postRessource(int fd, std::string content);
 
 		bool		craftAutoIndex(std::string path);
 		void		setMimeType(std::string path, Base *_base);

@@ -6,7 +6,7 @@
 /*   By: ancolmen <ancolmen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 11:42:42 by ancolmen          #+#    #+#             */
-/*   Updated: 2024/02/07 12:50:06 by ancolmen         ###   ########.fr       */
+/*   Updated: 2024/02/07 12:54:18 by ancolmen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,12 +187,14 @@ void    Client::findServer()
             if (i->getPort() == _base->get_serv_from_sock(_serv_sock).getPort())
             {
                 _server = &(*i);
+				return;
+			}
         }
     }
     _server = &_base->get_serv_from_sock(_serv_sock);
 }
 
-std::string     Client::generate_directory_listing(std::string& dir_path){
+std::string     Client::generate_directory_listing(std::string &dir_path) {
 
     DIR *dir;
     struct dirent *ent;
