@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Request.cpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/07 11:22:27 by atardif           #+#    #+#             */
+/*   Updated: 2024/02/07 11:22:31 by atardif          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../inc/Request.hpp"
 
@@ -59,8 +70,8 @@ void    Request::fillArgs(std::string str)
 {
     std::istringstream    ss(str);
 
-    std::getline(ss, _path, ' '); //Modifie par Alban, a remettre en etat
-    std::getline(ss, _args, ' '); //Modifie par Alban, a remettre en etat
+    std::getline(ss, _path, ' '); 
+    std::getline(ss, _args, ' '); 
     std::getline(ss, _version, '\0');
 }
 
@@ -108,12 +119,7 @@ bool	Request::fillMethod(std::string& line)
 		return (false);
     }
     deEncodingHexa(_path);
-    // if (!this->checkHttpVersion())
-    // {
-    //     _returnStatus = E_HTTP_VERSION;
-	// 	return (false);
-    // }
-	return (true);
+    return (true);
 }
 
 void    Request::updateCookie()
@@ -125,18 +131,10 @@ void    Request::updateCookie()
     }
 }
 
-bool Request::fillHeader(std::string& header)	// attention c'est pontentielement juste le header
+bool Request::fillHeader(std::string& header)
 {
-    // time_t  startTime;
-    // time_t  endTime;
-    // startTime = clock();
-
-    // clean le header avant
-
     removeBackSlashR(header);
-    //std::cout << "Le header : " << header << std::endl;
-
-    std::vector<std::string> lines = splitString(header, '\n');	// voir si on doit pas creer notre propre split
+    std::vector<std::string> lines = splitString(header, '\n');	    
     int size = lines.size();
 	int	length = lines[0].size();
     if (length > 140)
@@ -162,8 +160,6 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
             size_t      limit = rest.find(':');
             this->setHost(rest.substr(0, limit));
             this->setPort(rest.substr(0, limit));
-            //this->_client->set_serv_with_name();
-
         }
         else if (length >= 11 && lines[i].substr(0, 11) == "User-Agent:")
             this->setUserAgent(lines[i].substr(12, length));
@@ -173,19 +169,12 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
             this->setContentLength(strToInt(lines[i].substr(16, length)));
         else if (length >= 6 && lines[i].substr(0, 7) == "Cookie:")
         {
-            // std::cout << "c'est quoi le pb avec <" << lines[i].substr(8, length) << ">\n";
             this->setCookies(splitString(lines[i].substr(8, length), ' '));
             for (size_t k = 0; k < _cookies.size(); k++)
             {
                 removeLastChar(_cookies[k]);
-                // std::cout << _cookies[k]
             }
         }
-        /*else if (length >= 11 && lines[i].substr(0, 11 ) == "Keep-Alive:")
-        {
-            if (lines[i].substr(12, lines[i].size()).find("timeout") != std::string::npos)
-
-        }*/
         else if (length >= 11 && lines[i].substr(0, 11) == "Connection:")
         {
             this->setConnection(lines[i].substr(12, length));
@@ -199,33 +188,27 @@ bool Request::fillHeader(std::string& header)	// attention c'est pontentielement
         }
         for (int j = i + 1; j < size; j++)
         {
-            if (lines[i].size() && lines[i] == lines[j]) // si deux lignes sont identiques, c'est interdit
+            if (lines[i].size() && lines[i] == lines[j]) 
             {
                 _returnStatus = 400;
-                return (false); // -> penser a modifier le status dans le client;
+                return (false); 
             }
         }
     }
-    // changer la status pour receiving body ou alors si ca passe mal -> waiting for respond
-    // endTime = clock();
-    // std::cout << REQUEST << " fillContent method : exec time : " << endTime - startTime << std::endl;
     updateCookie();
     return (true);
 }
 
-bool    Request::fillBody(std::string&  body)   // a voir si on fait des modifs
+bool    Request::fillBody(std::string&  body)   
 {
-    //std::cout << "Le body : " << body << std::endl;
     _body = body;
-    // mettre a jour le status en waiting for response quel que soit le status;
     return (true);
 }
 
 int Request::checkHttpVersion()
 {
     if (_version != "HTTP/1.0" && _version != "HTTP/1.1" && _version != "HTTP/0.9")
-        return (false); // 505
-    // _httpVersion = "HTTP/1.1";
+        return (false);
     return (true);
 }
 
@@ -249,7 +232,6 @@ void    Request::setArgs(std::string args) {_args = args;}
 void    Request::setTransfertEncoding(std::string transfertEncoding) {_transfertEncoding = transfertEncoding;}
 void    Request::setChunkTransf(bool value) {_chunkTransf = value;}
 void    Request::setKeepAlive(bool value) {_keepAlive = value;}
-// void    Request::setServer(ServerInfo* server) {_server = server;}
 
 int                         Request::getMethod(void) const {return (_method);}
 std::string                 Request::getPath(void) const {return (_path);}
@@ -267,4 +249,3 @@ std::string                 Request::getArgs(void) const {return (_args);};
 std::string                 Request::getTransfertEncoding(void) const {return (_transfertEncoding);};
 bool                        Request::getChunkTransf(void) const {return _chunkTransf;};
 bool                        Request::getKeepAlive(void) const {return _keepAlive;};
-// ServerInfo*                 Request::getServer(void) {return (_server);}

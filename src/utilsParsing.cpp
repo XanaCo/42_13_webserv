@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utilsParsing.cpp                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/07 11:19:59 by atardif           #+#    #+#             */
+/*   Updated: 2024/02/07 11:23:31 by atardif          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../inc/webserv.hpp"
 
@@ -13,6 +24,7 @@ int strToInt(const std::string& str) {
 		else if (isdigit(str[i]))
 			result = result * 10 + (str[i] - '0');
 		else
+
 			break;
 	}
 
@@ -30,7 +42,7 @@ std::string intToStr(const int number) {
 	return res;
 }
 
-char **mapToCharTab(std::map<std::string, std::string> mapToConvert) { // A TESTER
+char **mapToCharTab(std::map<std::string, std::string> mapToConvert) { 
 
 	std::map<std::string, std::string>::iterator iter;
 	std::vector<char *> vectorTab;
@@ -58,7 +70,7 @@ char **mapToCharTab(std::map<std::string, std::string> mapToConvert) { // A TEST
 	return result;
 }
 
-void freeCharTab(char **charTab) { // A TESTER
+void freeCharTab(char **charTab) { 
 
 	for (size_t it = 0; charTab[it] != NULL; it++) 
 		delete[] charTab[it];
@@ -152,6 +164,7 @@ bool checkPathExists(std::string pathToCheck) {
 }
 
 bool checkFileExists(std::string fileToCheck) {
+
 
 	struct stat filestat;
 	

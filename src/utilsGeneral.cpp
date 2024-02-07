@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utilsGeneral.cpp                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/07 11:27:13 by atardif           #+#    #+#             */
+/*   Updated: 2024/02/07 11:28:19 by atardif          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../inc/webserv.hpp"
 
@@ -32,7 +43,7 @@ bool	containsParentDirectory(const std::string& str) {
 
 void compressionOfSlashes(std::string& str) {
 
-	for (std::string::iterator i = str.begin(); i != str.end(); ) // check if ++ is missing
+	for (std::string::iterator i = str.begin(); i != str.end(); ) 
 	{
 		if (*i == '/' && *(i + 1) == '/')
 			i = str.erase(i + 1);
@@ -84,20 +95,6 @@ void deEncodingHexa(std::string& chaine)
 	chaine = resultat;
 }
 
-// std::string getFirstNameDir(const std::string& path)
-// {
-//	 size_t lastSep = path.find('/');
-		
-//	 if (lastSep != std::string::npos && path[1])
-//	 {
-//		 if (lastSep == 0)
-//			 return path;
-//		 return path.substr(0, lastSep);
-//	 }
-//	 else
-//		 return ".";
-// }
-
 std::string getNameDir(const std::string& path)
 {
 	size_t lastSep = path.find_last_of('/');
@@ -118,7 +115,6 @@ std::string getNameFile(const std::string& path)
 {
 	size_t lastSep = path.find_last_of('/');
 
-	// Si aucun séparateur n'est trouvé, le chemin est probablement juste le nom de fichier
 	if (lastSep == std::string::npos)
 		return path;
 	return (path.substr(lastSep + 1));
@@ -161,7 +157,7 @@ bool isHtmlComplete(const std::string& html)
 	return c == 0;
 }
 
-int identifyFile(const std::string& str) // voir si on retourne une erreur en cas de ni .php ni py
+int identifyFile(const std::string& str) 
 {
 	if (str.length() >= 3)
 	{
@@ -209,49 +205,6 @@ bool            is_timedout(unsigned long start, int timeout){
     return false;
 }
 
-// ************************************************************************** //
-//	COOKIES
-// ************************************************************************** //
-
-// std::string	random_file_generator()
-// {
-// 	unsigned char	buffer[8];
-// 	int				fd;
-// 	unsigned long	nbr;
-// 	std::string     file_name;
-
-// 	fd = open("/dev/urandom", O_RDONLY);
-// 	if (fd < 0)
-// 		fd = open("/dev/random", O_RDONLY);
-// 	if (fd < 0)
-// 		return ("");
-// 	else
-// 	{
-// 		read(fd, buffer, 8);
-// 		close(fd);
-// 		memcpy(&nbr, buffer, 8);
-// 	}
-// 	file_name = std::to_string(nbr);
-// 	if (file_name == "")
-// 		return ("");
-// 	return (file_name);
-// }
-
-// faire une fonction qui check si il y a pas un fichier qui porte le nom du cookie
-// auquel cas le cookie a deja ete attribue a qq1
-// bool	ft_get_random_name(std::string& name)
-// {
-// 	while (1)
-// 	{
-// 		name = random_file_generator();
-// 		if (name == "")
-// 			return (false);
-// 		if (access(name.c_str(), F_OK))
-// 			break ;
-// 	}
-// 	return (true);
-// }
-
 std::string	get_cookie()
 {
 	static char	cookie[] = "000000000000";
@@ -265,7 +218,6 @@ std::string	get_cookie()
 		digit = cookie[11 - pow];
 	}
 	cookie[11 - pow]++;
-	// std::cout << "COOKIES : je donne un nouveau cookie !\n";
 	return (std::string(cookie));
 }
 

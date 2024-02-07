@@ -6,7 +6,7 @@
 /*   By: ancolmen <ancolmen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 11:42:42 by ancolmen          #+#    #+#             */
-/*   Updated: 2024/02/07 11:52:53 by ancolmen         ###   ########.fr       */
+/*   Updated: 2024/02/07 12:50:06 by ancolmen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,10 +72,6 @@ Client::~Client(void){
 
     return ;
 }
-
-// ************************************************************************** //
-//  OPERATORS
-// ************************************************************************** //
 
 Client &    Client::operator=(const Client & rhs){
 
@@ -189,6 +185,7 @@ void    Client::findServer()
         if (i->getServerName() == _request->getHost())
         {
             if (i->getPort() == _base->get_serv_from_sock(_serv_sock).getPort())
+            {
                 _server = &(*i);
         }
     }
@@ -468,6 +465,7 @@ void    Client::routine(int nbytes)
                 if ((this->_request->getContentLength() && this->_body_bytes > this->_request->getContentLength()) || (this->_body_bytes > (int)this->_server->getMaxClientBody()))
                 {
                     this->_request->setReturnStatus(413);
+                    this->_request->setReturnStatus(413);
                     this->_req_end = true;
                 }
                 if (this->_req_end == true)
@@ -515,11 +513,6 @@ void    Client::routine(int nbytes)
         }
     }
 }
-
-// ************************************************************************** //
-//  ^               ^
-//  | METHODS PABLO |
-// ************************************************************************** //
 
 std::string    Client::display_status(void) const{
 

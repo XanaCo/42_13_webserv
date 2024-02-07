@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Base.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/07 11:20:23 by atardif           #+#    #+#             */
+/*   Updated: 2024/02/07 12:22:54 by atardif          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/Base.hpp"
 
 // Constructors
@@ -9,18 +21,6 @@ Base::Base() : _servers(0), _clients(0), _pfds(0), _sock_count(0){
         std::cout << BASE << "🐥 constructor called" << std::endl;
     return ;
 }
-
-/*
-Base::Base(int argc, char **argv) : _clients(0), _sock_count(0){
-    for (int i = 0; i + 1 < argc; i++)
-    {
-        this->add_to_servers(argv[i + 1]);
-        this->add_to_poll_in(_servers[i].getSocket());
-        std::cout << _servers[i];
-    }
-    std::cout << std::endl << std::endl;
-    return ;
-}*/
 
 Base::Base(std::vector<ServerInfo> & Servers) :  _clients(0), _pfds(0), _sock_count(0){
 
@@ -41,8 +41,6 @@ Base::~Base(){
    
     for (unsigned int i = 0; i < _clients.size(); i++)
     {
-        //delete _clients[i]->getRequest();
-        //delete _clients[i]->getResponse();
         delete _clients[i];
     }
     _servers.clear();
@@ -67,14 +65,6 @@ Base &  Base::operator=(const Base & rhs) {
 // Methods
 
 // These functions are used to add into our 3 vectors depending of a port number or socket number
-
-/*
-void    Base::add_to_servers(char *port){
-    
-    ServerInfo  server(port);
-
-    this->_servers.push_back(server);
-}*/
 
 void    Base::init_mime_types(void){
 
@@ -152,7 +142,6 @@ void    Base::add_to_clients(int socket, struct sockaddr_in* address, std::vecto
 
     Client  *tmp = new  Client(socket, address, servers, this, serv_sock);
 
-    // tmp->set_max_body_size(this->get_serv_from_sock(serv_sock).getMaxClientBody()); // a remetre plus tard
     this->_clients.push_back(tmp);
 }
 
@@ -178,7 +167,6 @@ void    Base::add_to_poll_out(int socket)
     this->_sock_count++;
 }
 
-// These functions are used to remove items from our 3 vectors
 
 void    Base::remove_from_servers(int socket){
 
@@ -186,9 +174,7 @@ void    Base::remove_from_servers(int socket){
     {
         if (socket == _servers[i].getSocket())
         {
-            //std::cout << "Server n " << socket << " trying to be erased" << std::endl;
             _servers.erase(_servers.begin() + i);
-            //std::cout << "Server n " << socket << " erased" << std::endl;
             break ;
         }
     }
@@ -200,12 +186,10 @@ void    Base::remove_from_clients(int socket){
     {
         if (socket == _clients[i]->get_socket())
         {
-            //std::cout << "Client n " << socket << " trying to be erased" << std::endl;
             if (_clients[i]->getFdRessource() > 2 && _clients[i]->getFdRessource() != DIR_LIST)
                 close(_clients[i]->getFdRessource());
             delete _clients[i];
             _clients.erase(_clients.begin() + i);
-            //std::cout << "Client n " << socket << " erased" << std::endl;
             break ;
         }
     }
@@ -217,11 +201,9 @@ void    Base::remove_from_poll(int socket){
     {
         if (socket == _pfds[i].fd)
         {
-            //std::cout << "fd n " << socket << " trying to be erased from poll" << std::endl;
             close(_pfds[i].fd);
             _pfds.erase(_pfds.begin() + i);
             this->_sock_count--;
-            //std::cout << "fd n " << socket << " erased from poll" << std::endl;
             break ;
         }
     }
@@ -300,8 +282,7 @@ void    Base::handle_new_connection(int serv_sock)
         this->add_to_poll_in(new_fd);
         getactualTimestamp();
         std::cout << YELLOW << "New connection from " << inet_ntop(remoteaddr.ss_family, get_in_addr((struct sockaddr*)&remoteaddr), remoteIP, INET6_ADDRSTRLEN) << " on socket n " << new_fd << END_COLOR << std::endl; 
-        this->add_to_clients(new_fd, (struct sockaddr_in*)this->get_in_sockaddr((struct sockaddr*)&remoteaddr), this->_servers, serv_sock); //Add the adress to clients and maybe see the same for server but i think ana did it
-        //std::cout << get_cli_from_sock(new_fd) << std::endl;
+        this->add_to_clients(new_fd, (struct sockaddr_in*)this->get_in_sockaddr((struct sockaddr*)&remoteaddr), this->_servers, serv_sock);     
     }
 }
 
@@ -324,27 +305,6 @@ void    Base::change_poll_event(int socket, int event){
     }
     return ;
 }
-
-// function used to receive data on a client
-/*
-void    Base::receive_client_data(int client_sock){
-
-    Client  &client = get_cli_from_sock(client_sock);
-    char   buffer[BUFFER_SIZE + 1];
-
-    int nbytes = recv(client.new_socket, buffer, sizeof buffer, 0);
-
-    if (nbytes <= 0)
-    {
-            std::cout << "Socket " << client.new_socket << " closed connection or recv failed" << std::endl;
-            remove_from_poll(client_sock);
-            remove_from_clients(client_sock);
-            return ;
-    }
-    client.received += buffer;
-    change_poll_event(client_sock, pollout);
-    std::cout << client.get_received() << std::endl;
-}*/
 
 // These functions are used to return sockaddr_in or sockaddr_in->sin_addr
 
@@ -487,6 +447,8 @@ void    Base::review_poll(void){
         }
         if(_pfds[i].revents & POLLERR || _pfds[i].revents & POLLHUP)
         {
+                getactualTimestamp();
+                std::cout << "Closing connexion on client : " << _pfds[i].fd << std::endl;
                 remove_from_clients(_pfds[i].fd);
                 remove_from_poll(_pfds[i].fd);
         }

@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utilsPrint.cpp                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/07 11:28:40 by atardif           #+#    #+#             */
+/*   Updated: 2024/02/07 11:28:51 by atardif          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../inc/webserv.hpp"
 
@@ -41,7 +52,7 @@ void	printServerLocations(ServerInfo Server) {
 
 }
 
-void printCharTab(char **charTab) {  // A TESTER
+void printCharTab(char **charTab) {  
 
 	for (size_t it = 0; charTab[it] != NULL; it++)
 		std::cout << charTab[it] << std::endl;

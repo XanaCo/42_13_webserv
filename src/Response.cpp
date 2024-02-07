@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Response.cpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/07 11:25:13 by atardif           #+#    #+#             */
+/*   Updated: 2024/02/07 11:26:51 by atardif          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../inc/Response.hpp"
 
@@ -65,98 +76,18 @@ int    Response::readRessource(int fd)
     return (0);
 }
 
-// a conserver pour ameliorer l'ouverture d'un fichier de reponse
-// void    Response::readRessource(std::string path)
-// {
-//     const char*       cPath = path.c_str();
-// 	struct stat sb;
-//     // Response    response;
-
-// 	if (stat(cPath, &sb) != 0)
-//     {
-//         this->setReturnStatus(E_NOT_FOUND);
-//         std::cerr << "read ressource : " << path << " : does not exist" << std::endl;
-//         return ;
-//     }
-// 	if (!S_ISREG(sb.st_mode))
-//     {
-//         this->setReturnStatus(E_CONFLICT); // je suis pas certain pour ce code d'erreur
-//         std::cerr << "read ressource : " << path << " : is not a regular file" << std::endl;
-//         return ;
-//     }
-// 	std::ifstream ifs(cPath);
-// 	if (!ifs.is_open())
-//     {
-//         this->setReturnStatus(E_FORBIDDEN); // je suis pas certain pour ce code d'erreur
-//         std::cerr << "read ressource : " << path << " : cant be opened" << std::endl;
-// 		return ;
-//     }
-//     _content.assign(std::istreambuf_iterator<char>(ifs), std::istreambuf_iterator<char>());
-//     _returnStatus = S_OK;
-// 	return ;
-// }
-
-
-// a jeter il me semble
-void    Response::postRessource(int fd, std::string content)
+bool    Response::postRessource(int fd, std::string content)
 {
-    write(fd, content.c_str(), content.size());
-    
-    // std::ofstream file(path.c_str());
-    // file << content;
-    // file.close();
+    return (write(fd, content.c_str(), content.size()) >= 0);
 }
 
-// a jeter il me semble
 void Response::deleteRessource(std::string path)
 {
     std::remove(path.c_str());
-    // if (unlink(path.c_str()) != 0)
-    //     std::cerr << "delete ressource : " << path  << " : erreur lors de la suppression du fichier"<< std::endl;
-    // else
-    //     std::cout << "Le fichier " << path << " a été supprimé avec succès." << std::endl;
 }
-
-// ************************************************************************** //
-//	
-// ************************************************************************** //
-
-// bool    Response::addBuffer(int fd)
-// {
-//     // if (_fdFileToSend < 3)
-//     // {
-//     //     // le fichier n'est pas ouvert
-//     //     return (false);
-//     // }
-//     int     bytesReaded;
-//     char    line[BUFFER_SIZE + 1];
-//     bytesReaded = read(fd, line, BUFFER_SIZE);
-//     if (bytesReaded < 0)
-//     {
-
-//         return (false);
-//     }
-//     else if (bytesReaded)
-//     {
-//         line[bytesReaded] = 0;
-//         _content += line;
-//     }
-//     if (bytesReaded < BUFFER_SIZE)
-//     {
-//         return (false);
-//         // close le fichier
-//         // mettre a jour le status en mode "on a tout recu"
-//     }
-//     return (true);
-// }
-
-// ************************************************************************** //
-//	
-// ************************************************************************** //
 
 void    Response::resetValues(void)
 {
-    // _port = 0;
     _content = "";
     _location = "";
     _statusCode = "";
@@ -197,7 +128,6 @@ void    Response::setStatusCode(std::string statusCode) {_statusCode = statusCod
 void    Response::setProtocol(std::string protocol) {_protocol = protocol;}
 void    Response::setLocation(std::string location) {_location = location;}
 void    Response::setCookies(std::string cookies) {_cookies = cookies;}
-// void    Response::setPort(uint16_t port) {_port = port;}
 
 
 pid_t           Response::getCgiPid(void) const {return (_cgiPid);}
@@ -212,4 +142,3 @@ std::string     Response::getStatusCode() const {return (_statusCode);}
 std::string     Response::getProtocol() const {return (_protocol);}
 std::string     Response::getLocation() const {return (_location);}
 std::string     Response::getCookies() const {return (_cookies);}
-// uint16_t        Response::getPort() const {return (_port);}
