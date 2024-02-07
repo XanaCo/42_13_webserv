@@ -3,16 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   Base.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: atardif <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: ancolmen <ancolmen@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 11:20:23 by atardif           #+#    #+#             */
-/*   Updated: 2024/02/07 12:22:54 by atardif          ###   ########.fr       */
+/*   Updated: 2024/02/07 12:58:41 by ancolmen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/Base.hpp"
 
-// Constructors
+// ************************************************************************** //
+//	CONSTRUCTOR / DESTRUCTOR
+// ************************************************************************** //
 
 Base::Base() : _servers(0), _clients(0), _pfds(0), _sock_count(0){
 
@@ -34,9 +36,6 @@ Base::Base(const Base & rhs) {
     *this = rhs; 
 }
 
-
-// Destructors
-
 Base::~Base(){
    
     for (unsigned int i = 0; i < _clients.size(); i++)
@@ -53,19 +52,23 @@ Base::~Base(){
     return ;
 }
 
-// Operator overload
+// ************************************************************************** //
+//  OPERATORS
+// ************************************************************************** //
 
-Base &  Base::operator=(const Base & rhs) { 
-    this->_servers = rhs._servers; 
-    this->_clients = rhs._clients; 
-    this->_pfds = rhs._pfds; 
+Base &Base::operator=(const Base & rhs) {
+
+    this->_servers = rhs._servers;
+    this->_clients = rhs._clients;
+    this->_pfds = rhs._pfds;
     return *this;
 }
 
-// Methods
+// ************************************************************************** //
+//	METHODS
+// ************************************************************************** //
 
 // These functions are used to add into our 3 vectors depending of a port number or socket number
-
 void    Base::init_mime_types(void){
 
     _mime_types[".html"] = "Content-Type: text/html\n";
@@ -265,7 +268,6 @@ bool    Base::set_servers_sockets(void){
 }
 
 // function used to accept new connection on listening socket
-
 void    Base::handle_new_connection(int serv_sock)
 {
     struct sockaddr_storage remoteaddr;
@@ -307,7 +309,6 @@ void    Base::change_poll_event(int socket, int event){
 }
 
 // These functions are used to return sockaddr_in or sockaddr_in->sin_addr
-
 void*   Base::get_in_addr(struct sockaddr *sa)
 {
     if (sa->sa_family == AF_INET){
@@ -326,7 +327,6 @@ void*   Base::get_in_sockaddr(struct sockaddr *sa){
 }
 
 // This function is used to identify if a given fd is a listening fd
-
 bool    Base::is_a_server(int socket)
 {
     for (unsigned int i = 0; i < this->_servers.size(); i++)
@@ -338,7 +338,6 @@ bool    Base::is_a_server(int socket)
 }
 
 // This function is used to identify if a given fd is a client fd
-
 bool    Base::is_a_client(int socket)
 {
     for (unsigned int i = 0; i < this->_clients.size(); i++)
@@ -350,7 +349,6 @@ bool    Base::is_a_client(int socket)
 }
 
 // function used to return a client/poll ref from its socket
-
 Client &    Base::get_cli_from_sock(int client_sock){
 
     unsigned int i = 0;
@@ -389,7 +387,6 @@ struct pollfd    *Base::get_poll_from_sock(int client_sock){
 }
 
 // main loop that only call the poll reviewer
-
 void    Base::start_servers(void) {
 
     if(!this->set_servers_sockets())
@@ -408,7 +405,6 @@ void    Base::start_servers(void) {
 }
 
 // function used to review the poll of fd
-
 bool    Base::client_is_timed_out(Client & client){
 
     if (is_timedout(client.get_timestamp(), client.get_timeout()))
