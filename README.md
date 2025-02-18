@@ -7,7 +7,7 @@
 <h5>Outstanding Project 2/3</h5>
 </div>
 
-This is a [group project](https://github.com/pcheron-root/42_webserv), made with <3 with [@albibou](https://github.com/albibou) and [@pcheron](https://github.com/pcheron-root)
+This is a group project, made with <3 with [@albibou](https://github.com/albibou) and [@pcheron](https://github.com/pcheron-root)
 
 ## Overview
 
